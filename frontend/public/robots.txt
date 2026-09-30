@@ -1,0 +1,30 @@
+# robots.txt for EduFox (FOX FORD) IELTS Platform
+User-agent: *
+Allow: /
+Allow: /reading
+Allow: /listening
+Allow: /writing
+Allow: /speaking
+Allow: /vocabulary
+Allow: /practice
+Allow: /premium
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /reading/*
+Allow: /listening/*
+Allow: /tests/reading/*
+Allow: /tests/listening/*
+Allow: /tests/writing/*
+Allow: /tests/speaking/*
+
+# Disallow private user states & admin panel
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /dashboard/settings
+Disallow: /settings
+Disallow: /auth/callback
+Disallow: /onboarding
+
+# Sitemap location
+Sitemap: https://edufox.uz/sitemap.xml
