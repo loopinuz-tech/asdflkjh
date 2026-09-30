@@ -174,11 +174,15 @@ export function Navbar() {
               </div>
             ) : (
               <>
-                <Link to="/login" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                <Link to="/login" className="text-sm font-semibold text-foreground hover:text-primary transition-colors px-3 py-2 cursor-pointer">
                   Log in
                 </Link>
-                <Link to="/signup" className={buttonVariants({ size: "sm", className: "bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold" })}>
-                  Get Started
+                <Link 
+                  to="/signup" 
+                  className="bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-sm px-5 py-2 rounded-full shadow-2xs hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                 </Link>
               </>
             )}
