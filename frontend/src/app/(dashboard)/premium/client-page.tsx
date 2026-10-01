@@ -265,8 +265,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       {/* Promo Coupon Code Banner */}
       <div className="p-4 rounded-2xl bg-card border border-border/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
-            <TagPriceIcon className="w-5 h-5 text-primary" size={20} />
+          <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+            <TagPriceIcon className="w-5 h-5" size={20} />
           </div>
           <div>
             <h4 className="text-xs sm:text-sm font-bold text-foreground">
@@ -474,8 +474,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0">
-              <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
+            <div className="w-8 h-8 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+              <ShieldCheckIcon className="w-4 h-4" size={16} />
             </div>
             <div>
               <p className="font-bold text-foreground">Official Payment Gateways</p>
@@ -509,8 +509,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       {checkoutSuccess && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border text-center space-y-4 animate-in zoom-in-95">
-            <div className="w-16 h-16 rounded-full bg-primary/15 text-primary flex items-center justify-center mx-auto shadow-sm">
-              <StarsIcon className="w-8 h-8 text-primary" size={32} />
+            <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground shadow-md flex items-center justify-center mx-auto">
+              <StarsIcon className="w-8 h-8" size={32} />
             </div>
             <div className="space-y-1">
               <h4 className="text-lg font-bold text-foreground">Congratulations! Subscription Activated!</h4>

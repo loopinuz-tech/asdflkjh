@@ -28,8 +28,8 @@ export function VocabularyReviewClient({ words }: { words: any[] }) {
   if (isFinished) {
     return (
       <div className="text-center p-8 bg-card border border-border rounded-2xl fox-shadow-sm max-w-md w-full mx-auto my-12">
-        <div className="w-16 h-16 bg-primary/15 text-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <CheckSquareIcon className="w-8 h-8 text-primary" />
+        <div className="w-16 h-16 bg-primary text-primary-foreground shadow-md rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <CheckSquareIcon className="w-8 h-8" />
         </div>
         <h2 className="text-2xl font-bold mb-2 text-foreground">Review Session Complete!</h2>
         <p className="text-muted-foreground mb-8 text-sm">You reviewed {words.length} IELTS words today.</p>

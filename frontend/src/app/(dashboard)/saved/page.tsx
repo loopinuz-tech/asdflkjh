@@ -136,8 +136,8 @@ export default function SavedItemsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/15 text-primary shadow-2xs">
-            <BookmarkSquareIcon className="h-6 w-6 text-primary" size={24} />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary text-primary-foreground shadow-xs">
+            <BookmarkSquareIcon className="h-6 w-6" size={24} />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Saved Items</h1>
@@ -283,13 +283,13 @@ function SavedItemCard({
       const skill = details.skill || 'reading'
       const skillIcon =
         skill === 'listening' ? (
-          <HeadphonesRoundIcon className="w-4 h-4 text-primary" size={16} />
+          <HeadphonesRoundIcon className="w-4 h-4" size={16} />
         ) : skill === 'writing' ? (
-          <Pen2Icon className="w-4 h-4 text-primary" size={16} />
+          <Pen2Icon className="w-4 h-4" size={16} />
         ) : skill === 'speaking' ? (
-          <Microphone2Icon className="w-4 h-4 text-primary" size={16} />
+          <Microphone2Icon className="w-4 h-4" size={16} />
         ) : (
-          <BookBookmarkIcon className="w-4 h-4 text-primary" size={16} />
+          <BookBookmarkIcon className="w-4 h-4" size={16} />
         )
 
       const targetUrl = `/${skill}/${details.slug || details.id}`
@@ -299,7 +299,7 @@ function SavedItemCard({
           <CardHeader className="p-4 pb-2">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <span className="w-8 h-8 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
                   {skillIcon}
                 </span>
                 <div>
@@ -510,11 +510,11 @@ function SavedItemCard({
           <CardHeader className="p-4 pb-2">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <span className="w-7 h-7 rounded-lg bg-primary text-primary-foreground shadow-2xs flex items-center justify-center shrink-0">
                   {isWriting ? (
-                    <Pen2Icon className="w-3.5 h-3.5 text-primary" size={14} />
+                    <Pen2Icon className="w-3.5 h-3.5" size={14} />
                   ) : (
-                    <Microphone2Icon className="w-3.5 h-3.5 text-primary" size={14} />
+                    <Microphone2Icon className="w-3.5 h-3.5" size={14} />
                   )}
                 </span>
                 <div>

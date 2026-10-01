@@ -154,7 +154,7 @@ export default function ReadingHub() {
       {/* Header — Compact & No verbose intro on mobile */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary/15 text-primary shrink-0">
+          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
             <BookBookmarkIcon className="h-5 w-5" size={20} />
           </div>
           <div className="min-w-0">
@@ -385,7 +385,7 @@ export default function ReadingHub() {
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-bold">
                   <CrownStarIcon className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold">Premium Test Access</h3>
@@ -400,8 +400,8 @@ export default function ReadingHub() {
             </div>
 
             <div className="space-y-3 text-center py-2">
-              <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center mx-auto text-primary">
-                <LockKeyholeIcon className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 rounded-2xl bg-primary text-primary-foreground shadow-md flex items-center justify-center mx-auto">
+                <LockKeyholeIcon className="w-8 h-8" />
               </div>
               <h4 className="text-lg font-bold text-foreground">{lockedModalTest.title}</h4>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">

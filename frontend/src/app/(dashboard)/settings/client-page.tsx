@@ -43,7 +43,7 @@ function ThemeSelector() {
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isSelected ? 'bg-primary/15 text-primary' : 'bg-secondary text-muted-foreground'}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isSelected ? 'bg-primary text-primary-foreground shadow-xs' : 'bg-secondary text-muted-foreground'}`}>
                 <Icon className="w-5 h-5 text-current" size={20} />
               </div>
               {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
@@ -106,8 +106,8 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
   return (
     <div className="space-y-8 max-w-4xl">
       <div className="flex items-center gap-3">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/15 text-primary">
-          <SettingsIcon className="h-6 w-6 text-primary" size={24} />
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground shadow-xs">
+          <SettingsIcon className="h-6 w-6" size={24} />
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Account Settings</h1>

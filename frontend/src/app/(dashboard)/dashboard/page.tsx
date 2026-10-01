@@ -80,7 +80,7 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Target Band</span>
-              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground shadow-2xs flex items-center justify-center shrink-0">
                 <TargetIcon className="w-4 h-4" size={16} />
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Estimated Band</span>
-              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground shadow-2xs flex items-center justify-center shrink-0">
                 <GraphUpIcon className="w-4 h-4" size={16} />
               </div>
             </div>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Tests Completed</span>
-              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground shadow-2xs flex items-center justify-center shrink-0">
                 <FireIcon className="w-4 h-4" size={16} />
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Vocabulary</span>
-              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground shadow-2xs flex items-center justify-center shrink-0">
                 <TranslationIcon className="w-4 h-4" size={16} />
               </div>
             </div>
@@ -159,7 +159,7 @@ export default function DashboardPage() {
               className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between space-y-3 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center font-bold transition-transform group-hover:scale-105">
                   <BookBookmarkIcon className="w-5 h-5" size={20} />
                 </div>
                 <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
@@ -178,7 +178,7 @@ export default function DashboardPage() {
               className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between space-y-3 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center font-bold transition-transform group-hover:scale-105">
                   <HeadphonesRoundIcon className="w-5 h-5" size={20} />
                 </div>
                 <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
@@ -197,7 +197,7 @@ export default function DashboardPage() {
               className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between space-y-3 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center font-bold transition-transform group-hover:scale-105">
                   <Pen2Icon className="w-5 h-5" size={20} />
                 </div>
                 <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
@@ -216,7 +216,7 @@ export default function DashboardPage() {
               className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between space-y-3 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center font-bold transition-transform group-hover:scale-105">
                   <Microphone2Icon className="w-5 h-5" size={20} />
                 </div>
                 <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />

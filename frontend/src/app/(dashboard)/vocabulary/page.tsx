@@ -283,7 +283,7 @@ export default function VocabularyHub() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary/15 border border-primary/25 text-primary">
+          <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary text-primary-foreground shadow-xs">
             <TranslationIcon className="h-5 w-5" size={20} />
           </div>
           <div>
@@ -349,7 +349,7 @@ export default function VocabularyHub() {
             <p className="text-xs text-muted-foreground font-medium">Total Words</p>
             <p className="text-xl font-bold text-foreground mt-0.5">{totalCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
             <TranslationIcon className="w-4 h-4" size={18} />
           </div>
         </div>
@@ -358,7 +358,7 @@ export default function VocabularyHub() {
             <p className="text-xs text-muted-foreground font-medium">Due for Review</p>
             <p className="text-xl font-bold text-primary mt-0.5">{dueToday}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
             <FireIcon className="w-4 h-4" size={18} />
           </div>
         </div>
@@ -367,7 +367,7 @@ export default function VocabularyHub() {
             <p className="text-xs text-muted-foreground font-medium">Currently Learning</p>
             <p className="text-xl font-bold text-primary mt-0.5">{learningCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
             <BookBookmarkIcon className="w-4 h-4" size={18} />
           </div>
         </div>
@@ -376,7 +376,7 @@ export default function VocabularyHub() {
             <p className="text-xs text-muted-foreground font-medium">Mastered</p>
             <p className="text-xl font-bold text-primary mt-0.5">{masteredCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
             <MedalRibbonIcon className="w-4 h-4" size={18} />
           </div>
         </div>
@@ -557,8 +557,8 @@ export default function VocabularyHub() {
           <div className="bg-card border border-border rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-secondary/20">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
-                  <AddCircleIcon className="w-4 h-4 text-primary" size={16} />
+                <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center">
+                  <AddCircleIcon className="w-4 h-4" size={16} />
                 </div>
                 <h3 className="font-bold text-sm text-foreground">Add New IELTS Vocabulary Word</h3>
               </div>

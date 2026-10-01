@@ -150,15 +150,15 @@ export default function PracticeHistory() {
   const getSkillConfig = (skill: string) => {
     switch (skill) {
       case 'reading':
-        return { icon: BookBookmarkIcon, color: 'text-primary', bg: 'bg-primary/15', label: 'Reading' }
+        return { icon: BookBookmarkIcon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Reading' }
       case 'listening':
-        return { icon: HeadphonesRoundIcon, color: 'text-primary', bg: 'bg-primary/15', label: 'Listening' }
+        return { icon: HeadphonesRoundIcon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Listening' }
       case 'writing':
-        return { icon: Pen2Icon, color: 'text-primary', bg: 'bg-primary/15', label: 'Writing' }
+        return { icon: Pen2Icon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Writing' }
       case 'speaking':
-        return { icon: Microphone2Icon, color: 'text-primary', bg: 'bg-primary/15', label: 'Speaking' }
+        return { icon: Microphone2Icon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Speaking' }
       default:
-        return { icon: CheckSquareIcon, color: 'text-primary', bg: 'bg-primary/15', label: 'Practice' }
+        return { icon: CheckSquareIcon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Practice' }
     }
   }
 
@@ -168,8 +168,8 @@ export default function PracticeHistory() {
       title: 'Reading',
       desc: 'Academic & General reading passages with 15 question types.',
       icon: BookBookmarkIcon,
-      color: 'text-primary',
-      bgColor: 'bg-primary/15',
+      color: 'text-primary-foreground',
+      bgColor: 'bg-primary shadow-xs',
       href: '/reading',
       count: 'Full Tests',
     },
@@ -178,8 +178,8 @@ export default function PracticeHistory() {
       title: 'Listening',
       desc: 'Realistic audio recordings across 4 sections with timed playback.',
       icon: HeadphonesRoundIcon,
-      color: 'text-primary',
-      bgColor: 'bg-primary/15',
+      color: 'text-primary-foreground',
+      bgColor: 'bg-primary shadow-xs',
       href: '/listening',
       count: 'Audio Tests',
     },
@@ -188,8 +188,8 @@ export default function PracticeHistory() {
       title: 'Writing',
       desc: 'Task 1 and Task 2 prompts evaluated with detailed criteria.',
       icon: Pen2Icon,
-      color: 'text-primary',
-      bgColor: 'bg-primary/15',
+      color: 'text-primary-foreground',
+      bgColor: 'bg-primary shadow-xs',
       href: '/writing',
       count: 'Tasks 1 & 2',
     },
@@ -198,8 +198,8 @@ export default function PracticeHistory() {
       title: 'Speaking',
       desc: 'Part 1, 2, and 3 interview questions with simulated examiners.',
       icon: Microphone2Icon,
-      color: 'text-primary',
-      bgColor: 'bg-primary/15',
+      color: 'text-primary-foreground',
+      bgColor: 'bg-primary shadow-xs',
       href: '/speaking',
       count: 'Parts 1-3',
     },
@@ -210,8 +210,8 @@ export default function PracticeHistory() {
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/15 text-primary">
-            <ClockCircleIcon className="h-6 w-6 text-primary" size={24} />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground shadow-xs">
+            <ClockCircleIcon className="h-6 w-6" size={24} />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Practice Center</h1>
