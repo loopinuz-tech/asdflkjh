@@ -100,7 +100,10 @@ export default function SignupPage() {
             <div className="relative">
               <User className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
               <input
+                id="signup-first-name"
+                name="firstName"
                 type="text"
+                autoComplete="given-name"
                 placeholder="First name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -110,7 +113,10 @@ export default function SignupPage() {
             </div>
             <div>
               <input
+                id="signup-last-name"
+                name="lastName"
                 type="text"
+                autoComplete="family-name"
                 placeholder="Last name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -122,7 +128,10 @@ export default function SignupPage() {
           <div className="relative">
             <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
             <input
+              id="signup-email"
+              name="email"
               type="email"
+              autoComplete="email"
               placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -134,7 +143,10 @@ export default function SignupPage() {
           <div className="relative">
             <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
             <input
+              id="signup-password"
+              name="password"
               type="password"
+              autoComplete="new-password"
               placeholder="Password (min 6 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

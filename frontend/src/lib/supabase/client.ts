@@ -372,26 +372,65 @@ class FoxfordClient {
           (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID ||
           '157173720336-mmu0o0uitfvenmjmhcrurq6bph7l8hdn.apps.googleusercontent.com'
 
-        return new Promise<{ data: any; error: any }>((resolve) => {
-          const startFlow = () => {
-            const google = (window as any).google
-            if (!google?.accounts?.oauth2) {
-              resolve({
-                data: null,
-                error: { message: 'Google Sign-In is initializing. Please click again.' },
-              })
-              return
-            }
+        return new Promise<{ data: any; error: any }>(async (resolve) => {
+          // Helper to dynamically load and ensure Google Identity script
+          const ensureLoaded = (): Promise<boolean> => {
+            if (typeof window === 'undefined') return Promise.resolve(false)
+            if ((window as any).google?.accounts?.oauth2) return Promise.resolve(true)
 
+            return new Promise<boolean>((res) => {
+              let script = document.querySelector<HTMLScriptElement>('script[src*="accounts.google.com/gsi/client"]')
+              if (!script) {
+                script = document.createElement('script')
+                script.src = 'https://accounts.google.com/gsi/client'
+                script.async = true
+                script.defer = true
+                document.head.appendChild(script)
+              }
+
+              let attempts = 0
+              const interval = setInterval(() => {
+                attempts++
+                if ((window as any).google?.accounts?.oauth2) {
+                  clearInterval(interval)
+                  res(true)
+                } else if (attempts >= 60) {
+                  clearInterval(interval)
+                  res(false)
+                }
+              }, 100)
+            })
+          }
+
+          const isLoaded = await ensureLoaded()
+          const google = (window as any).google
+
+          if (!isLoaded || !google?.accounts?.oauth2) {
+            resolve({
+              data: null,
+              error: { message: 'Google Sign-In failed to load. Please check your network or ad blocker.' },
+            })
+            return
+          }
+
+          try {
             const tokenClient = google.accounts.oauth2.initTokenClient({
               client_id: clientId,
               scope: 'email profile openid',
+              error_callback: (err: any) => {
+                resolve({
+                  data: null,
+                  error: {
+                    message: err?.message || 'Google authorization was closed or cancelled.',
+                  },
+                })
+              },
               callback: async (tokenResponse: any) => {
                 if (tokenResponse.error) {
                   resolve({
                     data: null,
                     error: {
-                      message: tokenResponse.error_description || tokenResponse.error,
+                      message: tokenResponse.error_description || tokenResponse.error || 'Google authorization failed',
                     },
                   })
                   return
@@ -441,26 +480,14 @@ class FoxfordClient {
               },
             })
 
-            tokenClient.requestAccessToken()
-          }
-
-          if ((window as any).google?.accounts?.oauth2) {
-            startFlow()
-          } else {
-            let attempts = 0
-            const interval = setInterval(() => {
-              attempts++
-              if ((window as any).google?.accounts?.oauth2) {
-                clearInterval(interval)
-                startFlow()
-              } else if (attempts > 30) {
-                clearInterval(interval)
-                resolve({
-                  data: null,
-                  error: { message: 'Google Sign-In failed to load. Please check your network.' },
-                })
-              }
-            }, 100)
+            tokenClient.requestAccessToken({ prompt: 'select_account' })
+          } catch (initErr: any) {
+            resolve({
+              data: null,
+              error: {
+                message: initErr?.message || 'Failed to initialize Google Sign-In',
+              },
+            })
           }
         })
       }

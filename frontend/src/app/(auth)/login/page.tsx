@@ -100,7 +100,10 @@ export default function LoginPage() {
           <div className="relative">
             <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
             <input
+              id="login-email"
+              name="email"
               type="email"
+              autoComplete="email"
               placeholder="Email address (e.g. xudayberganovbackend@gmail.com)"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -112,7 +115,10 @@ export default function LoginPage() {
           <div className="relative">
             <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
             <input
+              id="login-password"
+              name="password"
               type="password"
+              autoComplete="current-password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

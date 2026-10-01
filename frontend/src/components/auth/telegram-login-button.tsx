@@ -310,7 +310,10 @@ export function TelegramLoginButton({
                     <div className="relative flex-1">
                       <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-mono">@</span>
                       <input
+                        id="telegram-username-input"
+                        name="telegramUsername"
                         type="text"
+                        autoComplete="username"
                         placeholder="telegram_username"
                         value={directUsername}
                         onChange={(e) => setDirectUsername(e.target.value)}
