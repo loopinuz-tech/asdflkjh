@@ -29,6 +29,7 @@ import {
 } from '@solar-icons/react/bold-duotone'
 import { cn } from '@/lib/utils'
 import { Sidebar } from '@/components/dashboard/sidebar'
+import { DashboardMobileHeader } from '@/components/dashboard/mobile-header'
 
 export default function SpeakingTestPage() {
   const { id } = useParams<{ id: string }>()
@@ -674,6 +675,11 @@ export function SpeakingClientPage({
 
         {/* Main Content Area */}
         <div className="flex flex-col flex-1 w-full md:pl-64 overflow-hidden">
+          {/* Mobile Top Header */}
+          <div className="md:hidden">
+            <DashboardMobileHeader />
+          </div>
+
           <main className="flex-1 relative overflow-y-auto focus:outline-none custom-scrollbar">
             <div className="py-4 px-4 sm:px-6 md:px-8 xl:px-10 pb-24 md:pb-8 w-full space-y-4">
               {/* Header bar */}
@@ -1023,7 +1029,17 @@ export function SpeakingClientPage({
             <TimerDisplay secondsLeft={secondsLeft} className={isRecording ? "animate-pulse border-primary/50 text-primary" : ""} />
             <FocusModeButton />
             <Button onClick={handleSubmit} disabled={isSubmitting || !audioUrl || isRecording} className="cursor-pointer">
-              {isSubmitting ? 'Evaluating Speech...' : 'Submit Recording'}
+              {isSubmitting ? (
+                <>
+                  <span className="hidden sm:inline">Evaluating Speech...</span>
+                  <span className="sm:hidden">Evaluating...</span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">Submit Recording</span>
+                  <span className="sm:hidden">Submit</span>
+                </>
+              )}
             </Button>
           </div>
         </div>

@@ -65,9 +65,9 @@ export function Hero() {
           <div className="absolute -left-3 sm:-left-4 z-20 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 border-2 border-amber-200 shadow-md animate-pulse" />
 
           {/* 3D 9.0 Graphic Badge (Capsule / Pill Chambar Shape) */}
-          <div className="relative z-10 p-[3.5px] rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-[0_18px_45px_rgba(245,158,11,0.35)]">
-            <div className="rounded-full bg-gradient-to-b from-zinc-900 via-black to-zinc-950 px-10 sm:px-16 py-3.5 sm:py-6 border border-amber-400/50 flex items-center justify-center shadow-inner">
-              <span className="text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-500 drop-shadow-md">
+          <div className="relative z-10 p-[3px] sm:p-[3.5px] rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-[0_18px_45px_rgba(245,158,11,0.35)]">
+            <div className="rounded-full bg-gradient-to-b from-zinc-900 via-black to-zinc-950 px-6 xs:px-10 sm:px-16 py-2.5 sm:py-6 border border-amber-400/50 flex items-center justify-center shadow-inner">
+              <span className="text-5xl xs:text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-500 drop-shadow-md">
                 9.0
               </span>
             </div>

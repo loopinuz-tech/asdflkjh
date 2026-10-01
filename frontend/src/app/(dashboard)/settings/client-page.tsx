@@ -130,9 +130,12 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground">First Name</label>
+                <label htmlFor="settings-first-name" className="text-xs font-semibold text-foreground">First Name</label>
                 <input
+                  id="settings-first-name"
+                  name="firstName"
                   type="text"
+                  autoComplete="given-name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -141,9 +144,12 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground">Last Name</label>
+                <label htmlFor="settings-last-name" className="text-xs font-semibold text-foreground">Last Name</label>
                 <input
+                  id="settings-last-name"
+                  name="lastName"
                   type="text"
+                  autoComplete="family-name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -153,9 +159,12 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground">Email Address</label>
+              <label htmlFor="settings-email" className="text-xs font-semibold text-foreground">Email Address</label>
               <input
-                type="text"
+                id="settings-email"
+                name="email"
+                type="email"
+                autoComplete="email"
                 disabled
                 value={initialSettings?.email || ''}
                 className="w-full px-3 py-2 text-sm bg-muted/50 border border-border rounded-lg text-muted-foreground cursor-not-allowed"

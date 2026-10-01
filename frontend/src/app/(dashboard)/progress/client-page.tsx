@@ -57,29 +57,29 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Current Band */}
         <Card className="border-border fox-shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-3.5 sm:p-6">
             <div className="flex justify-between items-start">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Current Band</p>
-                <p className="text-3xl font-bold">
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Current Band</p>
+                <p className="text-2xl sm:text-3xl font-bold">
                   {data.currentBand !== null ? data.currentBand.toFixed(1) : '—'}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Award className="w-5 h-5 text-primary" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Award className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-muted-foreground">
+            <div className="mt-3 sm:mt-4 flex items-center text-[11px] sm:text-xs text-muted-foreground">
               {data.currentBand !== null ? (
-                <span className="text-fox-success font-medium flex items-center">
-                  <TrendingUp className="w-3.5 h-3.5 mr-1" />
-                  Estimated average band
+                <span className="text-fox-success font-medium flex items-center truncate">
+                  <TrendingUp className="w-3.5 h-3.5 mr-1 shrink-0" />
+                  Average band
                 </span>
               ) : (
-                <span>Complete tests to reveal band</span>
+                <span className="truncate">Take tests to reveal</span>
               )}
             </div>
           </CardContent>
@@ -87,21 +87,21 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
 
         {/* Tests Completed */}
         <Card className="border-border fox-shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-3.5 sm:p-6">
             <div className="flex justify-between items-start">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Tests Completed</p>
-                <p className="text-3xl font-bold">{data.testsCompleted}</p>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Completed</p>
+                <p className="text-2xl sm:text-3xl font-bold">{data.testsCompleted}</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Brain className="w-5 h-5 text-blue-500" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-muted-foreground">
+            <div className="mt-3 sm:mt-4 flex items-center text-[11px] sm:text-xs text-muted-foreground">
               {data.testsCompleted > 0 ? (
-                <span>Across IELTS test sections</span>
+                <span className="truncate">Across test modules</span>
               ) : (
-                <span>No tests taken yet</span>
+                <span className="truncate">No tests taken yet</span>
               )}
             </div>
           </CardContent>
@@ -109,25 +109,25 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
 
         {/* Strongest Skill */}
         <Card className="border-border fox-shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-3.5 sm:p-6">
             <div className="flex justify-between items-start">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Strongest Skill</p>
-                <p className="text-3xl font-bold">
+              <div className="space-y-1 sm:space-y-2 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">Best Skill</p>
+                <p className="text-2xl sm:text-3xl font-bold truncate">
                   {data.strongestSkill ? data.strongestSkill.skill : '—'}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-fox-yellow/10 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-fox-yellow" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-fox-yellow/10 flex items-center justify-center shrink-0">
+                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-fox-yellow" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-muted-foreground">
+            <div className="mt-3 sm:mt-4 flex items-center text-[11px] sm:text-xs text-muted-foreground">
               {data.strongestSkill ? (
-                <span>
-                  Average Band: <strong className="text-foreground ml-1">{data.strongestSkill.score.toFixed(1)}</strong>
+                <span className="truncate">
+                  Band: <strong className="text-foreground ml-1">{data.strongestSkill.score.toFixed(1)}</strong>
                 </span>
               ) : (
-                <span>Complete 1+ module to calculate</span>
+                <span className="truncate">1+ module needed</span>
               )}
             </div>
           </CardContent>
@@ -135,25 +135,25 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
 
         {/* Study Time */}
         <Card className="border-border fox-shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-3.5 sm:p-6">
             <div className="flex justify-between items-start">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Study Time</p>
-                <p className="text-3xl font-bold">
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Study Time</p>
+                <p className="text-2xl sm:text-3xl font-bold">
                   {data.studyHoursTotal > 0 ? `${data.studyHoursTotal}h` : '0h'}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <CalendarIcon className="w-5 h-5 text-purple-500" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-500/10 flex items-center justify-center shrink-0">
+                <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-muted-foreground">
+            <div className="mt-3 sm:mt-4 flex items-center text-[11px] sm:text-xs text-muted-foreground">
               {data.studyHoursThisWeek > 0 ? (
-                <span className="text-fox-success font-medium">
-                  {data.studyHoursThisWeek}h logged this week
+                <span className="text-fox-success font-medium truncate">
+                  {data.studyHoursThisWeek}h this week
                 </span>
               ) : (
-                <span>Start your first practice session</span>
+                <span className="truncate">Start practicing</span>
               )}
             </div>
           </CardContent>

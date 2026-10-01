@@ -303,7 +303,10 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
         ) : (
           <form onSubmit={handleApplyCoupon} className="flex items-center gap-2 w-full sm:w-auto">
             <input
+              id="coupon-code-input"
+              name="couponCode"
               type="text"
+              autoComplete="off"
               value={couponCodeInput}
               onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
               placeholder="e.g. FOXFORD20"

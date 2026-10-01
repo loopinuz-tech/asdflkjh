@@ -317,7 +317,7 @@ export function ListeningClientPage({
       <footer className="h-16 bg-card border-t border-border px-3 md:px-6 flex items-center justify-between z-30 flex-shrink-0 gap-3">
         
         {/* Left: Section Selector Tabs */}
-        <div className="flex items-center gap-1.5 flex-shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar max-w-[45%] xs:max-w-[50%] sm:max-w-none flex-shrink-0">
           {test.sections.map((section, idx) => {
             const isCurrent = session.currentSectionIndex === idx
             const secQuestions = section.groups.flatMap(g => g.questions)
@@ -329,7 +329,7 @@ export function ListeningClientPage({
                 key={section.id}
                 onClick={() => session.setCurrentSectionIndex(idx)}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer",
+                  "px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 sm:gap-1.5 border cursor-pointer shrink-0",
                   isCurrent
                     ? "bg-primary text-black border-primary shadow-xs"
                     : "bg-background text-muted-foreground border-border hover:text-foreground hover:bg-secondary"
@@ -397,16 +397,17 @@ export function ListeningClientPage({
         </div>
 
         {/* Right: Section Navigation & Full Overview Dialog */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={() => setIsOverviewOpen(true)}
-            className="hidden sm:flex text-xs items-center gap-1.5 h-9 cursor-pointer"
+            className="flex text-xs items-center gap-1 sm:gap-1.5 h-8 sm:h-9 px-2 sm:px-3 cursor-pointer shrink-0"
+            title="All Questions"
           >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>All Questions</span>
-            <span className="ml-1 px-1.5 py-0.5 rounded bg-secondary text-[10px] font-bold">
+            <LayoutGrid className="w-3.5 h-3.5 text-primary" />
+            <span className="hidden sm:inline">All Questions</span>
+            <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px] font-bold">
               {session.answeredCount}/{session.totalQuestions}
             </span>
           </Button>

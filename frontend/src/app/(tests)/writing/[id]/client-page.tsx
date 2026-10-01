@@ -25,9 +25,11 @@ import {
   Bot,
   Lightbulb,
   FileDown,
+  Edit3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Sidebar } from '@/components/dashboard/sidebar'
+import { DashboardMobileHeader } from '@/components/dashboard/mobile-header'
 import { apiUrl } from '@/lib/api-config'
 
 export default function WritingTestPage() {
@@ -427,6 +429,7 @@ export function WritingClientPage({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const [imageZoom, setImageZoom] = useState(1)
   const [showLines, setShowLines] = useState(true)
+  const [mobileTab, setMobileTab] = useState<'prompt' | 'editor'>('editor')
 
   const secondsLeft = useTimer(
     prompt.time_limit_minutes * 60,
@@ -558,6 +561,11 @@ export function WritingClientPage({
 
         {/* Main Content Area */}
         <div className="flex flex-col flex-1 w-full md:pl-64 overflow-hidden">
+          {/* Mobile Top Header */}
+          <div className="md:hidden">
+            <DashboardMobileHeader />
+          </div>
+
           <main className="flex-1 relative overflow-y-auto focus:outline-none custom-scrollbar">
             <div className="py-4 px-4 sm:px-6 md:px-8 xl:px-10 pb-24 md:pb-8 w-full space-y-4">
           {/* Top minimal header bar */}
@@ -878,10 +886,14 @@ export function WritingClientPage({
               {isSubmitting ? (
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 animate-spin text-primary" />
-                  <span>Evaluating with Gemini AI...</span>
+                  <span className="hidden sm:inline">Evaluating with Gemini AI...</span>
+                  <span className="sm:hidden">Evaluating...</span>
                 </span>
               ) : (
-                'Submit Essay'
+                <>
+                  <span className="hidden sm:inline">Submit Essay</span>
+                  <span className="sm:hidden">Submit</span>
+                </>
               )}
             </Button>
           </div>
@@ -889,13 +901,43 @@ export function WritingClientPage({
       </header>
       
       {/* Workspace */}
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
+      <main className="flex-1 p-3 sm:p-6 md:p-8">
+        {/* Mobile Tab Switcher */}
+        <div className="lg:hidden flex items-center p-1 bg-secondary/80 rounded-xl mb-3 border border-border">
+          <button
+            type="button"
+            onClick={() => setMobileTab('prompt')}
+            className={cn(
+              "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+              mobileTab === 'prompt' ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <FileText className="w-3.5 h-3.5 text-primary" />
+            <span>Task Prompt & Graph</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('editor')}
+            className={cn(
+              "flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer",
+              mobileTab === 'editor' ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Edit3 className="w-3.5 h-3.5 text-primary" />
+            <span>Write Essay ({wordCount}w)</span>
+          </button>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 h-[calc(100vh-190px)] sm:h-[calc(100vh-170px)] lg:h-[calc(100vh-140px)]">
           
           {/* Left Pane: Prompt */}
           <div className={cn(
             "bg-card border border-border rounded-xl fox-shadow-sm flex flex-col transition-all duration-300",
-            isExpanded ? "hidden lg:flex lg:w-0 overflow-hidden opacity-0 p-0 border-0" : "flex-1 lg:w-1/2"
+            isExpanded
+              ? "hidden lg:flex lg:w-0 overflow-hidden opacity-0 p-0 border-0"
+              : mobileTab === 'editor'
+                ? "hidden lg:flex flex-1 lg:w-1/2"
+                : "flex flex-1 lg:w-1/2"
           )}>
             <div className="p-4 sm:p-5 overflow-y-auto custom-scrollbar h-full">
               <h2 className="text-xl font-bold mb-3">{prompt.title}</h2>
@@ -940,7 +982,11 @@ export function WritingClientPage({
           {/* Right Pane: Editor */}
           <div className={cn(
             "bg-card border border-border rounded-xl fox-shadow-sm flex flex-col relative transition-all duration-300",
-            isExpanded ? "w-full" : "flex-1 lg:w-1/2"
+            isExpanded
+              ? "w-full"
+              : mobileTab === 'prompt'
+                ? "hidden lg:flex flex-1 lg:w-1/2"
+                : "flex flex-1 lg:w-1/2"
           )}>
             {/* Toolbar */}
             <div className="flex items-center justify-between p-3 border-b border-border bg-secondary/30">
