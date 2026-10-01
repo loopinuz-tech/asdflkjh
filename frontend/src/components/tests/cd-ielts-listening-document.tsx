@@ -110,6 +110,20 @@ export function CDIELTSListeningDocument({
   const allSectionQuestions = section.groups.flatMap(g => g.questions)
   const getQ = (qNum: number) => allSectionQuestions.find(q => q.question_number === qNum)
 
+  // Check if this section has note card / passage HTML containing question markers
+  const passageHtml = 
+    (section as any).passage_html || 
+    section.groups?.find(g => g.passage?.content)?.passage?.content || 
+    (section as any).passage?.content || ''
+
+  const hasEmbeddedQuestions = Boolean(
+    passageHtml && 
+    allSectionQuestions.some(q => {
+      const reg = new RegExp(`\\[${q.question_number}\\]|id=["']q?${q.question_number}["']|data-question=["']${q.question_number}["']`, 'i')
+      return reg.test(passageHtml)
+    })
+  )
+
   // Is this specific IELTS Version K5002 test?
   const isK5002 = 
     test.slug === 'ielts-listening-practice-test-1-k5002' ||
@@ -124,6 +138,8 @@ export function CDIELTSListeningDocument({
       prefixText?: string; 
       suffixText?: string;
       customWidth?: string;
+      hideBadge?: boolean;
+      placeholder?: string;
     }
   ) => {
     const q = getQ(qNum)
@@ -148,22 +164,24 @@ export function CDIELTSListeningDocument({
         {options?.prefixText && <span className="text-neutral-800 dark:text-neutral-200">{options.prefixText}</span>}
 
         {/* Square Question Badge [31] */}
-        <span 
-          onClick={() => session.handleToggleMark(q.id)}
-          title={isMarked ? "Flagged for review (Click to unflag)" : "Click to flag for review"}
-          className={cn(
-            "inline-flex items-center justify-center min-w-[28px] h-[26px] border-[1.5px] font-bold text-xs shrink-0 px-1 rounded-xs select-none cursor-pointer transition-colors shadow-2xs",
-            isMarked
-              ? "border-amber-500 bg-amber-400 text-black font-extrabold"
-              : isSubmitted
-                ? isCorrect
-                  ? "border-emerald-600 bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
-                  : "border-rose-600 bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200"
-                : "border-neutral-800 dark:border-neutral-300 text-neutral-900 dark:text-neutral-100 bg-neutral-100/80 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-          )}
-        >
-          {qNum}
-        </span>
+        {!options?.hideBadge && (
+          <span 
+            onClick={() => session.handleToggleMark(q.id)}
+            title={isMarked ? "Flagged for review (Click to unflag)" : "Click to flag for review"}
+            className={cn(
+              "inline-flex items-center justify-center min-w-[28px] h-[26px] border-[1.5px] font-bold text-xs shrink-0 px-1 rounded-xs select-none cursor-pointer transition-colors shadow-2xs",
+              isMarked
+                ? "border-amber-500 bg-amber-400 text-black font-extrabold"
+                : isSubmitted
+                  ? isCorrect
+                    ? "border-emerald-600 bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
+                    : "border-rose-600 bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200"
+                  : "border-neutral-800 dark:border-neutral-300 text-neutral-900 dark:text-neutral-100 bg-neutral-100/80 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+            )}
+          >
+            {qNum}
+          </span>
+        )}
 
         {/* CD-IELTS Text Input Field */}
         <span className="relative inline-flex items-center">
@@ -171,14 +189,14 @@ export function CDIELTSListeningDocument({
             type="text"
             value={userAns}
             disabled={isSubmitted}
-            placeholder={String(qNum)}
+            placeholder={options?.placeholder !== undefined ? options.placeholder : ""}
             maxLength={options?.short ? 2 : 45}
             onChange={(e) => session.handleAnswerChange(q.id, options?.short ? e.target.value.toUpperCase() : e.target.value)}
             className={cn(
               "border text-center font-medium rounded outline-none transition-all select-text shadow-2xs font-sans",
               options?.short 
                 ? "w-[48px] h-[28px] text-sm uppercase font-bold" 
-                : (options?.customWidth || "w-[110px] sm:w-[125px] h-[28px] text-sm px-2"),
+                : (options?.customWidth || "w-[120px] sm:w-[145px] h-[28px] text-sm px-2"),
               isSubmitted
                 ? isCorrect
                   ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 ring-1 ring-emerald-500/40"
@@ -277,6 +295,55 @@ export function CDIELTSListeningDocument({
             )
           })}
         </div>
+      </div>
+    )
+  }
+
+  // Helper for rendering passage HTML with interactive React question inputs
+  const renderPassageWithQuestions = (rawPassageHtml: string) => {
+    // Matches <strong>[31]</strong>, [31], <input id="q31" />, <span class="drop-zone" data-question="31">
+    const regex = /(?:<strong[^>]*>\s*)?\[(\d+)\](?:\s*<\/strong>)?|<input[^>]*id=["']q?(\d+)["'][^>]*>|<span[^>]*class=["'][^"']*drop-zone[^"']*["'][^>]*data-question=["'](\d+)["'][^>]*>(?:<\/span>)?/gi
+    const segments: React.ReactNode[] = []
+    let lastIndex = 0
+    let match: RegExpExecArray | null
+
+    while ((match = regex.exec(rawPassageHtml)) !== null) {
+      const qNum = parseInt(match[1] || match[2] || match[3], 10)
+      const textChunk = rawPassageHtml.substring(lastIndex, match.index)
+      if (textChunk) {
+        segments.push(
+          <span
+            key={`chunk-${lastIndex}`}
+            dangerouslySetInnerHTML={{ __html: textChunk }}
+          />
+        )
+      }
+      const q = getQ(qNum)
+      if (q) {
+        segments.push(
+          <span key={`q-${qNum}`} className="inline-block mx-1 align-baseline">
+            {renderInlineField(qNum)}
+          </span>
+        )
+      } else {
+        segments.push(<span key={`fallback-${match.index}`}>{match[0]}</span>)
+      }
+      lastIndex = match.index + match[0].length
+    }
+
+    const remaining = rawPassageHtml.substring(lastIndex)
+    if (remaining) {
+      segments.push(
+        <span
+          key={`chunk-${lastIndex}`}
+          dangerouslySetInnerHTML={{ __html: remaining }}
+        />
+      )
+    }
+
+    return (
+      <div className="cd-ielts-passage-sheet select-text leading-relaxed">
+        {segments}
       </div>
     )
   }
@@ -779,124 +846,239 @@ export function CDIELTSListeningDocument({
         )}
 
         {/* ------------------------------------------------------------- */}
-        {/* GENERIC FALLBACK FOR OTHER LISTENING TESTS                     */}
+        {/* GENERIC & PASSAGE-BASED RENDERING FOR LISTENING TESTS          */}
         {/* ------------------------------------------------------------- */}
         {!isK5002 && (
           <div className="space-y-6">
-            {section.groups.map(group => {
-              // Find matching pool options if any question in this group has options
-              const hasMatchingQuestions = group.questions.some(q => q.question_type === 'matching' || q.question_type === 'matching_features')
-              const poolOptions = group.questions.find(q => q.options && q.options.length > 0)?.options || []
-
-              return (
-                <div key={group.id} className="space-y-4">
-                  {(group.title || group.instruction) && (
-                    <div className="p-4 rounded-md bg-[#f2f2f2] dark:bg-zinc-800/60 border border-neutral-200 dark:border-zinc-700">
-                      {group.title && <h3 className="font-bold text-base text-foreground mb-1">{group.title}</h3>}
-                      {group.instruction && <p className="text-sm text-muted-foreground italic leading-relaxed whitespace-pre-line">{group.instruction}</p>}
-                    </div>
-                  )}
-
-                  {/* Matching Option Box (if this group contains matching questions with pool options) */}
-                  {hasMatchingQuestions && poolOptions.length > 0 && (
-                    <div className="bg-[#f9f9f9] dark:bg-zinc-800/90 p-4 border border-neutral-300 dark:border-zinc-700 rounded-lg text-sm leading-relaxed">
-                      <div className="font-bold text-foreground mb-2 flex items-center gap-2">
-                        <span>Options:</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                        {poolOptions.map(opt => (
-                          <div key={opt.option_key} className="flex items-start gap-2">
-                            <span className="font-bold text-primary font-mono shrink-0">{opt.option_key}</span>
-                            <span className="text-foreground">{opt.option_text}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-4">
-                    {group.questions.map(q => {
-                      // 1. Inline bracket question: e.g. "Located in ___ Street [1]"
-                      const hasInlineBracket = /\[\d+\]/.test(q.question_text || '')
-                      if (hasInlineBracket) {
-                        const parts = q.question_text.split(/\[\d+\]/)
-                        return (
-                          <div key={q.id} className="flex flex-wrap items-center gap-2 text-[15px] p-2 rounded hover:bg-neutral-50 dark:hover:bg-zinc-800/40">
-                            {parts[0] && <span>{parts[0]}</span>}
-                            {renderInlineField(q.question_number)}
-                            {parts[1] && <span>{parts[1]}</span>}
-                          </div>
-                        )
-                      }
-
-                      // 2. Matching Question with Options Pool
-                      if ((q.question_type === 'matching' || q.question_type === 'matching_features') && (q.options?.length || poolOptions.length > 0)) {
-                        const opts = q.options && q.options.length > 0 ? q.options : poolOptions
-                        const userVal = session.answers[q.id] || ''
-
-                        return (
-                          <div key={q.id} className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-zinc-800/40 border border-neutral-200 dark:border-zinc-700 hover:border-neutral-300">
-                            <div className="flex items-center gap-2.5">
-                              <span 
-                                onClick={() => session.handleToggleMark(q.id)}
-                                title="Click to flag question"
-                                className={cn(
-                                  "inline-flex items-center justify-center min-w-[28px] h-[26px] border-[1.5px] font-bold text-xs shrink-0 px-1 rounded-xs select-none cursor-pointer",
-                                  session.markedQuestions.has(q.id) 
-                                    ? "border-amber-500 bg-amber-400 text-black" 
-                                    : "border-neutral-800 dark:border-neutral-300 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
-                                )}
-                              >
-                                {q.question_number}
-                              </span>
-                              <span className="font-medium text-foreground select-text">{q.question_text}</span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <select
-                                value={userVal}
-                                disabled={session.isSubmitted}
-                                onChange={(e) => session.handleAnswerChange(q.id, e.target.value.toUpperCase())}
-                                className="border rounded px-2.5 py-1 text-sm bg-white dark:bg-zinc-900 border-neutral-300 dark:border-zinc-600 font-bold text-foreground cursor-pointer focus:border-[#005eb8] focus:ring-1 focus:ring-[#005eb8]"
-                              >
-                                <option value="">Select option...</option>
-                                {opts.map(opt => (
-                                  <option key={opt.option_key} value={opt.option_key}>
-                                    {opt.option_key} — {opt.option_text.length > 40 ? opt.option_text.substring(0, 40) + '...' : opt.option_text}
-                                  </option>
-                                ))}
-                              </select>
-                              <div>{renderInlineField(q.question_number, { short: true })}</div>
-                            </div>
-                          </div>
-                        )
-                      }
-
-                      // 3. Multiple Choice with 2-4 radio options
-                      if (q.question_type === 'multiple_choice' && q.options && q.options.length > 0) {
-                        return (
-                          <div key={q.id}>
-                            {renderMCQ(
-                              q.question_number, 
-                              q.question_text, 
-                              q.options.map(o => ({ key: o.option_key, text: o.option_text }))
-                            )}
-                          </div>
-                        )
-                      }
-
-                      // 4. Note Completion / Default input field
-                      return (
-                        <div key={q.id} className="flex flex-wrap items-center gap-3 text-[15px] p-2.5 rounded bg-neutral-50 dark:bg-zinc-800/40 border border-neutral-200 dark:border-zinc-700">
-                          <span className="font-medium text-foreground">{q.question_text}</span>
-                          <div>{renderInlineField(q.question_number)}</div>
-                        </div>
-                      )
-                    })}
+            {hasEmbeddedQuestions ? (
+              <div className="space-y-4">
+                {section.instructions && (
+                  <div className="p-3.5 sm:p-4 rounded-md bg-[#f2f2f2] dark:bg-zinc-800/60 border border-neutral-200 dark:border-zinc-700">
+                    <p className="text-sm text-foreground/90 font-medium italic leading-relaxed">
+                      {section.instructions}
+                    </p>
                   </div>
-                </div>
-              )
-            })}
+                )}
+                {renderPassageWithQuestions(passageHtml)}
+              </div>
+            ) : (
+              section.groups.map(group => {
+                const groupPassageHtml = group.passage?.content || ''
+                const groupHasEmbedded = Boolean(
+                  groupPassageHtml &&
+                  group.questions.some(q => {
+                    const reg = new RegExp(`\\[${q.question_number}\\]|id=["']q?${q.question_number}["']|data-question=["']${q.question_number}["']`, 'i')
+                    return reg.test(groupPassageHtml)
+                  })
+                )
+
+                if (groupHasEmbedded) {
+                  return (
+                    <div key={group.id} className="space-y-4">
+                      {(group.title || group.instruction) && (
+                        <div className="p-4 rounded-md bg-[#f2f2f2] dark:bg-zinc-800/60 border border-neutral-200 dark:border-zinc-700">
+                          {group.title && <h3 className="font-bold text-base text-foreground mb-1">{group.title}</h3>}
+                          {group.instruction && <p className="text-sm text-muted-foreground italic leading-relaxed whitespace-pre-line">{group.instruction}</p>}
+                        </div>
+                      )}
+                      {renderPassageWithQuestions(groupPassageHtml)}
+                    </div>
+                  )
+                }
+
+                // Find matching pool options if any question in this group has options
+                const hasMatchingQuestions = group.questions.some(q => q.question_type === 'matching' || q.question_type === 'matching_features')
+                const poolOptions = group.questions.find(q => q.options && q.options.length > 0)?.options || []
+
+                // Check if all or most questions are completion
+                const isAllCompletion = group.questions.every(q => 
+                  q.question_type === 'note_completion' || 
+                  q.question_type === 'sentence_completion' || 
+                  q.question_type === 'summary_completion' ||
+                  q.question_type === 'flow_chart_completion'
+                )
+
+                return (
+                  <div key={group.id} className="space-y-4">
+                    {(group.title || group.instruction) && (
+                      <div className="p-4 rounded-md bg-[#f2f2f2] dark:bg-zinc-800/60 border border-neutral-200 dark:border-zinc-700">
+                        {group.title && <h3 className="font-bold text-base text-foreground mb-1">{group.title}</h3>}
+                        {group.instruction && <p className="text-sm text-muted-foreground italic leading-relaxed whitespace-pre-line">{group.instruction}</p>}
+                      </div>
+                    )}
+
+                    {/* Matching Option Box */}
+                    {hasMatchingQuestions && poolOptions.length > 0 && (
+                      <div className="bg-[#f9f9f9] dark:bg-zinc-800/90 p-4 border border-neutral-300 dark:border-zinc-700 rounded-lg text-sm leading-relaxed">
+                        <div className="font-bold text-foreground mb-2 flex items-center gap-2">
+                          <span>Options Reference:</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                          {poolOptions.map(opt => (
+                            <div key={opt.option_key} className="flex items-start gap-2">
+                              <span className="font-bold text-primary font-mono shrink-0">{opt.option_key}</span>
+                              <span className="text-foreground">{opt.option_text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Questions Container */}
+                    <div className={cn(
+                      isAllCompletion 
+                        ? "p-5 sm:p-7 rounded-xl border border-neutral-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 divide-y divide-neutral-100 dark:divide-zinc-800/80 space-y-3"
+                        : "space-y-4"
+                    )}>
+                      {group.questions.map(q => {
+                        // 1. Multiple Response / Checkboxes (e.g. Choose TWO letters)
+                        if (q.question_type === 'multiple_select' || (q.question_type as any) === 'multiple_response') {
+                          const currentAnswers: string[] = Array.isArray(session.answers[q.id])
+                            ? session.answers[q.id]
+                            : typeof session.answers[q.id] === 'string' && session.answers[q.id]
+                            ? session.answers[q.id].split(',').map((s: string) => s.trim().toUpperCase())
+                            : []
+
+                          const toggleAns = (key: string) => {
+                            if (session.isSubmitted) return
+                            const next = currentAnswers.includes(key)
+                              ? currentAnswers.filter(a => a !== key)
+                              : [...currentAnswers, key]
+                            session.handleAnswerChange(q.id, next)
+                          }
+
+                          return (
+                            <div key={q.id} className="p-4 rounded-xl border border-neutral-200 dark:border-zinc-700 bg-neutral-50/70 dark:bg-zinc-800/40 space-y-2.5">
+                              <div className="flex items-center gap-2.5">
+                                <span 
+                                  onClick={() => session.handleToggleMark(q.id)}
+                                  className="inline-flex items-center justify-center min-w-[28px] h-[26px] border-[1.5px] font-bold text-xs shrink-0 px-1 rounded-xs bg-neutral-100 dark:bg-neutral-800 cursor-pointer select-none"
+                                >
+                                  {q.question_number}
+                                </span>
+                                <span className="font-semibold text-foreground text-[15px]">{q.question_text}</span>
+                              </div>
+                              <div className="space-y-1.5 pl-9">
+                                {q.options?.map(opt => {
+                                  const isChecked = currentAnswers.includes(opt.option_key.toUpperCase())
+                                  return (
+                                    <label key={opt.option_key} className="flex items-center gap-3 p-2 rounded hover:bg-neutral-100 dark:hover:bg-zinc-700/60 cursor-pointer text-sm select-text">
+                                      <input 
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        disabled={session.isSubmitted}
+                                        onChange={() => toggleAns(opt.option_key.toUpperCase())}
+                                        className="accent-[#005eb8] w-4 h-4 cursor-pointer"
+                                      />
+                                      <span className="font-bold text-foreground">{opt.option_key}</span>
+                                      <span className="text-foreground">{opt.option_text}</span>
+                                    </label>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )
+                        }
+
+                        // 2. Matching Question with Options Pool
+                        if ((q.question_type === 'matching' || q.question_type === 'matching_features') && (q.options?.length || poolOptions.length > 0)) {
+                          const opts = q.options && q.options.length > 0 ? q.options : poolOptions
+                          const userVal = session.answers[q.id] || ''
+
+                          return (
+                            <div key={q.id} className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-zinc-800/40 border border-neutral-200 dark:border-zinc-700 hover:border-neutral-300">
+                              <div className="flex items-center gap-2.5">
+                                <span 
+                                  onClick={() => session.handleToggleMark(q.id)}
+                                  title="Click to flag question"
+                                  className={cn(
+                                    "inline-flex items-center justify-center min-w-[28px] h-[26px] border-[1.5px] font-bold text-xs shrink-0 px-1 rounded-xs select-none cursor-pointer",
+                                    session.markedQuestions.has(q.id) 
+                                      ? "border-amber-500 bg-amber-400 text-black" 
+                                      : "border-neutral-800 dark:border-neutral-300 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+                                  )}
+                                >
+                                  {q.question_number}
+                                </span>
+                                <span className="font-medium text-foreground select-text">{q.question_text}</span>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <select
+                                  value={userVal}
+                                  disabled={session.isSubmitted}
+                                  onChange={(e) => session.handleAnswerChange(q.id, e.target.value.toUpperCase())}
+                                  className="border rounded px-2.5 py-1 text-sm bg-white dark:bg-zinc-900 border-neutral-300 dark:border-zinc-600 font-bold text-foreground cursor-pointer focus:border-[#005eb8] focus:ring-1 focus:ring-[#005eb8]"
+                                >
+                                  <option value="">Select option...</option>
+                                  {opts.map(opt => (
+                                    <option key={opt.option_key} value={opt.option_key}>
+                                      {opt.option_key} — {opt.option_text.length > 40 ? opt.option_text.substring(0, 40) + '...' : opt.option_text}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div>{renderInlineField(q.question_number, { short: true, hideBadge: true })}</div>
+                              </div>
+                            </div>
+                          )
+                        }
+
+                        // 3. Multiple Choice with 2-4 radio options
+                        if (q.question_type === 'multiple_choice' && q.options && q.options.length > 0) {
+                          return (
+                            <div key={q.id}>
+                              {renderMCQ(
+                                q.question_number, 
+                                q.question_text, 
+                                q.options.map(o => ({ key: o.option_key, text: o.option_text }))
+                              )}
+                            </div>
+                          )
+                        }
+
+                        // 4. Flow-chart step or Completion with inline blank
+                        const hasInlineBlank = /\[____+\]|\[\s*\]|_{2,}|\[\d+\]/.test(q.question_text || '')
+                        if (hasInlineBlank) {
+                          const parts = q.question_text.split(/\[____+\]|\[\s*\]|_{2,}|\[\d+\]/)
+                          const bulletParts = parts[0].split(' • ')
+
+                          return (
+                            <div 
+                              key={q.id} 
+                              className={cn(
+                                isAllCompletion
+                                  ? "pt-2.5 pb-1 flex flex-wrap items-baseline gap-2 text-[15px] leading-relaxed text-foreground select-text"
+                                  : "flex flex-wrap items-baseline gap-2 text-[15px] p-2.5 rounded bg-neutral-50 dark:bg-zinc-800/40 border border-neutral-200 dark:border-zinc-700"
+                              )}
+                            >
+                              {bulletParts.length > 1 ? (
+                                <>
+                                  <span className="font-semibold text-neutral-800 dark:text-neutral-200">{bulletParts[0]}</span>
+                                  <span className="text-neutral-400">•</span>
+                                  <span>{bulletParts.slice(1).join(' • ')}</span>
+                                </>
+                              ) : (
+                                <span>{parts[0]}</span>
+                              )}
+                              {renderInlineField(q.question_number)}
+                              {parts[1] && <span>{parts[1]}</span>}
+                            </div>
+                          )
+                        }
+
+                        // 5. Default Completion Item
+                        return (
+                          <div key={q.id} className="flex flex-wrap items-center justify-between gap-3 text-[15px] p-2.5 rounded bg-neutral-50 dark:bg-zinc-800/40 border border-neutral-200 dark:border-zinc-700">
+                            <span className="font-medium text-foreground">{q.question_text}</span>
+                            <div>{renderInlineField(q.question_number)}</div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
         )}
 
