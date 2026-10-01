@@ -509,11 +509,11 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
             const lastStep = beforeHtml.lastIndexOf('class="flow-step"')
             if (lastStep !== -1) {
               const prevBefore = beforeHtml.substring(0, lastStep)
-              const prevStep = prevBefore.lastIndexOf('class="flow-step"')
+              const prevStep = prevBefore.lastIndexOf('<div')
               if (prevStep !== -1) {
                 const prevChunk = beforeHtml.substring(prevStep, lastStep)
                 if (!/data-question|<input/i.test(prevChunk)) {
-                  const cleanPrev = stripTags(prevChunk).replace(/^[▪•\-\s]+/, '').trim()
+                  const cleanPrev = stripTags(prevChunk.replace(/^[^>]*>/, '')).replace(/^[▪•\-\s]+/, '').trim()
                   if (cleanPrev && cleanPrev.length > 5 && cleanPrev.length < 120) {
                     qText = `${cleanPrev} • ${qText}`
                   }
