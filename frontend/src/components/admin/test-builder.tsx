@@ -228,6 +228,7 @@ export function TestBuilder({
           question_type: 'multiple_choice',
           instruction: 'Choose the correct letter, A, B, C or D.',
           question_text: 'What is the main topic of this passage?',
+          question_html: 'What is the main topic of this passage?',
           options: [
             { option_key: 'A', option_text: 'Option A', is_correct: false },
             { option_key: 'B', option_text: 'Option B', is_correct: true },
@@ -269,6 +270,7 @@ export function TestBuilder({
         question_type: q.question_type || 'multiple_choice',
         instruction: q.instruction || 'Choose the correct letter, A, B, C or D.',
         question_text: q.question_text || `Question #${idx + 1}`,
+        question_html: q.question_html || q.question_text || '',
         options: q.options || [
           { option_key: 'A', option_text: 'Option A', is_correct: false },
           { option_key: 'B', option_text: 'Option B', is_correct: true },
@@ -318,6 +320,7 @@ export function TestBuilder({
             question_type: q.question_type || 'multiple_choice',
             instruction: q.instruction || 'Choose the correct letter, A, B, C or D.',
             question_text: q.question_text || `Question #${idx + 1}`,
+            question_html: q.question_html || q.question_text || '',
             options: q.options || [
               { option_key: 'A', option_text: 'Option A', is_correct: false },
               { option_key: 'B', option_text: 'Option B', is_correct: true },
@@ -659,6 +662,7 @@ export function TestBuilder({
       question_type: type,
       instruction: defaultInstruction,
       question_text: `New IELTS Question #${nextNum}`,
+      question_html: `New IELTS Question #${nextNum}`,
       options: defaultOptions,
       correct_answer: defaultCorrect,
       accepted_answers: [],
@@ -1102,6 +1106,7 @@ export function TestBuilder({
       id: `temp-q-${Date.now()}`,
       question_number: questions.length + 1,
       question_text: `${activeQ.question_text} (Copy)`,
+      question_html: activeQ.question_html ? `${activeQ.question_html}` : activeQ.question_text ? `${activeQ.question_text} (Copy)` : '',
       options: activeQ.options ? JSON.parse(JSON.stringify(activeQ.options)) : [],
       metadata: activeQ.metadata ? JSON.parse(JSON.stringify(activeQ.metadata)) : {},
     }
@@ -2043,15 +2048,28 @@ export function TestBuilder({
                   />
                 </div>
 
-                {/* Question Text */}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-foreground">Question Text / Sentence</label>
-                  <textarea
-                    value={activeQ.question_text}
-                    onChange={(e) => updateActiveQuestion({ question_text: e.target.value })}
-                    rows={3}
-                    placeholder="Enter question text or sentence with blank..."
-                    className="w-full p-3 rounded-xl border border-border bg-background text-xs text-foreground resize-none leading-relaxed"
+                {/* Question Text / Visual HTML Editor */}
+                <div className="space-y-1.5 pt-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-foreground">
+                      Question Text / Sentence (Visual HTML Editor)
+                    </label>
+                    <span className="text-[11px] text-muted-foreground">
+                      Rich formatting, headings, bullet lists, tables & blanks
+                    </span>
+                  </div>
+                  <HtmlEditor
+                    key={activeQ.id || `q-${activeQuestionIndex}`}
+                    value={activeQ.question_html || activeQ.question_text || ''}
+                    onChange={(html) => {
+                      const plainText = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+                      updateActiveQuestion({
+                        question_html: html,
+                        question_text: plainText || html,
+                      })
+                    }}
+                    placeholder="Enter question text, notes, table, or sentence with blank [____]..."
+                    minHeight="180px"
                   />
                 </div>
 
