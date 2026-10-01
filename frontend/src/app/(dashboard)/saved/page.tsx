@@ -1,20 +1,18 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Bookmark,
-  BookOpen,
-  Headphones,
-  PenTool,
-  Mic,
-  Languages,
-  Trash2,
-  ExternalLink,
-  Search,
-  Sparkles,
-  HelpCircle,
-  Clock,
-  Layers,
-} from 'lucide-react'
+  BookmarkSquareIcon,
+  BookBookmarkIcon,
+  HeadphonesRoundIcon,
+  Pen2Icon,
+  Microphone2Icon,
+  TranslationIcon,
+  RoundedMagnifierIcon,
+  StarsIcon,
+  ClockCircleIcon,
+  TrashBinMinimalisticIcon,
+  AltArrowRightIcon,
+} from '@solar-icons/react/bold-duotone'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
@@ -138,8 +136,8 @@ export default function SavedItemsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 shadow-2xs">
-            <Bookmark className="h-6 w-6 fill-current text-amber-500" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/15 text-primary shadow-2xs">
+            <BookmarkSquareIcon className="h-6 w-6 text-primary" size={24} />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Saved Items</h1>
@@ -151,7 +149,7 @@ export default function SavedItemsPage() {
 
         {/* Search input */}
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <RoundedMagnifierIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
           <input
             type="text"
             value={searchQuery}
@@ -233,15 +231,15 @@ export default function SavedItemsPage() {
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link to="/reading" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5')}>
-                <BookOpen className="w-4 h-4" />
+                <BookBookmarkIcon className="w-4 h-4" size={16} />
                 <span>Reading Tests</span>
               </Link>
               <Link to="/listening" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5')}>
-                <Headphones className="w-4 h-4" />
+                <HeadphonesRoundIcon className="w-4 h-4" size={16} />
                 <span>Listening Tests</span>
               </Link>
               <Link to="/vocabulary" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5')}>
-                <Languages className="w-4 h-4" />
+                <TranslationIcon className="w-4 h-4" size={16} />
                 <span>Vocabulary Hub</span>
               </Link>
             </div>
@@ -285,13 +283,13 @@ function SavedItemCard({
       const skill = details.skill || 'reading'
       const skillIcon =
         skill === 'listening' ? (
-          <Headphones className="w-4 h-4 text-sky-500" />
+          <HeadphonesRoundIcon className="w-4 h-4 text-primary" size={16} />
         ) : skill === 'writing' ? (
-          <PenTool className="w-4 h-4 text-emerald-500" />
+          <Pen2Icon className="w-4 h-4 text-primary" size={16} />
         ) : skill === 'speaking' ? (
-          <Mic className="w-4 h-4 text-purple-500" />
+          <Microphone2Icon className="w-4 h-4 text-primary" size={16} />
         ) : (
-          <BookOpen className="w-4 h-4 text-amber-500" />
+          <BookBookmarkIcon className="w-4 h-4 text-primary" size={16} />
         )
 
       const targetUrl = `/${skill}/${details.slug || details.id}`
@@ -301,7 +299,7 @@ function SavedItemCard({
           <CardHeader className="p-4 pb-2">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                <span className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
                   {skillIcon}
                 </span>
                 <div>
@@ -320,7 +318,7 @@ function SavedItemCard({
                 title="Remove bookmark"
                 className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <TrashBinMinimalisticIcon className="w-3.5 h-3.5" size={14} />
               </button>
             </div>
           </CardHeader>
@@ -335,7 +333,7 @@ function SavedItemCard({
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium">
               {details.time_limit_minutes && (
                 <span className="inline-flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> {details.time_limit_minutes} mins
+                  <ClockCircleIcon className="w-3 h-3 text-primary" size={12} /> {details.time_limit_minutes} mins
                 </span>
               )}
               {details.difficulty && (
@@ -344,7 +342,7 @@ function SavedItemCard({
                 </span>
               )}
               {details.is_premium && (
-                <span className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
+                <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold text-[10px]">
                   ★ Premium
                 </span>
               )}
@@ -359,7 +357,7 @@ function SavedItemCard({
                 className={cn(buttonVariants({ size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
               >
                 <span>Take Test</span>
-                <ExternalLink className="w-3 h-3" />
+                <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
               </Link>
             </div>
           </CardContent>
@@ -395,7 +393,7 @@ function SavedItemCard({
                 title="Remove bookmark"
                 className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <TrashBinMinimalisticIcon className="w-3.5 h-3.5" size={14} />
               </button>
             </div>
           </CardHeader>
@@ -431,7 +429,7 @@ function SavedItemCard({
                 className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
               >
                 <span>Open Test</span>
-                <ExternalLink className="w-3 h-3" />
+                <AltArrowRightIcon className="w-3.5 h-3.5 text-primary" size={14} />
               </Link>
             </div>
           </CardContent>
@@ -471,7 +469,7 @@ function SavedItemCard({
                 title="Remove bookmark"
                 className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <TrashBinMinimalisticIcon className="w-3.5 h-3.5" size={14} />
               </button>
             </div>
           </CardHeader>
@@ -495,7 +493,7 @@ function SavedItemCard({
                 to={`/vocabulary?search=${encodeURIComponent(details.word)}`}
                 className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
               >
-                <Languages className="w-3 h-3 text-primary" />
+                <TranslationIcon className="w-3.5 h-3.5 text-primary" size={14} />
                 <span>Practice Word</span>
               </Link>
             </div>
@@ -512,11 +510,11 @@ function SavedItemCard({
           <CardHeader className="p-4 pb-2">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                <span className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
                   {isWriting ? (
-                    <PenTool className="w-3.5 h-3.5 text-emerald-500" />
+                    <Pen2Icon className="w-3.5 h-3.5 text-primary" size={14} />
                   ) : (
-                    <Mic className="w-3.5 h-3.5 text-purple-500" />
+                    <Microphone2Icon className="w-3.5 h-3.5 text-primary" size={14} />
                   )}
                 </span>
                 <div>
@@ -535,7 +533,7 @@ function SavedItemCard({
                 title="Remove bookmark"
                 className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <TrashBinMinimalisticIcon className="w-3.5 h-3.5" size={14} />
               </button>
             </div>
           </CardHeader>
@@ -554,7 +552,7 @@ function SavedItemCard({
                 className={cn(buttonVariants({ size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
               >
                 <span>Practice Now</span>
-                <ExternalLink className="w-3 h-3" />
+                <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
               </Link>
             </div>
           </CardContent>

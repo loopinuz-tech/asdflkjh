@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { Volume2, CheckCircle2, ChevronLeft, Sparkles, Flame } from 'lucide-react'
+import { VolumeLoudIcon, CheckSquareIcon, AltArrowLeftIcon } from '@solar-icons/react/bold-duotone'
 import { Link } from 'react-router-dom'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { recordWordReview } from '@/actions/vocabulary'
@@ -28,8 +28,8 @@ export function VocabularyReviewClient({ words }: { words: any[] }) {
   if (isFinished) {
     return (
       <div className="text-center p-8 bg-card border border-border rounded-2xl fox-shadow-sm max-w-md w-full mx-auto my-12">
-        <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 className="w-8 h-8" />
+        <div className="w-16 h-16 bg-primary/15 text-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <CheckSquareIcon className="w-8 h-8 text-primary" />
         </div>
         <h2 className="text-2xl font-bold mb-2 text-foreground">Review Session Complete!</h2>
         <p className="text-muted-foreground mb-8 text-sm">You reviewed {words.length} IELTS words today.</p>
@@ -110,7 +110,7 @@ export function VocabularyReviewClient({ words }: { words: any[] }) {
           to="/vocabulary" 
           className={buttonVariants({ variant: "ghost", size: "icon", className: "text-muted-foreground hover:text-foreground rounded-xl" })}
         >
-          <ChevronLeft className="h-5 w-5" />
+          <AltArrowLeftIcon className="h-5 w-5" />
         </Link>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-xs font-semibold px-2.5 py-0.5 border-border">
@@ -188,9 +188,9 @@ export function VocabularyReviewClient({ words }: { words: any[] }) {
                   <button
                     onClick={(e) => { e.stopPropagation(); playPronunciation(); }}
                     title="Pronounce word"
-                    className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    className="p-1 rounded-lg hover:bg-secondary text-primary hover:text-primary transition-colors cursor-pointer"
                   >
-                    <Volume2 className="w-4 h-4 text-primary" />
+                    <VolumeLoudIcon className="w-4 h-4 text-primary" />
                   </button>
                 </div>
                 <div className="flex items-center gap-2 mt-1">

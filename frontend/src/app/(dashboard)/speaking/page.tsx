@@ -1,11 +1,18 @@
 import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mic, Clock, PlayCircle, BarChart, Crown, Lock, CheckCircle2, X, Sparkles, Search, MessageSquare } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { Link, useNavigate } from 'react-router-dom'
 import { buttonVariants } from '@/components/ui/button'
-import { LockKeyholeIcon } from '@solar-icons/react/bold-duotone'
+import { 
+  Microphone2Icon, 
+  ChartSquareIcon, 
+  RoundedMagnifierIcon, 
+  CloseCircleIcon, 
+  CrownStarIcon, 
+  LockKeyholeIcon, 
+  StarsIcon 
+} from '@solar-icons/react/bold-duotone'
 import { cn } from '@/lib/utils'
 
 export default function SpeakingHub() {
@@ -147,8 +154,8 @@ export default function SpeakingHub() {
       {/* Header — Compact & No verbose intro on mobile */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-fox-yellow/15 text-fox-yellow shrink-0">
-            <Mic className="h-5 w-5" />
+          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary/15 text-primary shrink-0">
+            <Microphone2Icon className="h-5 w-5" size={20} />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -166,7 +173,7 @@ export default function SpeakingHub() {
 
         {/* Avg Band badge — inline on mobile */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border rounded-xl shadow-2xs shrink-0">
-          <BarChart className="w-3.5 h-3.5 text-primary" />
+          <ChartSquareIcon className="w-3.5 h-3.5 text-primary" size={15} />
           <span className="text-xs text-muted-foreground hidden xs:inline font-medium">Avg:</span>
           <span className="text-xs sm:text-sm font-bold text-foreground">{avgBand}</span>
         </div>
@@ -177,7 +184,7 @@ export default function SpeakingHub() {
         <div className="flex flex-col sm:flex-row items-center gap-2">
           {/* Search Input */}
           <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+            <RoundedMagnifierIcon className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" size={16} />
             <input
               type="text"
               value={searchQuery}
@@ -191,7 +198,7 @@ export default function SpeakingHub() {
                 onClick={() => setSearchQuery('')}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" />
+                <CloseCircleIcon className="w-3.5 h-3.5" size={14} />
               </button>
             )}
           </div>
@@ -392,8 +399,8 @@ export default function SpeakingHub() {
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
-                  <Crown className="w-4 h-4 fill-current" />
+                <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold">
+                  <CrownStarIcon className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold">Premium Speaking Access</h3>
               </div>
@@ -402,13 +409,13 @@ export default function SpeakingHub() {
                 onClick={() => setLockedModalPrompt(null)}
                 className="p-1 rounded-lg text-muted-foreground hover:bg-secondary cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <CloseCircleIcon className="w-5 h-5 text-muted-foreground hover:text-foreground" />
               </button>
             </div>
 
             <div className="space-y-3 text-center py-2">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-500">
-                <Lock className="w-8 h-8" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center mx-auto text-primary">
+                <LockKeyholeIcon className="w-8 h-8 text-primary" />
               </div>
               <h4 className="text-lg font-bold text-foreground">{lockedModalPrompt.title}</h4>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
@@ -418,7 +425,7 @@ export default function SpeakingHub() {
 
             <div className="p-3 bg-secondary/50 rounded-2xl border border-border/60 text-xs space-y-2">
               <div className="flex items-center gap-2 text-foreground font-semibold">
-                <Sparkles className="w-4 h-4 text-amber-500" />
+                <StarsIcon className="w-4 h-4 text-primary" />
                 <span>Premium Features:</span>
               </div>
               <ul className="space-y-1.5 text-muted-foreground pl-6 list-disc text-[11px]">
@@ -439,9 +446,9 @@ export default function SpeakingHub() {
               <button
                 type="button"
                 onClick={() => navigate(`/premium?promptId=${lockedModalPrompt.id}&reason=premium_required`)}
-                className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
-                <Crown className="w-3.5 h-3.5 fill-current" />
+                <CrownStarIcon className="w-4 h-4" />
                 <span>Upgrade to Premium</span>
               </button>
             </div>

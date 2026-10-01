@@ -9,8 +9,11 @@ import {
   ShieldCheckIcon,
   AltArrowLeftIcon,
   Logout2Icon,
+  TagPriceIcon,
+  PanelLeftCloseIcon,
+  PanelLeftOpenIcon,
+  CloseCircleIcon,
 } from '@solar-icons/react/bold-duotone'
-import { Tag, X, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
@@ -33,7 +36,7 @@ const navSections = [
   {
     label: 'Platform & Business',
     items: [
-      { href: '/admin/pricing', label: 'Pricing & Coupons', icon: Tag },
+      { href: '/admin/pricing', label: 'Pricing & Coupons', icon: TagPriceIcon },
       { href: '/admin/attempts', label: 'Student Results & Attempts', icon: ChartSquareIcon },
       { href: '/admin/users', label: 'Student & User Accounts', icon: UsersGroupTwoRoundedIcon },
     ],
@@ -108,9 +111,9 @@ export function AdminSidebar({
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {isCollapsed ? (
-                <PanelLeftOpen className="w-4 h-4 text-primary" />
+                <PanelLeftOpenIcon className="w-4 h-4 text-primary" size={16} />
               ) : (
-                <PanelLeftClose className="w-3.5 h-3.5" />
+                <PanelLeftCloseIcon className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" size={14} />
               )}
             </button>
           )}
@@ -122,7 +125,7 @@ export function AdminSidebar({
               className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Close menu"
             >
-              <X className="w-4 h-4" />
+              <CloseCircleIcon className="w-4 h-4" size={16} />
             </button>
           )}
         </div>

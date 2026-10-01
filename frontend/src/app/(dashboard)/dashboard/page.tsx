@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { ArrowRight, Target, TrendingUp, Flame, BookA } from 'lucide-react'
 import { 
   BookBookmarkIcon, 
   HeadphonesRoundIcon, 
   Pen2Icon, 
   Microphone2Icon,
+  TargetIcon,
+  GraphUpIcon,
+  FireIcon,
+  TranslationIcon,
+  AltArrowRightIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { Link } from 'react-router-dom'
@@ -76,7 +80,9 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Target Band</span>
-              <Target className="w-4 h-4 text-primary shrink-0" />
+              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <TargetIcon className="w-4 h-4" size={16} />
+              </div>
             </div>
             <div className="mt-2.5 sm:mt-3">
               <div className="text-xl sm:text-3xl font-extrabold text-foreground">
@@ -90,7 +96,9 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Estimated Band</span>
-              <TrendingUp className="w-4 h-4 text-primary shrink-0" />
+              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <GraphUpIcon className="w-4 h-4" size={16} />
+              </div>
             </div>
             <div className="mt-2.5 sm:mt-3">
               <div className="text-xl sm:text-3xl font-extrabold text-foreground">
@@ -106,7 +114,9 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Tests Completed</span>
-              <Flame className="w-4 h-4 text-primary shrink-0" />
+              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <FireIcon className="w-4 h-4" size={16} />
+              </div>
             </div>
             <div className="mt-2.5 sm:mt-3">
               <div className="text-xl sm:text-3xl font-extrabold text-foreground">
@@ -120,7 +130,9 @@ export default function DashboardPage() {
           <div className="p-3.5 sm:p-5 bg-card border border-border rounded-2xl shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-bold text-foreground">Vocabulary</span>
-              <BookA className="w-4 h-4 text-primary shrink-0" />
+              <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <TranslationIcon className="w-4 h-4" size={16} />
+              </div>
             </div>
             <div className="mt-2.5 sm:mt-3">
               <div className="text-xl sm:text-3xl font-extrabold text-foreground">
@@ -150,7 +162,7 @@ export default function DashboardPage() {
                 <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
                   <BookBookmarkIcon className="w-5 h-5" size={20} />
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
@@ -169,7 +181,7 @@ export default function DashboardPage() {
                 <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
                   <HeadphonesRoundIcon className="w-5 h-5" size={20} />
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
@@ -188,7 +200,7 @@ export default function DashboardPage() {
                 <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
                   <Pen2Icon className="w-5 h-5" size={20} />
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
@@ -207,7 +219,7 @@ export default function DashboardPage() {
                 <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
                   <Microphone2Icon className="w-5 h-5" size={20} />
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                <AltArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" size={16} />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
@@ -266,7 +278,7 @@ export default function DashboardPage() {
               <div className="pt-2">
                 <Link to="/practice" className={cn(buttonVariants(), 'gap-2 font-bold cursor-pointer shadow-xs text-xs sm:text-sm')}>
                   <span>Explore All Practice Tests</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <AltArrowRightIcon className="w-4 h-4" size={16} />
                 </Link>
               </div>
             </div>

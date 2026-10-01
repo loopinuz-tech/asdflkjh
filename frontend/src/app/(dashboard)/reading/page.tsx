@@ -12,7 +12,6 @@ import {
   CrownStarIcon,
   StarsIcon,
 } from '@solar-icons/react/bold-duotone'
-import { Crown, X, Lock, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getTestScope } from '@/lib/test-scope'
 import { SEOHead } from '@/components/seo/SEOHead'
@@ -386,23 +385,23 @@ export default function ReadingHub() {
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
-                  <Crown className="w-4 h-4 fill-current" />
+                <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold">
+                  <CrownStarIcon className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold">Premium Test Access</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setLockedModalTest(null)}
-                className="p-1 rounded-lg text-muted-foreground hover:bg-secondary"
+                className="p-1 rounded-lg text-muted-foreground hover:bg-secondary cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <CloseCircleIcon className="w-5 h-5 text-muted-foreground hover:text-foreground" />
               </button>
             </div>
 
             <div className="space-y-3 text-center py-2">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-500">
-                <Lock className="w-8 h-8" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center mx-auto text-primary">
+                <LockKeyholeIcon className="w-8 h-8 text-primary" />
               </div>
               <h4 className="text-lg font-bold text-foreground">{lockedModalTest.title}</h4>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
@@ -412,7 +411,7 @@ export default function ReadingHub() {
 
             <div className="p-3 bg-secondary/50 rounded-2xl border border-border/60 text-xs space-y-2">
               <div className="flex items-center gap-2 text-foreground font-semibold">
-                <Sparkles className="w-4 h-4 text-amber-500" />
+                <StarsIcon className="w-4 h-4 text-primary" />
                 <span>Premium Features:</span>
               </div>
               <ul className="space-y-1.5 text-muted-foreground pl-6 list-disc text-[11px]">
@@ -433,9 +432,9 @@ export default function ReadingHub() {
               <button
                 type="button"
                 onClick={() => navigate(`/premium?testId=${lockedModalTest.id}&reason=premium_required`)}
-                className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
-                <Crown className="w-3.5 h-3.5 fill-current" />
+                <CrownStarIcon className="w-4 h-4" />
                 <span>Upgrade to Premium</span>
               </button>
             </div>

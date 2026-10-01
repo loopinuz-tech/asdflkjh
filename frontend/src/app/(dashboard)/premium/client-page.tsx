@@ -1,23 +1,17 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { Loader2 } from 'lucide-react'
 import {
-  Check,
-  Shield,
-  Sparkles,
-  AlertCircle,
-  ArrowRight,
-  Loader2,
-  Star,
-  CreditCard,
-  Send,
-  CheckCircle2,
-  X,
-  Phone,
-  HelpCircle,
-  Clock,
-  ExternalLink,
-  Tag,
-} from 'lucide-react'
+  StarsIcon,
+  ShieldCheckIcon,
+  TagPriceIcon,
+  CheckCircleIcon,
+  DangerCircleIcon,
+  CloseCircleIcon,
+  CardIcon,
+  AltArrowRightIcon,
+  PlaneIcon,
+} from '@solar-icons/react/bold-duotone'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -222,13 +216,13 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3 text-primary" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/25 text-primary text-[11px] font-bold uppercase tracking-wider">
+              <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
               FOX FORD IELTS PRO
             </span>
             {reason === 'premium_required' && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-destructive/10 border border-destructive/20 text-destructive text-[11px] font-semibold">
-                <AlertCircle className="w-3 h-3" />
+                <DangerCircleIcon className="w-3.5 h-3.5" size={14} />
                 Premium Membership Required
               </span>
             )}
@@ -243,7 +237,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
 
         <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-border text-xs font-medium text-muted-foreground shadow-2xs">
-            <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
             <span>Secure Checkout • Payme, Click & Cards</span>
           </div>
         </div>
@@ -252,7 +246,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       {errorMsg && (
         <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/25 text-destructive text-xs flex items-start justify-between gap-3 animate-in fade-in-50">
           <div className="flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <DangerCircleIcon className="w-4 h-4 shrink-0 mt-0.5" size={16} />
             <div className="space-y-1">
               <p className="font-bold text-sm">Payment system notification:</p>
               <p className="text-xs leading-relaxed opacity-95">{String(errorMsg)}</p>
@@ -263,7 +257,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
             onClick={() => setErrorMsg(null)}
             className="p-1 rounded-lg text-destructive hover:bg-destructive/15 cursor-pointer shrink-0"
           >
-            <X className="w-4 h-4" />
+            <CloseCircleIcon className="w-4 h-4" size={16} />
           </button>
         </div>
       )}
@@ -271,8 +265,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       {/* Promo Coupon Code Banner */}
       <div className="p-4 rounded-2xl bg-card border border-border/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
-            <Tag className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+            <TagPriceIcon className="w-5 h-5 text-primary" size={20} />
           </div>
           <div>
             <h4 className="text-xs sm:text-sm font-bold text-foreground">
@@ -285,8 +279,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
         </div>
 
         {appliedCoupon ? (
-          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+          <div className="flex items-center gap-2 bg-primary/15 border border-primary/30 px-3 py-1.5 rounded-xl text-xs font-bold text-primary">
+            <CheckCircleIcon className="w-4 h-4 text-primary shrink-0" size={16} />
             <span className="font-mono">{appliedCoupon.code}</span>
             <span className="text-[11px] font-medium opacity-90">
               ({appliedCoupon.discount_type === 'percentage' ? `${appliedCoupon.discount_value}%` : `$${appliedCoupon.discount_value}`} discount applied)
@@ -294,10 +288,10 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
             <button
               type="button"
               onClick={handleRemoveCoupon}
-              className="ml-1 p-1 rounded-md hover:bg-emerald-500/20 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+              className="ml-1 p-1 rounded-md hover:bg-primary/20 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               title="Remove coupon"
             >
-              <X className="w-3.5 h-3.5" />
+              <CloseCircleIcon className="w-3.5 h-3.5" size={14} />
             </button>
           </div>
         ) : (
@@ -329,14 +323,14 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
           className={cn(
             'p-3 rounded-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in-50',
             couponFeedback.type === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
+              ? 'bg-primary/15 text-primary border border-primary/30'
               : 'bg-destructive/10 text-destructive border border-destructive/20'
           )}
         >
           {couponFeedback.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+            <CheckCircleIcon className="w-4 h-4 shrink-0 text-primary" size={16} />
           ) : (
-            <AlertCircle className="w-4 h-4 shrink-0 text-destructive" />
+            <DangerCircleIcon className="w-4 h-4 shrink-0 text-destructive" size={16} />
           )}
           <span>{couponFeedback.message}</span>
         </div>
@@ -375,7 +369,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                         : 'bg-secondary text-foreground border-border/80'
                     }`}
                   >
-                    {isYearly && <Star className="w-2.5 h-2.5 fill-current inline-block mr-1 text-black" />}
+                    {isYearly && <StarsIcon className="w-3 h-3 text-black inline-block mr-1" size={12} />}
                     {badgeText}
                   </Badge>
                 </div>
@@ -427,8 +421,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                   <ul className="space-y-2 text-xs text-muted-foreground">
                     {(plan.features || []).map((feat, idx) => (
                       <li key={idx} className="flex items-start gap-2">
-                        <div className="mt-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        <div className="mt-0.5 w-3.5 h-3.5 rounded-full bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                          <CheckCircleIcon className="w-3 h-3 text-primary" size={12} />
                         </div>
                         <span className="leading-snug">{feat}</span>
                       </li>
@@ -463,9 +457,9 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                       </>
                     ) : (
                       <>
-                        <CreditCard className="w-3.5 h-3.5" />
+                        <CardIcon className="w-4 h-4" size={16} />
                         <span>Get {plan.name}</span>
-                        <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                        <AltArrowRightIcon className="w-4 h-4 ml-0.5" size={16} />
                       </>
                     )}
                   </Button>
@@ -480,8 +474,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-              <Shield className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0">
+              <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
             </div>
             <div>
               <p className="font-bold text-foreground">Official Payment Gateways</p>
@@ -490,12 +484,12 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
           </div>
 
           <div className="flex items-center gap-1.5 font-medium">
-            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircleIcon className="w-3.5 h-3.5 text-primary" size={14} />
             <span>Guaranteed Security (inPAY)</span>
           </div>
 
           <div className="flex items-center gap-1.5 font-medium">
-            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircleIcon className="w-3.5 h-3.5 text-primary" size={14} />
             <span>24/7 Priority Support</span>
           </div>
         </div>
@@ -506,7 +500,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
           rel="noreferrer"
           className="inline-flex items-center gap-1.5 text-primary hover:underline font-semibold"
         >
-          <Send className="w-3.5 h-3.5" />
+          <PlaneIcon className="w-3.5 h-3.5 text-primary" size={14} />
           <span>Questions? Ask via Telegram: @{botUsername}</span>
         </a>
       </div>
@@ -515,8 +509,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       {checkoutSuccess && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border text-center space-y-4 animate-in zoom-in-95">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
-              <Sparkles className="w-8 h-8 text-emerald-500" />
+            <div className="w-16 h-16 rounded-full bg-primary/15 text-primary flex items-center justify-center mx-auto shadow-sm">
+              <StarsIcon className="w-8 h-8 text-primary" size={32} />
             </div>
             <div className="space-y-1">
               <h4 className="text-lg font-bold text-foreground">Congratulations! Subscription Activated!</h4>

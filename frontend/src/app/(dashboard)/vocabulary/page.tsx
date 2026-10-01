@@ -1,23 +1,22 @@
 import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  BookA,
-  Search,
-  Flame,
-  ArrowRight,
-  CheckCircle2,
-  Volume2,
-  Plus,
-  Trash2,
-  Sparkles,
-  X,
   Loader2,
-  Check,
-  GraduationCap,
-  Layers,
-  BookOpen
 } from 'lucide-react'
+import {
+  TranslationIcon,
+  FireIcon,
+  StarsIcon,
+  AltArrowRightIcon,
+  BookBookmarkIcon,
+  MedalRibbonIcon,
+  RoundedMagnifierIcon,
+  CheckSquareIcon,
+  VolumeLoudIcon,
+  AddCircleIcon,
+  TrashBinMinimalisticIcon,
+  CloseCircleIcon,
+} from '@solar-icons/react/bold-duotone'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { Link } from 'react-router-dom'
 import { buttonVariants, Button } from '@/components/ui/button'
@@ -284,8 +283,8 @@ export default function VocabularyHub() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 text-primary">
-            <BookA className="h-5 w-5" />
+          <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary/15 border border-primary/25 text-primary">
+            <TranslationIcon className="h-5 w-5" size={20} />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -309,8 +308,8 @@ export default function VocabularyHub() {
             </Button>
           )}
 
-          <div className="flex items-center gap-2 bg-card border border-border px-3 py-1.5 rounded-xl text-xs font-semibold text-amber-600 dark:text-amber-400">
-            <Flame className="w-4 h-4 fill-current" />
+          <div className="flex items-center gap-2 bg-card border border-border px-3 py-1.5 rounded-xl text-xs font-semibold text-primary">
+            <FireIcon className="w-4 h-4 text-primary" size={16} />
             <span>Active Deck: {learningCount + masteredCount} words</span>
           </div>
         </div>
@@ -320,7 +319,7 @@ export default function VocabularyHub() {
       <div className="bg-gradient-to-r from-primary/10 via-card to-card border border-primary/25 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="z-10 flex-1 text-center sm:text-left">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary mb-1">
-            <Sparkles className="w-3.5 h-3.5" />
+            <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
             <span>Spaced Repetition System</span>
           </div>
           <h2 className="text-xl font-bold text-foreground mb-1.5">Ready for your review session?</h2>
@@ -333,7 +332,7 @@ export default function VocabularyHub() {
               className={buttonVariants({ size: "default", className: "h-9 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 text-black shadow-xs transition-all flex items-center gap-2 text-xs" })}
             >
               <span>Start Flashcard Review</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
             </Link>
           </div>
         </div>
@@ -343,23 +342,43 @@ export default function VocabularyHub() {
         </div>
       </div>
 
-      {/* Stats Quick Cards */}
+      {/* Stats Quick Cards with Solar Icons */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs">
-          <p className="text-xs text-muted-foreground font-medium">Total Words</p>
-          <p className="text-xl font-bold text-foreground mt-0.5">{totalCount}</p>
+        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-xs text-muted-foreground font-medium">Total Words</p>
+            <p className="text-xl font-bold text-foreground mt-0.5">{totalCount}</p>
+          </div>
+          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+            <TranslationIcon className="w-4 h-4" size={18} />
+          </div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs">
-          <p className="text-xs text-muted-foreground font-medium">Due for Review</p>
-          <p className="text-xl font-bold text-amber-500 mt-0.5">{dueToday}</p>
+        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-xs text-muted-foreground font-medium">Due for Review</p>
+            <p className="text-xl font-bold text-primary mt-0.5">{dueToday}</p>
+          </div>
+          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+            <FireIcon className="w-4 h-4" size={18} />
+          </div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs">
-          <p className="text-xs text-muted-foreground font-medium">Currently Learning</p>
-          <p className="text-xl font-bold text-blue-500 mt-0.5">{learningCount}</p>
+        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-xs text-muted-foreground font-medium">Currently Learning</p>
+            <p className="text-xl font-bold text-primary mt-0.5">{learningCount}</p>
+          </div>
+          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+            <BookBookmarkIcon className="w-4 h-4" size={18} />
+          </div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs">
-          <p className="text-xs text-muted-foreground font-medium">Mastered</p>
-          <p className="text-xl font-bold text-emerald-500 mt-0.5">{masteredCount}</p>
+        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-xs text-muted-foreground font-medium">Mastered</p>
+            <p className="text-xl font-bold text-primary mt-0.5">{masteredCount}</p>
+          </div>
+          <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+            <MedalRibbonIcon className="w-4 h-4" size={18} />
+          </div>
         </div>
       </div>
 
@@ -392,7 +411,7 @@ export default function VocabularyHub() {
 
         {/* Search bar */}
         <div className="relative w-full md:w-72 shrink-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <RoundedMagnifierIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" size={15} />
           <input
             type="text"
             value={searchQuery}
@@ -406,7 +425,7 @@ export default function VocabularyHub() {
       {/* Real Vocabulary Words Grid */}
       {filteredWords.length === 0 ? (
         <div className="bg-card border border-border rounded-2xl p-10 text-center space-y-3">
-          <BookOpen className="w-8 h-8 text-muted-foreground mx-auto" />
+          <BookBookmarkIcon className="w-8 h-8 text-primary/60 mx-auto" size={32} />
           <p className="text-sm font-semibold text-foreground">No vocabulary words found matching your filter</p>
           <p className="text-xs text-muted-foreground">Try clearing your search query or selecting a different topic.</p>
           {isAdmin && (
@@ -445,9 +464,9 @@ export default function VocabularyHub() {
                       <button
                         onClick={() => speakWord(word.word)}
                         title="Listen to pronunciation"
-                        className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                        className="p-1 rounded-lg hover:bg-secondary text-primary hover:text-primary transition-colors cursor-pointer"
                       >
-                        <Volume2 className="w-3.5 h-3.5" />
+                        <VolumeLoudIcon className="w-3.5 h-3.5 text-primary" size={14} />
                       </button>
                     </div>
 
@@ -463,7 +482,7 @@ export default function VocabularyHub() {
                           title="Delete word (Admin)"
                           className="p-1 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <TrashBinMinimalisticIcon className="w-3.5 h-3.5" size={14} />
                         </button>
                       )}
                     </div>
@@ -493,12 +512,12 @@ export default function VocabularyHub() {
                 <div className="pt-2 border-t border-border/50 flex items-center justify-between">
                   <div>
                     {isMastered ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Mastered
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary">
+                        <CheckSquareIcon className="w-3.5 h-3.5 text-primary" size={14} /> Mastered
                       </span>
                     ) : isLearning ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-500">
-                        <Flame className="w-3.5 h-3.5 fill-current" /> Stage {userProgress?.mastery_level || 1}
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+                        <FireIcon className="w-3.5 h-3.5 text-primary" size={14} /> Stage {userProgress?.mastery_level || 1}
                       </span>
                     ) : (
                       <span className="text-[11px] text-muted-foreground">Not in deck yet</span>
@@ -518,7 +537,7 @@ export default function VocabularyHub() {
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
                           <>
-                            <Plus className="w-3 h-3 mr-1" />
+                            <AddCircleIcon className="w-3.5 h-3.5 mr-1 text-primary" size={14} />
                             <span>Add to Deck</span>
                           </>
                         )}
@@ -538,8 +557,8 @@ export default function VocabularyHub() {
           <div className="bg-card border border-border rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-secondary/20">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                  <Plus className="w-4 h-4" />
+                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+                  <AddCircleIcon className="w-4 h-4 text-primary" size={16} />
                 </div>
                 <h3 className="font-bold text-sm text-foreground">Add New IELTS Vocabulary Word</h3>
               </div>
@@ -547,7 +566,7 @@ export default function VocabularyHub() {
                 onClick={() => setShowAddModal(false)}
                 className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-secondary cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <CloseCircleIcon className="w-4 h-4" size={16} />
               </button>
             </div>
 

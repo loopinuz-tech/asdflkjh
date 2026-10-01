@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { BookOpen, Headphones, Edit3, Mic, Clock, ArrowRight, PlayCircle, CheckCircle2, History, Eye } from 'lucide-react'
+import { 
+  BookBookmarkIcon, 
+  HeadphonesRoundIcon, 
+  Pen2Icon, 
+  Microphone2Icon, 
+  ClockCircleIcon, 
+  AltArrowRightIcon, 
+  PlayCircleIcon, 
+  RestartSquareIcon, 
+  EyeIcon, 
+  CheckSquareIcon,
+} from '@solar-icons/react/bold-duotone'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { Link } from 'react-router-dom'
 import { buttonVariants } from '@/components/ui/button'
@@ -139,15 +150,15 @@ export default function PracticeHistory() {
   const getSkillConfig = (skill: string) => {
     switch (skill) {
       case 'reading':
-        return { icon: BookOpen, color: 'text-fox-yellow', bg: 'bg-fox-yellow/10', label: 'Reading' }
+        return { icon: BookBookmarkIcon, color: 'text-primary', bg: 'bg-primary/15', label: 'Reading' }
       case 'listening':
-        return { icon: Headphones, color: 'text-blue-500', bg: 'bg-blue-500/10', label: 'Listening' }
+        return { icon: HeadphonesRoundIcon, color: 'text-primary', bg: 'bg-primary/15', label: 'Listening' }
       case 'writing':
-        return { icon: Edit3, color: 'text-fox-red', bg: 'bg-fox-red/10', label: 'Writing' }
+        return { icon: Pen2Icon, color: 'text-primary', bg: 'bg-primary/15', label: 'Writing' }
       case 'speaking':
-        return { icon: Mic, color: 'text-fox-success', bg: 'bg-fox-success/10', label: 'Speaking' }
+        return { icon: Microphone2Icon, color: 'text-primary', bg: 'bg-primary/15', label: 'Speaking' }
       default:
-        return { icon: CheckCircle2, color: 'text-primary', bg: 'bg-primary/10', label: 'Practice' }
+        return { icon: CheckSquareIcon, color: 'text-primary', bg: 'bg-primary/15', label: 'Practice' }
     }
   }
 
@@ -156,9 +167,9 @@ export default function PracticeHistory() {
       id: 'reading',
       title: 'Reading',
       desc: 'Academic & General reading passages with 15 question types.',
-      icon: BookOpen,
-      color: 'text-fox-yellow',
-      bgColor: 'bg-fox-yellow/10',
+      icon: BookBookmarkIcon,
+      color: 'text-primary',
+      bgColor: 'bg-primary/15',
       href: '/reading',
       count: 'Full Tests',
     },
@@ -166,9 +177,9 @@ export default function PracticeHistory() {
       id: 'listening',
       title: 'Listening',
       desc: 'Realistic audio recordings across 4 sections with timed playback.',
-      icon: Headphones,
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-500/10',
+      icon: HeadphonesRoundIcon,
+      color: 'text-primary',
+      bgColor: 'bg-primary/15',
       href: '/listening',
       count: 'Audio Tests',
     },
@@ -176,9 +187,9 @@ export default function PracticeHistory() {
       id: 'writing',
       title: 'Writing',
       desc: 'Task 1 and Task 2 prompts evaluated with detailed criteria.',
-      icon: Edit3,
-      color: 'text-fox-red',
-      bgColor: 'bg-fox-red/10',
+      icon: Pen2Icon,
+      color: 'text-primary',
+      bgColor: 'bg-primary/15',
       href: '/writing',
       count: 'Tasks 1 & 2',
     },
@@ -186,9 +197,9 @@ export default function PracticeHistory() {
       id: 'speaking',
       title: 'Speaking',
       desc: 'Part 1, 2, and 3 interview questions with simulated examiners.',
-      icon: Mic,
-      color: 'text-fox-success',
-      bgColor: 'bg-fox-success/10',
+      icon: Microphone2Icon,
+      color: 'text-primary',
+      bgColor: 'bg-primary/15',
       href: '/speaking',
       count: 'Parts 1-3',
     },
@@ -199,8 +210,8 @@ export default function PracticeHistory() {
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <Clock className="h-6 w-6 text-primary" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/15 text-primary">
+            <ClockCircleIcon className="h-6 w-6 text-primary" size={24} />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Practice Center</h1>
@@ -219,7 +230,7 @@ export default function PracticeHistory() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center', m.bgColor)}>
-                      <Icon className={cn('w-6 h-6', m.color)} />
+                      <Icon className={cn('w-6 h-6', m.color)} size={24} />
                     </div>
                     <span className="text-xs text-muted-foreground font-medium">{m.count}</span>
                   </div>
@@ -233,7 +244,7 @@ export default function PracticeHistory() {
                   className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'w-full justify-between group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors')}
                 >
                   <span>Start Module</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <AltArrowRightIcon className="w-4 h-4" size={16} />
                 </Link>
               </CardContent>
             </Card>
@@ -246,7 +257,7 @@ export default function PracticeHistory() {
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
             <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <History className="w-5 h-5 text-muted-foreground" />
+              <RestartSquareIcon className="w-5 h-5 text-primary" size={20} />
               <span>Recent Test Attempts</span>
             </CardTitle>
             <CardDescription>Your scored practice sessions and progress logs across all 4 IELTS skills</CardDescription>
@@ -266,7 +277,7 @@ export default function PracticeHistory() {
                   <div key={attempt.id} className="py-3.5 flex items-center justify-between gap-4 hover:bg-muted/30 px-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', config.bg)}>
-                        <Icon className={cn('w-4 h-4', config.color)} />
+                        <Icon className={cn('w-4 h-4', config.color)} size={18} />
                       </div>
                       <div className="min-w-0">
                         <h4 className="text-sm font-semibold text-foreground truncate">
@@ -295,9 +306,9 @@ export default function PracticeHistory() {
                           to={attempt.href}
                           className="h-8 px-3 rounded-xl bg-primary/10 hover:bg-primary text-primary-foreground dark:text-primary hover:text-black font-bold text-xs border border-primary/30 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <EyeIcon className="w-3.5 h-3.5" size={14} />
                           <span>Review Full Test</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
                         </Link>
                       )}
                     </div>
@@ -313,7 +324,7 @@ export default function PracticeHistory() {
                 You haven&apos;t completed any tests yet. Choose a module above to start your practice journey!
               </p>
               <Link to="/reading" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5')}>
-                <PlayCircle className="w-4 h-4" />
+                <PlayCircleIcon className="w-4 h-4" size={16} />
                 <span>Try Reading Practice</span>
               </Link>
             </div>

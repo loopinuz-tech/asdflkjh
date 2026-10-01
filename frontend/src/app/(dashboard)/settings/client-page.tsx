@@ -2,7 +2,18 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Settings as SettingsIcon, User, Target, Shield, Check, Loader2, Sparkles, Send, Sun, Moon, Laptop } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+import { 
+  SettingsIcon, 
+  UserCircleIcon, 
+  TargetIcon, 
+  ShieldCheckIcon, 
+  Sun2Icon,
+  MoonStarsIcon,
+  LaptopMinimalisticIcon,
+  CheckCircleIcon,
+  PlaneIcon
+} from '@solar-icons/react/bold-duotone'
 import { updateUserSettings } from '@/actions/settings'
 import { useTheme } from '@/components/theme/theme-provider'
 
@@ -10,9 +21,9 @@ function ThemeSelector() {
   const { theme, setTheme } = useTheme()
 
   const themes: { id: 'light' | 'dark' | 'system'; label: string; icon: any; desc: string }[] = [
-    { id: 'light', label: 'Light', icon: Sun, desc: 'Clean white surfaces with high contrast' },
-    { id: 'dark', label: 'Dark', icon: Moon, desc: 'Sleek dark theme, easy on the eyes' },
-    { id: 'system', label: 'System', icon: Laptop, desc: 'Sync automatically with your device theme' },
+    { id: 'light', label: 'Light', icon: Sun2Icon, desc: 'Clean white surfaces with high contrast' },
+    { id: 'dark', label: 'Dark', icon: MoonStarsIcon, desc: 'Sleek dark theme, easy on the eyes' },
+    { id: 'system', label: 'System', icon: LaptopMinimalisticIcon, desc: 'Sync automatically with your device theme' },
   ]
 
   return (
@@ -32,8 +43,8 @@ function ThemeSelector() {
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isSelected ? 'bg-primary text-black' : 'bg-secondary text-foreground'}`}>
-                <Icon className="w-4 h-4" />
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isSelected ? 'bg-primary/15 text-primary' : 'bg-secondary text-muted-foreground'}`}>
+                <Icon className="w-5 h-5 text-current" size={20} />
               </div>
               {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
             </div>
@@ -95,8 +106,8 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
   return (
     <div className="space-y-8 max-w-4xl">
       <div className="flex items-center gap-3">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-          <SettingsIcon className="h-6 w-6 text-primary" />
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/15 text-primary">
+          <SettingsIcon className="h-6 w-6 text-primary" size={24} />
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Account Settings</h1>
@@ -106,7 +117,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
 
       {successMessage && (
         <Alert className="border-fox-success/30 bg-fox-success/10 text-fox-success py-2.5">
-          <Check className="h-4 w-4" />
+          <CheckCircleIcon className="h-4 w-4" size={16} />
           <AlertDescription className="text-sm font-medium">{successMessage}</AlertDescription>
         </Alert>
       )}
@@ -122,7 +133,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         <Card className="border-border fox-shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <User className="w-4 h-4 text-primary" />
+              <UserCircleIcon className="w-4 h-4 text-primary" size={16} />
               <span>Personal Information</span>
             </CardTitle>
             <CardDescription>Your name and login credentials</CardDescription>
@@ -175,11 +186,11 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
             {initialSettings?.telegramUsername && (
               <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/40 border border-border text-xs">
                 <div className="flex items-center gap-2">
-                  <Send className="w-4 h-4 text-[#229ED9]" />
+                  <PlaneIcon className="w-4 h-4 text-primary" size={16} />
                   <span>Linked Telegram: <strong>@{initialSettings.telegramUsername}</strong></span>
                 </div>
-                <span className="text-fox-success font-medium flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5" /> Verified
+                <span className="text-primary font-medium flex items-center gap-1">
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-primary" size={14} /> Verified
                 </span>
               </div>
             )}
@@ -190,7 +201,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         <Card className="border-border fox-shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Target className="w-4 h-4 text-primary" />
+              <TargetIcon className="w-4 h-4 text-primary" size={16} />
               <span>Target Band Score</span>
             </CardTitle>
             <CardDescription>The IELTS band score you are aiming to achieve</CardDescription>
@@ -222,7 +233,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         <Card className="border-border fox-shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Sun className="w-4 h-4 text-primary" />
+              <Sun2Icon className="w-4 h-4 text-primary" size={16} />
               <span>Appearance & Theme</span>
             </CardTitle>
             <CardDescription>Customize the interface theme to your preference</CardDescription>
@@ -236,7 +247,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         <Card className="border-border fox-shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Shield className="w-4 h-4 text-primary" />
+              <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
               <span>Subscription & Membership</span>
             </CardTitle>
             <CardDescription>Your current EduFox tier</CardDescription>
