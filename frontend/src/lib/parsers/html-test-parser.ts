@@ -415,6 +415,16 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
           questionsHtml = chunk.replace(readingPassageBoxMatch[0], '').trim()
         }
       }
+    } else if (skill === 'listening' && !passageHtml) {
+      // For listening tests, extract the formatted note-card, flow-chart, or container into passageHtml
+      const cardMatch = chunk.match(/<div[^>]*class=["'][^"']*(?:note-card|drag-container|questions-list|process-container|mc-question)[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>/i) ||
+        chunk.match(/<div[^>]*class=["'][^"']*(?:note-card|drag-container|questions-list)[^"']*["'][^>]*>[\s\S]*?<\/div>/i)
+      if (cardMatch) {
+        let cleanCard = cardMatch[0]
+          .replace(/<input[^>]*id=["']q?(\d{1,2})["'][^>]*>/gi, ' <strong>[$1]</strong> ')
+          .replace(/<span[^>]*class=["'][^"']*drop-zone[^"']*["'][^>]*data-question=["']?(\d{1,2})["']?[^>]*><\/span>/gi, ' <strong>[$1]</strong> ')
+        passageHtml = cleanCard
+      }
     }
 
     const sectionQuestions: ParsedQuestion[] = []
@@ -494,6 +504,24 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
           const isFlow = /flow-step|flow-chart|mite/i.test(itemHtml + ' ' + beforeHtml.substring(Math.max(0, beforeHtml.length - 300)))
           let qText = cleanQuestionPrompt(itemHtml, qNum)
 
+          // Check for preceding intermediary flow-chart step without inputs
+          if (isFlow) {
+            const lastStep = beforeHtml.lastIndexOf('class="flow-step"')
+            if (lastStep !== -1) {
+              const prevBefore = beforeHtml.substring(0, lastStep)
+              const prevStep = prevBefore.lastIndexOf('class="flow-step"')
+              if (prevStep !== -1) {
+                const prevChunk = beforeHtml.substring(prevStep, lastStep)
+                if (!/data-question|<input/i.test(prevChunk)) {
+                  const cleanPrev = stripTags(prevChunk).replace(/^[▪•\-\s]+/, '').trim()
+                  if (cleanPrev && cleanPrev.length > 5 && cleanPrev.length < 120) {
+                    qText = `${cleanPrev} • ${qText}`
+                  }
+                }
+              }
+            }
+          }
+
           if (!isFlow) {
             // For matching items like "Sweet Water Season", keep just the clean name
             qText = qText.replace(/\s*\[____\]\s*/g, '').trim()
@@ -552,8 +580,27 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
         const bestEnd = closes.length > 0 ? Math.min(...closes) : 100
         const endIdx = pos + bestEnd
 
+        // Check for preceding helper bullet or subheading (e.g. "Classes last for 55 minutes", "Yoga", "Soccer")
+        let helperText = ''
+        if (lastLi !== -1) {
+          const prevLiBefore = before.substring(0, lastLi)
+          const prevOpenLi = prevLiBefore.lastIndexOf('<li')
+          if (prevOpenLi !== -1) {
+            const prevLiChunk = before.substring(prevOpenLi, lastLi)
+            if (!/<input|<select|data-question/i.test(prevLiChunk)) {
+              const cleanPrev = stripTags(prevLiChunk).replace(/^[▪•\-\s]+/, '').trim()
+              if (cleanPrev && cleanPrev.length > 2 && cleanPrev.length < 120) {
+                helperText = cleanPrev
+              }
+            }
+          }
+        }
+
         const snippet = questionsHtml.substring(startIdx, endIdx)
-        const qText = cleanQuestionPrompt(snippet, qNum)
+        let qText = cleanQuestionPrompt(snippet, qNum)
+        if (helperText) {
+          qText = `${helperText} • ${qText}`
+        }
 
         const instrMatch = before.match(/<p[^>]*class=["'][^"']*instructions[^"']*["'][^>]*>([\s\S]*?)<\/p>(?![\s\S]*<p[^>]*class=["'][^"']*instructions)/i)
         const instruction = instrMatch ? stripTags(instrMatch[1]).trim() : 'Complete the notes below. Write ONE WORD ONLY for each answer.'

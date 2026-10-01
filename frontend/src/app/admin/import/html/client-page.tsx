@@ -52,10 +52,25 @@ export function HtmlImportClientView() {
   }
 
   // Parse HTML with Gemini AI Auto-Detection & Fallback
-  const triggerParse = async (content: string, customFileName?: string) => {
+  const triggerParse = async (content: string, customFileName?: string, engineOverride?: 'gemini' | 'algorithmic') => {
     if (!content.trim()) return
     setIsParsing(true)
     const token = typeof window !== 'undefined' ? localStorage.getItem('foxford_token') : null
+
+    // If algorithmic requested directly
+    if (engineOverride === 'algorithmic') {
+      try {
+        const result = parseIeltsHtml(content)
+        setParsedTest(result)
+        setParsingEngine('algorithmic')
+        setModelUsed(null)
+        setActiveSectionIdx(0)
+        setSelectedQuestionIdx(0)
+      } finally {
+        setIsParsing(false)
+      }
+      return
+    }
 
     try {
       // 1. Try Gemini AI Auto-Detection endpoint
@@ -74,9 +89,20 @@ export function HtmlImportClientView() {
       if (res.ok) {
         const json = await res.json()
         if (json.parsedTest) {
-          setParsedTest(json.parsedTest)
-          setParsingEngine('gemini')
-          setModelUsed(json.parsedTest.model_used || 'gemini-3.1-flash-lite')
+          const aiCount = json.parsedTest.total_questions || 0
+          const algoResult = parseIeltsHtml(content)
+
+          // If AI missed questions on a full test (e.g. returned 16 when algorithmic has 40)
+          if (algoResult.total_questions > aiCount) {
+            console.warn(`Gemini AI detected ${aiCount} questions, but Algorithmic engine detected ${algoResult.total_questions} questions. Using complete algorithmic result.`)
+            setParsedTest(algoResult)
+            setParsingEngine('algorithmic')
+            setModelUsed(null)
+          } else {
+            setParsedTest(json.parsedTest)
+            setParsingEngine('gemini')
+            setModelUsed(json.parsedTest.model_used || 'gemini-3.1-flash-lite')
+          }
           setActiveSectionIdx(0)
           setSelectedQuestionIdx(0)
           return
@@ -344,17 +370,26 @@ export function HtmlImportClientView() {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => triggerParse(htmlInput)}
-            disabled={!htmlInput.trim() || isParsing}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-primary text-primary-foreground font-extrabold text-xs shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-          >
-            <Sparkles className={cn('w-4 h-4', isParsing && 'animate-spin')} />
-            <span>
-              {isParsing ? 'Gemini AI Auto-Detecting Test Structure...' : '✨ Auto-Detect with Gemini AI'}
-            </span>
-          </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => triggerParse(htmlInput, undefined, 'algorithmic')}
+              disabled={!htmlInput.trim() || isParsing}
+              className="py-3 px-4 rounded-xl bg-primary text-primary-foreground font-extrabold text-xs shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <FileCode className="w-4 h-4 shrink-0" />
+              <span>⚡ Fast Algorithmic Parse (Instant 40 Qs)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => triggerParse(htmlInput, undefined, 'gemini')}
+              disabled={!htmlInput.trim() || isParsing}
+              className="py-3 px-4 rounded-xl border border-primary/40 bg-secondary/50 hover:bg-secondary text-foreground font-extrabold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <Sparkles className={cn('w-4 h-4 text-primary shrink-0', isParsing && 'animate-spin')} />
+              <span>{isParsing ? 'Processing...' : '✨ Auto-Detect with Gemini AI'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Right: Parsed Summary & Action Box */}
@@ -373,13 +408,30 @@ export function HtmlImportClientView() {
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary animate-bounce">
                 <Sparkles className="w-6 h-6" />
               </div>
-              <h3 className="text-sm font-bold text-foreground">Gemini AI is Analyzing HTML Test</h3>
+              <h3 className="text-sm font-bold text-foreground">Analyzing HTML Test Structure</h3>
               <p className="text-xs text-muted-foreground max-w-sm">
                 Automatically extracting passages, parsing IELTS question formats, matching multiple choice options, and linking answer keys...
               </p>
             </div>
           ) : parsedTest ? (
             <div className="space-y-4 flex-1 flex flex-col">
+              {/* Deficiency Warning Banner */}
+              {parsedTest.total_questions < 40 && parsedTest.skill === 'listening' && htmlInput.trim() && (
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-amber-500" />
+                    <span>Faqat {parsedTest.total_questions} ta savol topildi. Algoritmik tizim bilan to'liq 40 ta savolni ochish mumkin:</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => triggerParse(htmlInput, undefined, 'algorithmic')}
+                    className="px-2.5 py-1 rounded-lg bg-primary text-primary-foreground font-bold text-[11px] shrink-0 hover:opacity-90 cursor-pointer shadow-xs"
+                  >
+                    ⚡ 40 ta savolni yuklash
+                  </button>
+                </div>
+              )}
+
               {/* Test Info Header */}
               <div className="p-4 rounded-xl bg-secondary/40 border border-border space-y-2.5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -402,10 +454,16 @@ export function HtmlImportClientView() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-[10px] font-bold text-primary flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => triggerParse(htmlInput, undefined, parsingEngine === 'gemini' ? 'algorithmic' : 'gemini')}
+                      title="Boshqa parser rejimiga o'tish"
+                      className="px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-[10px] font-bold text-primary flex items-center gap-1 hover:bg-primary/25 transition-colors cursor-pointer"
+                    >
                       <Sparkles className="w-3 h-3" />
                       <span>{parsingEngine === 'gemini' ? `AI (${modelUsed || 'Flash'})` : 'Algorithmic'}</span>
-                    </span>
+                      <span className="text-[9px] opacity-70 underline ml-0.5">Switch</span>
+                    </button>
                     <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" /> Ready for Import
                     </span>
