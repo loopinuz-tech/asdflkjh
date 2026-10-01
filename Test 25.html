@@ -1,0 +1,1083 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IELTS Listening Practice Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      font-size: 16px;
+      color: #333;
+      background-color: #ffffff;
+      padding-bottom: 100px;
+    }
+    .header {
+      background-color: #ffffff;
+      padding: 12px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 60px;
+    }
+    .header h1 {
+      font-size: 20px;
+      color: #333;
+    }
+    .main-container {
+      max-width: 900px;
+      margin: 60px auto 0;
+      padding: 20px;
+    }
+    .section-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+    .sub-section-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 8px;
+    }
+    .instructions {
+      margin-bottom: 15px;
+      font-size: 16px;
+      color: #666;
+    }
+    .note-card {
+      border: 1px solid #000;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    ul.note-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul.note-list li {
+      margin-bottom: 8px;
+    }
+    .answer-input {
+      border: 1px solid #888;
+      border-radius: 4px;
+      background-color: #fff;
+      padding: 4px 8px;
+      font-size: 16px;
+      text-align: center;
+      margin-left: 4px;
+      margin-right: 4px;
+      width: 140px;
+      max-width: 160px;
+      min-width: 100px;
+      height: 24px;
+      line-height: 1.2;
+    }
+    .answer-input.correct {
+      background-color: #e6ffe6;
+      border-color: #4caf50;
+      color: #333;
+    }
+    .answer-input.incorrect {
+      background-color: #ffe6e6;
+      border-color: #f44336;
+      color: #333;
+    }
+    .mc-question {
+      margin-bottom: 15px;
+    }
+    .mc-options {
+      margin-left: 20px;
+      margin-top: 5px;
+    }
+    .mc-option {
+      margin-bottom: 5px;
+    }
+    .drag-container {
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    .options-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+      padding: 10px;
+      border: 2px dashed #ccc;
+      min-height: 60px;
+      background-color: #f9f9f9;
+    }
+    .option {
+      width: auto;
+      min-width: 200px;
+      height: auto;
+      min-height: 26px;
+      border: 1px solid #888;
+      border-radius: 4px;
+      background-color: #fff;
+      text-align: left;
+      padding: 4px 8px;
+      line-height: 1.2;
+      font-weight: normal;
+      cursor: move;
+      user-select: none;
+      white-space: normal;
+      display: inline-block;
+    }
+    .drop-zone {
+      display: inline-block;
+      width: auto;
+      min-width: 200px;
+      height: auto;
+      min-height: 26px;
+      border: 1px dashed #999;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.5);
+      text-align: left;
+      padding: 4px 8px;
+      line-height: 1.2;
+      font-weight: normal;
+      color: #555;
+      position: relative;
+      white-space: normal;
+      vertical-align: middle;
+    }
+    .drop-zone.correct {
+      background-color: #e6ffe6;
+      border-color: #4caf50;
+    }
+    .drop-zone.incorrect {
+      background-color: #ffe6e6;
+      border-color: #f44336;
+    }
+    .submit-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    .results {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .correct-answer {
+      color: #333;
+      font-size: 15px;
+      margin-left: 4px;
+    }
+    .highlight {
+      background-color: #fff8b3;
+    }
+    .highlight-toolbar {
+      position: absolute;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 5px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 2000;
+    }
+    .highlight-toolbar button {
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin-right: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .highlight-toolbar button.remove-button {
+      background: #dc3545;
+    }
+    .nav-row {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      height: 80px;
+      z-index: 100;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      border-top: 1px solid #e0e0e0;
+      padding-left: 10px;
+    }
+    .footer-question-wrapper {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+    .footer-submit-wrapper {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+    .footer-question-no {
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background-color 0.2s;
+    }
+    .footer-question-no:hover {
+      background-color: #f8f9fa;
+    }
+    .part-prefix {
+      font-size: 16px;
+    }
+    .part-nr {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .attempted-count {
+      font-size: 14px;
+      color: #666;
+      margin-left: 5px;
+      font-weight: 400;
+    }
+    .subquestion-wrapper {
+      display: none;
+      gap: 2px;
+      margin-left: 10px;
+    }
+    .footer-question-wrapper.active .subquestion-wrapper {
+      display: flex;
+    }
+    .sub-question {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #ccc;
+      background: white;
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      border-radius: 2px;
+      text-decoration: none;
+    }
+    .sub-question:hover {
+      background-color: #f0f0f0;
+      border-color: #999;
+    }
+    .sub-question.active {
+      background-color: #4a90e2;
+      color: white;
+      border-color: #4a90e2;
+    }
+    .sub-question.correct {
+      background-color: #28a745 !important;
+      color: #fff !important;
+      border-color: #28a745 !important;
+    }
+    .sub-question.incorrect {
+      background-color: #dc3545 !important;
+      color: #fff !important;
+      border-color: #dc3545 !important;
+    }
+    .sub-question.answered:not(.correct):not(.incorrect) {
+      background-color: #ffc107 !important;
+      color: #fff !important;
+      border-color: #ffc107 !important;
+    }
+    .progress-box {
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    #q11to12-error, #q13to14-error {
+      color: #f44336;
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><a href="https://t.me/Siroj_notes" target="_blank" style="text-decoration: none; color: #333;">Siroj_Notes</a></h1>
+    <div class="audio-player">
+      <audio controls id="audio-player">
+        <source src="" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  </div>
+  <div class="main-container">
+    <!-- PART 1 -->
+    <div class="section">
+      <div class="section-title">PART 1</div>
+      <p><strong>Questions 1–10</strong></p>
+      <p class="instructions">Complete the notes below. Write <strong>ONE WORD ONLY</strong> for each answer.</p>
+      <div class="note-card">
+        <p class="sub-section-title" style="text-align: center;">Watertown Community Centre Programmes</p>
+        <p><em>Example: Name of staff member</em>: Maria</p>
+        <ul class="note-list">
+          <li><strong>Yoga</strong></li>
+          <li>▪ ‘Modern Yoga’ is good for losing <input type="text" id="q1" class="answer-input" placeholder="1" />.</li>
+          <li>▪ ‘Yoga and More’ is beneficial for those with aches in their <input type="text" id="q2" class="answer-input" placeholder="2" />.</li>
+          <li>▪ ‘Original Yoga’ is great for <input type="text" id="q3" class="answer-input" placeholder="3" />.</li>
+          <li>▪ Classes last for 55 minutes</li>
+          <li>▪ Participants should bring a <input type="text" id="q4" class="answer-input" placeholder="4" />.</li>
+        </ul>
+        <ul class="note-list">
+          <li><strong>Ballet</strong></li>
+          <li>▪ The Wednesday class focuses on difficult routines and <input type="text" id="q5" class="answer-input" placeholder="5" />.</li>
+          <li>▪ The Thursday class is preparing for a <input type="text" id="q6" class="answer-input" placeholder="6" />.</li>
+        </ul>
+        <ul class="note-list">
+          <li><strong>Soccer</strong></li>
+          <li>▪ In the Rookies team, the children learn the main skills of soccer</li>
+          <li>▪ Parents bring a <input type="text" id="q7" class="answer-input" placeholder="7" /> to be shared</li>
+        </ul>
+        <ul class="note-list">
+          <li><strong>Aerobics</strong></li>
+          <li>▪ Classes are held 16 times a week</li>
+          <li>▪ It’s best to go before <input type="text" id="q8" class="answer-input" placeholder="8" /> instead of later</li>
+          <li>▪ High-impact aerobics helps maintain a strong <input type="text" id="q9" class="answer-input" placeholder="9" /></li>
+        </ul>
+        <ul class="note-list">
+          <li><strong>Registration procedures</strong></li>
+          <li>▪ Can pay online or at <input type="text" id="q10" class="answer-input" placeholder="10" /> in the centre</li>
+          <li>▪ $360 for 12 weeks</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PART 2 -->
+    <div class="section">
+      <div class="section-title">PART 2</div>
+      <p><strong>Questions 11–20</strong></p>
+      <div class="sub-section-title">Questions 11 and 12</div>
+      <p class="instructions">Which TWO facts are given about the lake in the Royal Nature Park? Choose <strong>TWO</strong> letters, A–E.</p>
+      <div id="q11to12" class="mc-question">
+        <p>Lake facts:</p>
+        <div class="mc-options">
+          <div class="mc-option"><label><input type="checkbox" name="q11to12" value="a" /> A Aquatic life feeds on plants floating on the lake</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q11to12" value="b" /> B Visitors can swim in any part of the lake</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q11to12" value="c" /> C There is little life in the deepest parts of the lake</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q11to12" value="d" /> D The lake has very low water levels</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q11to12" value="e" /> E There is evidence that corn was grown nearby</label></div>
+        </div>
+        <div id="q11to12-error" style="color: #f44336; display: none; margin-top: 10px;">Please select exactly two options.</div>
+      </div>
+      <div class="sub-section-title">Questions 13 and 14</div>
+      <p class="instructions">Which TWO facts are given about the First Nations longhouses in the park? Choose <strong>TWO</strong> letters, A–E.</p>
+      <div id="q13to14" class="mc-question">
+        <p>Longhouse facts:</p>
+        <div class="mc-options">
+          <div class="mc-option"><label><input type="checkbox" name="q13to14" value="a" /> A They are built on two levels</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q13to14" value="b" /> B Several families might live in one house</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q13to14" value="c" /> C Animals were kept inside</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q13to14" value="d" /> D Children helped to build them</label></div>
+          <div class="mc-option"><label><input type="checkbox" name="q13to14" value="e" /> E They were later destroyed by fire</label></div>
+        </div>
+        <div id="q13to14-error" style="color: #f44336; display: none; margin-top: 10px;">Please select exactly two options.</div>
+      </div>
+      <div class="sub-section-title">Questions 15–20</div>
+      <p class="instructions">Which activity will people do at each of the following events? Drag and drop the correct option into each box.</p>
+      <div class="drag-container">
+        <div class="options-box" id="options-part2">
+          <div class="option" draggable="true" data-value="a">A enter a competition</div>
+          <div class="option" draggable="true" data-value="b">B pick produce</div>
+          <div class="option" draggable="true" data-value="c">C paint pictures of leaves</div>
+          <div class="option" draggable="true" data-value="d">D take a walk at night</div>
+          <div class="option" draggable="true" data-value="e">E follow winter trails</div>
+          <div class="option" draggable="true" data-value="f">F find carvings of endangered species</div>
+          <div class="option" draggable="true" data-value="g">G learn about production of a traditional food</div>
+          <div class="option" draggable="true" data-value="h">H participate in an animal show</div>
+          <div class="option" draggable="true" data-value="i">I feed the animals</div>
+        </div>
+        <div class="question">15 Sweet Water Season <input type="hidden" id="q15" /><span class="drop-zone" data-question="15"></span></div>
+        <div class="question">16 Season of the Harvest <input type="hidden" id="q16" /><span class="drop-zone" data-question="16"></span></div>
+        <div class="question">17 Fall into Nature <input type="hidden" id="q17" /><span class="drop-zone" data-question="17"></span></div>
+        <div class="question">18 Moccasin Time <input type="hidden" id="q18" /><span class="drop-zone" data-question="18"></span></div>
+        <div class="question">19 Hide and Seek Trail <input type="hidden" id="q19" /><span class="drop-zone" data-question="19"></span></div>
+        <div class="question">20 Pine Ridge Way <input type="hidden" id="q20" /><span class="drop-zone" data-question="20"></span></div>
+      </div>
+    </div>
+
+    <!-- PART 3 -->
+    <div class="section">
+      <div class="section-title">PART 3</div>
+      <p><strong>Questions 21–30</strong></p>
+      <div class="sub-section-title">Questions 21–25</div>
+      <p class="instructions">Complete the flow-chart below. Drag and drop the correct option into each box.</p>
+      <div class="drag-container">
+        <div class="options-box" id="options-flow">
+          <div class="option" draggable="true" data-value="a">A the blood</div>
+          <div class="option" draggable="true" data-value="b">B a flower</div>
+          <div class="option" draggable="true" data-value="c">C the hive</div>
+          <div class="option" draggable="true" data-value="d">D the honey</div>
+          <div class="option" draggable="true" data-value="e">E a honeycomb cell</div>
+          <div class="option" draggable="true" data-value="f">F the queen bee</div>
+          <div class="option" draggable="true" data-value="g">G a virus</div>
+        </div>
+        <div class="process-title" style="font-weight:bold;margin:10px 0;">How the Varroa mite attacks</div>
+        <div class="flow-step">The mite moves from the bee to 21 <input type="hidden" id="q21" /><span class="drop-zone" data-question="21"></span>.</div>
+        <div class="flow-step">The mite travels to 22 <input type="hidden" id="q22" /><span class="drop-zone" data-question="22"></span> on a new host.</div>
+        <div class="flow-step">Inside, the mite enters the honeycomb cell.</div>
+        <div class="flow-step">The mite uses 23 <input type="hidden" id="q23" /><span class="drop-zone" data-question="23"></span> to hide its smell.</div>
+        <div class="flow-step">The mite feeds on 24 <input type="hidden" id="q24" /><span class="drop-zone" data-question="24"></span> of the bee larva.</div>
+        <div class="flow-step">The mite reproduces and moves on.</div>
+        <div class="flow-step">The bee is left weakened and with 25 <input type="hidden" id="q25" /><span class="drop-zone" data-question="25"></span>.</div>
+      </div>
+      <div class="sub-section-title">Questions 26–30</div>
+      <p class="instructions">What problem do the speakers identify with each of the following types of bee? Drag and drop the correct option into each box.</p>
+      <div class="drag-container">
+        <div class="options-box" id="options-bees">
+          <div class="option" draggable="true" data-value="h">A could introduce pests</div>
+          <div class="option" draggable="true" data-value="i">B needs a warm climate</div>
+          <div class="option" draggable="true" data-value="j">C not much is known about it</div>
+          <div class="option" draggable="true" data-value="k">D numbers are too few to help farmers</div>
+          <div class="option" draggable="true" data-value="l">E spreads weeds</div>
+          <div class="option" draggable="true" data-value="m">F too aggressive</div>
+          <div class="option" draggable="true" data-value="n">G unable to produce honey</div>
+        </div>
+        <div class="questions-list">
+          <div class="question">26 European Bumblebee <input type="hidden" id="q26" /><span class="drop-zone" data-question="26"></span></div>
+          <div class="question">27 Blue Banded Bee <input type="hidden" id="q27" /><span class="drop-zone" data-question="27"></span></div>
+          <div class="question">28 Africanised Bee <input type="hidden" id="q28" /><span class="drop-zone" data-question="28"></span></div>
+          <div class="question">29 Australian Stingless Bee <input type="hidden" id="q29" /><span class="drop-zone" data-question="29"></span></div>
+          <div class="question">30 Canadian Leafcutter Bee <input type="hidden" id="q30" /><span class="drop-zone" data-question="30"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PART 4 -->
+    <div class="section">
+      <div class="section-title">PART 4</div>
+      <p><strong>Questions 31–40</strong></p>
+      <p class="instructions">Complete the notes below. Write <strong>ONE WORD ONLY</strong> for each answer.</p>
+      <div class="note-card">
+        <p class="sub-section-title" style="text-align: center;">After Action Review Process</p>
+        <ul class="note-list">
+          <li><strong>Background</strong></li>
+          <li>▪ A way of evaluating during a project in order to make improvements</li>
+          <li>▪ Developed by the <input type="text" id="q31" class="answer-input" placeholder="31" />.</li>
+          <li><strong>Benefits</strong></li>
+          <li>▪ Not just for large projects — can also be used after:</li>
+          <li>&nbsp;&nbsp;• a staff meeting</li>
+          <li>&nbsp;&nbsp;• a <input type="text" id="q32" class="answer-input" placeholder="32" /> incident</li>
+          <li>▪ Develops better team communication because of the emphasis on <input type="text" id="q33" class="answer-input" placeholder="33" /></li>
+          <li><strong>What is an After Action Review?</strong></li>
+          <li>▪ It's a meeting that:</li>
+          <li>&nbsp;&nbsp;• concentrates on results and the <input type="text" id="q34" class="answer-input" placeholder="34" /> for them</li>
+          <li>&nbsp;&nbsp;• encourages participation</li>
+          <li>&nbsp;&nbsp;• stresses the need to <input type="text" id="q35" class="answer-input" placeholder="35" /> each other</li>
+          <li><strong>Things to remember when conducting an After Action Review</strong></li>
+          <li>▪ Use an external facilitator (so stronger team members cannot dominate)</li>
+          <li>▪ To encourage participation, get the group’s thoughts in <input type="text" id="q36" class="answer-input" placeholder="36" />.</li>
+          <li>▪ Remember to use <input type="text" id="q37" class="answer-input" placeholder="37" /> questions</li>
+          <li>▪ Give any recommendations to other team <input type="text" id="q38" class="answer-input" placeholder="38" />.</li>
+          <li>▪ Make sure you follow up on ideas and provide <input type="text" id="q39" class="answer-input" placeholder="39" /> for employees</li>
+          <li>▪ Remember to check the <input type="text" id="q40" class="answer-input" placeholder="40" /> often</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-toolbar" id="highlight-toolbar">
+      <button id="highlight-btn">Highlight</button>
+      <button class="remove-button" id="remove-highlight-btn">Remove</button>
+    </div>
+    <div class="progress-box" id="progress-box">Progress: 0/40 answered</div>
+    <div class="results" id="results"></div>
+  </div>
+  <div class="nav-row">
+    <div class="footer-question-wrapper">
+      <button class="footer-question-no" onclick="showPart(1)">
+        <span class="part-prefix">Part</span>
+        <span class="part-nr">1</span>
+        <span class="attempted-count" id="attempted-count-1"></span>
+      </button>
+      <div class="subquestion-wrapper">
+        <a class="sub-question" href="#q1" data-q="1">1</a>
+        <a class="sub-question" href="#q2" data-q="2">2</a>
+        <a class="sub-question" href="#q3" data-q="3">3</a>
+        <a class="sub-question" href="#q4" data-q="4">4</a>
+        <a class="sub-question" href="#q5" data-q="5">5</a>
+        <a class="sub-question" href="#q6" data-q="6">6</a>
+        <a class="sub-question" href="#q7" data-q="7">7</a>
+        <a class="sub-question" href="#q8" data-q="8">8</a>
+        <a class="sub-question" href="#q9" data-q="9">9</a>
+        <a class="sub-question" href="#q10" data-q="10">10</a>
+      </div>
+    </div>
+    <div class="footer-question-wrapper">
+      <button class="footer-question-no" onclick="showPart(2)">
+        <span class="part-prefix">Part</span>
+        <span class="part-nr">2</span>
+        <span class="attempted-count" id="attempted-count-2"></span>
+      </button>
+      <div class="subquestion-wrapper">
+        <a class="sub-question" href="#q11to12" data-q="11">11</a>
+        <a class="sub-question" href="#q11to12" data-q="12">12</a>
+        <a class="sub-question" href="#q13to14" data-q="13">13</a>
+        <a class="sub-question" href="#q13to14" data-q="14">14</a>
+        <a class="sub-question" href="#q15" data-q="15">15</a>
+        <a class="sub-question" href="#q16" data-q="16">16</a>
+        <a class="sub-question" href="#q17" data-q="17">17</a>
+        <a class="sub-question" href="#q18" data-q="18">18</a>
+        <a class="sub-question" href="#q19" data-q="19">19</a>
+        <a class="sub-question" href="#q20" data-q="20">20</a>
+      </div>
+    </div>
+    <div class="footer-question-wrapper">
+      <button class="footer-question-no" onclick="showPart(3)">
+        <span class="part-prefix">Part</span>
+        <span class="part-nr">3</span>
+        <span class="attempted-count" id="attempted-count-3"></span>
+      </button>
+      <div class="subquestion-wrapper">
+        <a class="sub-question" href="#q21" data-q="21">21</a>
+        <a class="sub-question" href="#q22" data-q="22">22</a>
+        <a class="sub-question" href="#q23" data-q="23">23</a>
+        <a class="sub-question" href="#q24" data-q="24">24</a>
+        <a class="sub-question" href="#q25" data-q="25">25</a>
+        <a class="sub-question" href="#q26" data-q="26">26</a>
+        <a class="sub-question" href="#q27" data-q="27">27</a>
+        <a class="sub-question" href="#q28" data-q="28">28</a>
+        <a class="sub-question" href="#q29" data-q="29">29</a>
+        <a class="sub-question" href="#q30" data-q="30">30</a>
+      </div>
+    </div>
+    <div class="footer-question-wrapper">
+      <button class="footer-question-no" onclick="showPart(4)">
+        <span class="part-prefix">Part</span>
+        <span class="part-nr">4</span>
+        <span class="attempted-count" id="attempted-count-4"></span>
+      </button>
+      <div class="subquestion-wrapper">
+        <a class="sub-question" href="#q31" data-q="31">31</a>
+        <a class="sub-question" href="#q32" data-q="32">32</a>
+        <a class="sub-question" href="#q33" data-q="33">33</a>
+        <a class="sub-question" href="#q34" data-q="34">34</a>
+        <a class="sub-question" href="#q35" data-q="35">35</a>
+        <a class="sub-question" href="#q36" data-q="36">36</a>
+        <a class="sub-question" href="#q37" data-q="37">37</a>
+        <a class="sub-question" href="#q38" data-q="38">38</a>
+        <a class="sub-question" href="#q39" data-q="39">39</a>
+        <a class="sub-question" href="#q40" data-q="40">40</a>
+      </div>
+    </div>
+    <div class="footer-submit-wrapper">
+      <button class="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    </div>
+  </div>
+  <script>
+    const correctAnswers = {
+      1: 'weight',
+      2: 'back',
+      3: 'beginners',
+      4: 'mat',
+      5: 'jumps',
+      6: 'competition',
+      7: 'snack',
+      8: 'work',
+      9: 'heart',
+      10: 'reception',
+      '11to12': ['e', 'c'],
+      '13to14': ['b', 'd'],
+      15: 'g',
+      16: 'b',
+      17: 'h',
+      18: 'd',
+      19: 'f',
+      20: 'e',
+      21: 'b',
+      22: 'c',
+      23: 'd',
+      24: 'a',
+      25: 'g',
+      26: 'l',
+      27: 'j',
+      28: 'm',
+      29: 'i',
+      30: 'k',
+      31: 'army',
+      32: 'safety',
+      33: 'learning',
+      34: 'reasons',
+      35: 'trust',
+      36: 'writing',
+      37: 'open',
+      38: 'leaders',
+      39: 'training',
+      40: 'time'
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const checkboxes11to12 = document.querySelectorAll('input[name="q11to12"]');
+      checkboxes11to12.forEach(cb => {
+        cb.addEventListener('change', function() {
+          const checked = Array.from(checkboxes11to12).filter(c => c.checked);
+          if (checked.length > 2) {
+            this.checked = false;
+            const errorDiv = document.getElementById('q11to12-error');
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 2000);
+          } else {
+            document.getElementById('q11to12-error').style.display = 'none';
+          }
+          updateProgress();
+        });
+      });
+
+      const checkboxes13to14 = document.querySelectorAll('input[name="q13to14"]');
+      checkboxes13to14.forEach(cb => {
+        cb.addEventListener('change', function() {
+          const checked = Array.from(checkboxes13to14).filter(c => c.checked);
+          if (checked.length > 2) {
+            this.checked = false;
+            const errorDiv = document.getElementById('q13to14-error');
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 2000);
+          } else {
+            document.getElementById('q13to14-error').style.display = 'none';
+          }
+          updateProgress();
+        });
+      });
+    });
+
+    let currentDragItem = null;
+    const dragItems = document.querySelectorAll('.option');
+    dragItems.forEach(item => {
+      item.addEventListener('dragstart', dragStart);
+    });
+    const dropZones = document.querySelectorAll('.drop-zone');
+    dropZones.forEach(zone => {
+      zone.addEventListener('dragover', dragOver);
+      zone.addEventListener('drop', dropped);
+    });
+
+    function dragStart(e) {
+      e.dataTransfer.setData('text/plain', e.target.dataset.value);
+      currentDragItem = e.target;
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+    }
+
+    function dropped(e) {
+      e.preventDefault();
+      const letter = e.dataTransfer.getData('text/plain');
+      const zone = e.target.closest('.drop-zone');
+      if (!zone) return;
+      const qnum = zone.getAttribute('data-question');
+      if (!qnum) return;
+      const qNumInt = parseInt(qnum, 10);
+      if (qNumInt >= 15 && qNumInt <= 30) {
+        const existingItem = zone.querySelector('.option');
+        if (existingItem) {
+          const hiddenOld = document.getElementById('q' + qnum);
+          if (hiddenOld) hiddenOld.value = '';
+          const optionsContainer = existingItem.closest('.drag-container').querySelector('.options-box');
+          optionsContainer.appendChild(existingItem);
+        }
+        if (currentDragItem) {
+          const hidden = document.getElementById('q' + qnum);
+          if (hidden) hidden.value = currentDragItem.dataset.value;
+          zone.innerHTML = '';
+          zone.appendChild(currentDragItem);
+          currentDragItem.style.display = 'inline-block';
+        }
+        sortDragOptions(zone.closest('.drag-container').querySelector('.options-box').id);
+        updateProgress();
+      }
+    }
+
+    function sortDragOptions(containerId) {
+      const container = document.getElementById(containerId);
+      if (container) {
+        const items = Array.from(container.children);
+        items.sort((a, b) => {
+          const av = a.dataset.value;
+          const bv = b.dataset.value;
+          return av.localeCompare(bv);
+        });
+        items.forEach(item => container.appendChild(item));
+      }
+    }
+
+    function submitAnswers() {
+      let correctCount = 0;
+      document.querySelectorAll('.answer-input, .drop-zone, .mc-question').forEach(el => {
+        el.classList.remove('correct', 'incorrect');
+      });
+      document.querySelectorAll('.mc-question, .note-card, .drop-zone').forEach(container => {
+        container.querySelectorAll('.correct-answer').forEach(span => span.remove());
+      });
+
+      for (let q = 1; q <= 40; q++) {
+        if (q >= 11 && q <= 12) {
+          if (q === 11) {
+            const checkboxes = document.querySelectorAll('input[name="q11to12"]:checked');
+            const userValue = Array.from(checkboxes).map(cb => cb.value.toLowerCase());
+            console.log('Q11-12 User Answers:', userValue); // Debugging
+            const correctAns = correctAnswers['11to12'];
+            const correctSelections = userValue.filter(val => correctAns.includes(val)).length;
+            const questionDiv = document.getElementById('q11to12');
+            correctCount += correctSelections;
+            if (correctSelections > 0) {
+              questionDiv.classList.add('correct');
+              ['11', '12'].forEach((qNum, idx) => {
+                const navLink = document.querySelector('.sub-question[data-q="' + qNum + '"]');
+                if (navLink && idx < correctSelections) {
+                  navLink.classList.add('correct');
+                } else if (navLink) {
+                  navLink.classList.add('incorrect');
+                }
+              });
+            } else {
+              questionDiv.classList.add('incorrect');
+              ['11', '12'].forEach(qNum => {
+                const navLink = document.querySelector('.sub-question[data-q="' + qNum + '"]');
+                if (navLink) navLink.classList.add('incorrect');
+              });
+            }
+            if (correctSelections < 2) {
+              const ansSpan = document.createElement('span');
+              ansSpan.className = 'correct-answer';
+              ansSpan.textContent = ' (Correct answers: ' + correctAns.map(a => a.toUpperCase()).join(', ') + ')';
+              questionDiv.appendChild(ansSpan);
+            }
+          }
+          continue;
+        }
+        if (q >= 13 && q <= 14) {
+          if (q === 13) {
+            const checkboxes = document.querySelectorAll('input[name="q13to14"]:checked');
+            const userValue = Array.from(checkboxes).map(cb => cb.value.toLowerCase());
+            console.log('Q13-14 User Answers:', userValue); // Debugging
+            const correctAns = correctAnswers['13to14'];
+            const correctSelections = userValue.filter(val => correctAns.includes(val)).length;
+            const questionDiv = document.getElementById('q13to14');
+            correctCount += correctSelections;
+            if (correctSelections > 0) {
+              questionDiv.classList.add('correct');
+              ['13', '14'].forEach((qNum, idx) => {
+                const navLink = document.querySelector('.sub-question[data-q="' + qNum + '"]');
+                if (navLink && idx < correctSelections) {
+                  navLink.classList.add('correct');
+                } else if (navLink) {
+                  navLink.classList.add('incorrect');
+                }
+              });
+            } else {
+              questionDiv.classList.add('incorrect');
+              ['13', '14'].forEach(qNum => {
+                const navLink = document.querySelector('.sub-question[data-q="' + qNum + '"]');
+                if (navLink) navLink.classList.add('incorrect');
+              });
+            }
+            if (correctSelections < 2) {
+              const ansSpan = document.createElement('span');
+              ansSpan.className = 'correct-answer';
+              ansSpan.textContent = ' (Correct answers: ' + correctAns.map(a => a.toUpperCase()).join(', ') + ')';
+              questionDiv.appendChild(ansSpan);
+            }
+          }
+          continue;
+        }
+        const correctAns = correctAnswers[q];
+        let userValue = '';
+        let isCorrect = false;
+        const inputEl = document.getElementById('q' + q);
+        if (inputEl && inputEl.tagName === 'INPUT') {
+          if (inputEl.type === 'hidden' || inputEl.type === 'text') {
+            userValue = inputEl.value.trim().toLowerCase();
+          }
+        }
+        isCorrect = userValue === correctAns;
+        const dz = document.querySelector('.drop-zone[data-question="' + q + '"]');
+        const navLink = document.querySelector('.sub-question[data-q="' + q + '"]');
+        if (navLink) {
+          navLink.classList.remove('correct', 'incorrect');
+        }
+        if (isCorrect) {
+          correctCount++;
+          if (inputEl && inputEl.type === 'text') {
+            inputEl.classList.add('correct');
+          }
+          if (dz) dz.classList.add('correct');
+          if (navLink) navLink.classList.add('correct');
+        } else {
+          if (inputEl && inputEl.type === 'text') {
+            inputEl.classList.add('incorrect');
+          }
+          if (dz) dz.classList.add('incorrect');
+          if (navLink) navLink.classList.add('incorrect');
+          if (inputEl && inputEl.type === 'text') {
+            const parent = inputEl.parentNode;
+            if (parent) {
+              parent.querySelectorAll('.correct-answer').forEach(span => span.remove());
+              const ansSpan = document.createElement('span');
+              ansSpan.className = 'correct-answer';
+              ansSpan.textContent = ' (' + correctAns + ')';
+              parent.insertBefore(ansSpan, inputEl.nextSibling);
+            }
+          } else if (dz) {
+            dz.querySelectorAll('.correct-answer').forEach(span => span.remove());
+            const ansSpan = document.createElement('span');
+            ansSpan.className = 'correct-answer';
+            ansSpan.textContent = ' (' + correctAns.toUpperCase() + ')';
+            dz.appendChild(ansSpan);
+          }
+        }
+      }
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.textContent = 'You answered ' + correctCount + ' out of 40 questions correctly.';
+    }
+
+    function updateProgress() {
+      let answered = 0;
+      for (let q = 1; q <= 40; q++) {
+        if (q >= 11 && q <= 12) {
+          if (q === 11) {
+            const checkboxes = document.querySelectorAll('input[name="q11to12"]:checked');
+            const filledCount = checkboxes.length;
+            answered += filledCount;
+            ['11', '12'].forEach((qNum, idx) => {
+              const navLink = document.querySelector('.sub-question[data-q="' + qNum + '"]');
+              if (navLink && filledCount > idx && !navLink.classList.contains('correct') && !navLink.classList.contains('incorrect')) {
+                navLink.classList.add('answered');
+              } else if (navLink) {
+                navLink.classList.remove('answered');
+              }
+            });
+          }
+          continue;
+        }
+        if (q >= 13 && q <= 14) {
+          if (q === 13) {
+            const checkboxes = document.querySelectorAll('input[name="q13to14"]:checked');
+            const filledCount = checkboxes.length;
+            answered += filledCount;
+            ['13', '14'].forEach((qNum, idx) => {
+              const navLink = document.querySelector('.sub-question[data-q="' + qNum + '"]');
+              if (navLink && filledCount > idx && !navLink.classList.contains('correct') && !navLink.classList.contains('incorrect')) {
+                navLink.classList.add('answered');
+              } else if (navLink) {
+                navLink.classList.remove('answered');
+              }
+            });
+          }
+          continue;
+        }
+        const navLink = document.querySelector('.sub-question[data-q="' + q + '"]');
+        let filled = false;
+        const inputEl = document.getElementById('q' + q);
+        if (inputEl && inputEl.tagName === 'INPUT') {
+          if (inputEl.type === 'text' || inputEl.type === 'hidden') {
+            filled = inputEl.value.trim().length > 0;
+          }
+        }
+        if (filled) {
+          answered++;
+          if (navLink && !navLink.classList.contains('correct') && !navLink.classList.contains('incorrect')) {
+            navLink.classList.add('answered');
+          }
+        } else {
+          if (navLink) navLink.classList.remove('answered');
+        }
+      }
+      const progressBox = document.getElementById('progress-box');
+      if (progressBox) {
+        progressBox.textContent = 'Progress: ' + answered + '/40 answered';
+      }
+    }
+
+    function showPart(part) {
+      const parts = document.querySelectorAll('.section');
+      parts.forEach((sec, index) => {
+        sec.style.display = index === part - 1 ? '' : 'none';
+      });
+      const wrappers = document.querySelectorAll('.footer-question-wrapper');
+      wrappers.forEach((w, idx) => {
+        w.classList.toggle('active', idx === part - 1);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      showPart(1);
+      updateProgress();
+      document.querySelectorAll('input').forEach(el => {
+        el.addEventListener('input', updateProgress);
+        el.addEventListener('change', updateProgress);
+      });
+      document.querySelectorAll('.sub-question').forEach(link => {
+        link.addEventListener('click', function(e) {
+          const q = parseInt(this.getAttribute('data-q'));
+          let part;
+          if (q <= 10) part = 1;
+          else if (q <= 20) part = 2;
+          else if (q <= 30) part = 3;
+          else part = 4;
+          showPart(part);
+        });
+      });
+
+      ['options-part2', 'options-flow', 'options-bees'].forEach(containerId => {
+        const optionsBox = document.getElementById(containerId);
+        if (optionsBox) {
+          optionsBox.addEventListener('dragover', function(evt) {
+            evt.preventDefault();
+          });
+          optionsBox.addEventListener('drop', function(evt) {
+            evt.preventDefault();
+            if (currentDragItem) {
+              const parentZone = currentDragItem.parentElement;
+              if (parentZone && parentZone.classList.contains('drop-zone')) {
+                const qnum = parentZone.getAttribute('data-question');
+                if (qnum) {
+                  const hidden = document.getElementById('q' + qnum);
+                  if (hidden) hidden.value = '';
+                }
+                parentZone.textContent = '';
+              }
+              optionsBox.appendChild(currentDragItem);
+              currentDragItem.style.display = 'inline-block';
+              currentDragItem = null;
+              sortDragOptions(containerId);
+              updateProgress();
+            }
+          });
+        }
+      });
+
+      let selectedHighlight = null;
+      const selectionMenu = document.getElementById('highlight-toolbar');
+      function clearSelection() {
+        const sel = window.getSelection();
+        if (sel) sel.removeAllRanges();
+      }
+      document.addEventListener('mouseup', function(ev) {
+        const sel = window.getSelection();
+        if (sel && sel.toString().length > 0) {
+          const range = sel.getRangeAt(0);
+          const rect = range.getBoundingClientRect();
+          selectionMenu.style.display = 'block';
+          selectionMenu.style.top = (rect.top + window.scrollY - selectionMenu.offsetHeight - 5) + 'px';
+          selectionMenu.style.left = (rect.left + window.scrollX) + 'px';
+          selectionMenu.querySelector('#highlight-btn').style.display = 'inline-block';
+          selectionMenu.querySelector('#remove-highlight-btn').style.display = 'none';
+          window.__selectionRange = range;
+        } else {
+          if (!ev.target.classList.contains('highlight')) {
+            selectionMenu.style.display = 'none';
+          }
+        }
+      });
+      document.getElementById('highlight-btn').addEventListener('click', function() {
+        const range = window.__selectionRange;
+        if (range) {
+          const span = document.createElement('span');
+          span.className = 'highlight';
+          try {
+            range.surroundContents(span);
+          } catch (err) {
+            // ignore errors
+          }
+          selectionMenu.style.display = 'none';
+          clearSelection();
+        }
+      });
+      document.addEventListener('click', function(ev) {
+        if (ev.target.classList.contains('highlight')) {
+          selectedHighlight = ev.target;
+          const rect = selectedHighlight.getBoundingClientRect();
+          selectionMenu.style.display = 'block';
+          selectionMenu.style.top = (rect.top + window.scrollY - selectionMenu.offsetHeight - 5) + 'px';
+          selectionMenu.style.left = (rect.left + window.scrollX) + 'px';
+          selectionMenu.querySelector('#highlight-btn').style.display = 'none';
+          selectionMenu.querySelector('#remove-highlight-btn').style.display = 'inline-block';
+        }
+      });
+      document.getElementById('remove-highlight-btn').addEventListener('click', function() {
+        if (selectedHighlight) {
+          const parent = selectedHighlight.parentNode;
+          while (selectedHighlight.firstChild) {
+            parent.insertBefore(selectedHighlight.firstChild, selectedHighlight);
+          }
+          parent.removeChild(selectedHighlight);
+          selectedHighlight = null;
+          selectionMenu.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

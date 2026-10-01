@@ -43,3 +43,6 @@ out/
 *.sw?
 .DS_Store
 Thumbs.db
+
+# Scratch directory
+scratch/

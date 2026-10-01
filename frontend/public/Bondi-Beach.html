@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Reading Practice: Bondi Beach</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .passage-container {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            position: relative;
+        }
+        .questions-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .timer {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        h2 {
+            color: #3498db;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .question-number {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 5px;
+        }
+        .answer-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .dropdown {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+            display: none;
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .highlight {
+            background-color: yellow;
+            cursor: pointer;
+        }
+        .telegram-btn {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .corner-decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 3px solid #3498db;
+            opacity: 0.3;
+        }
+        .top-left {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+        .top-right {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+        .bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+        .bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="passage-container">
+            <div class="corner-decoration top-left"></div>
+            <div class="corner-decoration top-right"></div>
+            <div class="corner-decoration bottom-left"></div>
+            <div class="corner-decoration bottom-right"></div>
+            <div class="timer" id="timer">20:00</div>
+            <h1>Bondi Beach</h1>
+            <p>Bondi is Australia's most famous beach, but how did this come about?</p>
+            
+            <p>Australians have not always valued Sydney's Bondi Beach. Beaches attracted little attention in the first century of British colonial settlement, when it was the country's desert interior that stirred the settlers' imagination. The visual image of Australia was based on stories of explorers searching in the dry red centre for an inland sea, of men driving cattle vast distances, or shearing sheep in hot dusty sheds. It was a cultural landscape developed in hardship and tragedy.</p>
+            
+            <p>Before the British settlement, there had been a strong traditional connection to the coast among Aboriginal people, the indigenous inhabitants of Australia, and evidence of this connection can still be seen. In 1788 Governor Phillip, who established the first British settlement on the eastern coast of Australia, estimated that there were approximately 1500 Aboriginal people living within a 10-mile radius of Sydney Harbour. But by the 1820s the local Aboriginal population had largely disappeared as a result of contact with the diseases brought by the settlers. In the minds of the new settlers, Aboriginal culture would come to be predominantly associated with the inland desert. The cultural associations that formed around Australia's beach landscape would, in turn, be almost entirely European in nature. Compared with the 'ancient' and bicultural mythology of Australia's interior, its beach culture would be depicted as being wholly modern and Western.</p>
+            
+            <p>At the end of the 19th century, the beach emerged in art and literature as an alternative cultural landscape to the mythology of the interior. The two settings were similar in that they shared an idea of purity because of their association with nature, but otherwise they represented vastly different qualities. The interior of the country represented hard work and suffering, while the coast evoked images of health, leisure and egalitarianism.</p>
+            
+            <p>In Britain, the association of beaches with health received royal blessing in 1763 when a prominent member of the royal family attended the health spas at Brighton Beach on the English coast, and built a pavilion there. With its entertainment, hotels and weekend villas, Brighton became the model for beaches throughout Britain's colonies. Reflecting the English resort's influence, seven Sydney beach suburbs still have a Brighton Street. Sydney's beach suburbs, rising to prominence in the late 19th century, shared Brighton's association with health. The perception of the city's beaches as places of purity and well-being was strengthened by contrast with the increasingly polluted city centre.</p>
+            
+            <p>By the end of the 19th century, Sydney's beaches had begun to differ in their socio-economic characteristics. The beach in the suburb of Coogee was the first ocean beach to become accessible by tram from the city. Promoted as a garden suburb, Coogee became a recreational meeting place for the city's middle class. The suburb of Manly, with its beach and esplanade, copied the British resort model, and attracted the city's wealthy class living in the northern suburbs as well as holiday-makers from farms in the countryside.</p>
+            
+            <p>The suburb of Bondi was developed after Coogee and Manly and took on a character distinct from the city's other beach suburbs. With the extension of the tram line to Bondi in the 1890s, a number of substantial properties were built there. Property developers, expecting continued middle-class development, subdivided the area into house-sized plots. However, a sudden demand for housing in the first decade of the 20th century saw the plans for houses put aside, and investors built blocks of flats instead. A treeless plain of red-roofed apartments began to spread its way across Bondi. Built with cheap local bricks, the size and quality of the apartments were generally more modest than those in neighbouring suburbs, and quickly attracted a population of rent-paying, working-class tenants.</p>
+            
+            <p>With tram access extended all the way to the beach, Bondi also became the most accessible ocean beach to people living in the inner city, who were mostly working class. The pleasures of the sun, sea and surf were not only for the wealthy, but free to all. The Australian notion of beaches as places of social equality became established, and Bondi exemplified this precisely.</p>
+            
+            <p>Bondi's identity as a largely working-class suburb began to change in the 1950s. The suburb and its beach first came to international attention in 1954 when Queen Elizabeth of England and her husband Prince Philip attended a surf carnival there. Since then, Bondi has become one of Sydney's most used sites for large-scale public events. The film industry quickly built on the fame that Bondi beach acquired as a result of the surf carnival, and since then it has been the location of many Australian films. With the expanding use of Bondi as a media setting, the suburb became home to a community of artists as well as film and television workers. Since the 1970s Bondi has become the almost inevitable backdrop for any artistic or commercial project in Sydney that requires a beach setting. Bondi is now famous simply for being famous.</p>
+            
+            <p>In the preparations for the 2000 Olympic Games, Bondi was nominated to host the 10,000-seat beach volleyball stadium. Some people in the Bondi community did not support the proposal because of concerns for the environment, but the opposition was dismissed by the Olympics Organising Committee. There were good practical reasons for the Committee to support Bondi's hosting of the event, but the main reason the Committee insisted the stadium be built there was the international expectation that Bondi, as Australia's best known beach, would be the stadium's scenic backdrop.</p>
+        </div>
+        
+        <div class="questions-container">
+            <h2>Questions 1-6</h2>
+            <p>Do the following statements agree with the information given in Reading Passage 1?</p>
+            <p>In boxes 1-6 on your answer sheet, write</p>
+            <p><strong>TRUE</strong> if the statement agrees with the information<br>
+            <strong>FALSE</strong> if the statement contradicts the information<br>
+            <strong>NOT GIVEN</strong> if there is no information on this</p>
+            
+            <div class="question">
+                <div class="question-number">1. Bondi beach has been popular since the arrival of the first British settlers in Australia.</div>
+                <select class="dropdown" id="q1">
+                    <option value="">Select answer</option>
+                    <option value="TRUE">TRUE</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="NOT GIVEN">NOT GIVEN</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">2. Aborigines in the centre of Australia had a different culture from those on the coast.</div>
+                <select class="dropdown" id="q2">
+                    <option value="">Select answer</option>
+                    <option value="TRUE">TRUE</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="NOT GIVEN">NOT GIVEN</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">3. Contemporary Australian beach culture reflects Aboriginal traditions.</div>
+                <select class="dropdown" id="q3">
+                    <option value="">Select answer</option>
+                    <option value="TRUE">TRUE</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="NOT GIVEN">NOT GIVEN</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">4. At the end of the 19th century, some parts of Australia were associated with a difficult life.</div>
+                <select class="dropdown" id="q4">
+                    <option value="">Select answer</option>
+                    <option value="TRUE">TRUE</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="NOT GIVEN">NOT GIVEN</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">5. Sydney's beach suburbs were influenced by a seaside town in England.</div>
+                <select class="dropdown" id="q5">
+                    <option value="">Select answer</option>
+                    <option value="TRUE">TRUE</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="NOT GIVEN">NOT GIVEN</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">6. At the end of the 19th century, Sydney's beaches were regarded as unhealthy places to be.</div>
+                <select class="dropdown" id="q6">
+                    <option value="">Select answer</option>
+                    <option value="TRUE">TRUE</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="NOT GIVEN">NOT GIVEN</option>
+                </select>
+            </div>
+            
+            <h2>Questions 7-13</h2>
+            <p>Answer the questions below.</p>
+            <p>Choose NO MORE THAN THREE WORDS AND/OR A NUMBER from the passage for each answer.</p>
+            
+            <div class="question">
+                <div class="question-number">7. What form of public transport could people use to get to the beach at the end of the 19th century?</div>
+                <input type="text" class="answer-input" id="q7">
+            </div>
+            
+            <div class="question">
+                <div class="question-number">8. Which beachside suburb was popular with people from rural areas?</div>
+                <input type="text" class="answer-input" id="q8">
+            </div>
+            
+            <div class="question">
+                <div class="question-number">9. Which suburb helped to meet the needs of Sydney's accommodation shortage?</div>
+                <input type="text" class="answer-input" id="q9">
+            </div>
+            
+            <div class="question">
+                <div class="question-number">10. When did British royalty visit Bondi?</div>
+                <input type="text" class="answer-input" id="q10">
+            </div>
+            
+            <div class="question">
+                <div class="question-number">11. Which industry is Bondi now associated with?</div>
+                <input type="text" class="answer-input" id="q11">
+            </div>
+            
+            <div class="question">
+                <div class="question-number">12. What sporting event at the 2000 Olympic Games was held at Bondi?</div>
+                <input type="text" class="answer-input" id="q12">
+            </div>
+            
+            <div class="question">
+                <div class="question-number">13. What did people think could be damaged by building a stadium on Bondi Beach?</div>
+                <input type="text" class="answer-input" id="q13">
+            </div>
+            
+            <button class="submit-btn" id="submit-btn">Submit Answers</button>
+            <a href="https://t.me/yourchannel" class="telegram-btn" target="_blank">Join My Telegram Channel</a>
+            
+            <div class="result-container" id="result-container">
+                <h2>Results and Explanations</h2>
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Timer functionality
+        let timeLeft = 20 * 60; // 20 minutes in seconds
+        const timer = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            timer.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timer.textContent = "Time's up!";
+                submitAnswers();
+            } else {
+                timeLeft--;
+            }
+        }, 1000);
+        
+        // Highlighting functionality
+        const passage = document.querySelector('.passage-container');
+        let isHighlighting = false;
+        
+        passage.addEventListener('mousedown', (e) => {
+            if (e.target.tagName === 'P' || e.target.tagName === 'SPAN') {
+                isHighlighting = true;
+                toggleHighlight(e.target);
+            }
+        });
+        
+        passage.addEventListener('mouseup', () => {
+            isHighlighting = false;
+        });
+        
+        passage.addEventListener('mouseover', (e) => {
+            if (isHighlighting && (e.target.tagName === 'P' || e.target.tagName === 'SPAN')) {
+                toggleHighlight(e.target);
+            }
+        });
+        
+        function toggleHighlight(element) {
+            if (element.tagName === 'P') {
+                // Create a range to highlight part of the paragraph
+                const range = document.createRange();
+                const textNode = element.firstChild;
+                range.setStart(textNode, 0);
+                range.setEnd(textNode, textNode.length);
+                
+                const span = document.createElement('span');
+                span.className = 'highlight';
+                range.surroundContents(span);
+            } else if (element.classList.contains('highlight')) {
+                // Remove highlighting
+                const parent = element.parentNode;
+                parent.replaceChild(document.createTextNode(element.textContent), element);
+            }
+        }
+        
+        // Answer checking functionality
+        document.getElementById('submit-btn').addEventListener('click', submitAnswers);
+        
+        function submitAnswers() {
+            clearInterval(countdown);
+            
+            const answers = {
+                q1: document.getElementById('q1').value,
+                q2: document.getElementById('q2').value,
+                q3: document.getElementById('q3').value,
+                q4: document.getElementById('q4').value,
+                q5: document.getElementById('q5').value,
+                q6: document.getElementById('q6').value,
+                q7: document.getElementById('q7').value.trim().toLowerCase(),
+                q8: document.getElementById('q8').value.trim().toLowerCase(),
+                q9: document.getElementById('q9').value.trim().toLowerCase(),
+                q10: document.getElementById('q10').value.trim().toLowerCase(),
+                q11: document.getElementById('q11').value.trim().toLowerCase(),
+                q12: document.getElementById('q12').value.trim().toLowerCase(),
+                q13: document.getElementById('q13').value.trim().toLowerCase()
+            };
+            
+            const correctAnswers = {
+                q1: "FALSE",
+                q2: "NOT GIVEN",
+                q3: "FALSE",
+                q4: "TRUE",
+                q5: "TRUE",
+                q6: "FALSE",
+                q7: "tram",
+                q8: "manly",
+                q9: "bondi",
+                q10: "1954",
+                q11: "film",
+                q12: "beach volleyball",
+                q13: "environment"
+            };
+            
+            const explanations = {
+                q1: "The passage states that 'Australians have not always valued Sydney's Bondi Beach' and that beaches attracted little attention in the first century of British settlement.",
+                q2: "The passage mentions differences between coastal and inland Aboriginal associations, but doesn't specifically state their cultures were different.",
+                q3: "The passage states that Australia's beach culture would be 'almost entirely European in nature' and 'wholly modern and Western', not reflecting Aboriginal traditions.",
+                q4: "The passage describes the interior as representing 'hard work and suffering' and 'a cultural landscape developed in hardship and tragedy'.",
+                q5: "The passage mentions that Brighton in England became the model for beaches throughout Britain's colonies, including Sydney's beach suburbs.",
+                q6: "The passage states that Sydney's beaches were regarded as 'places of purity and well-being', not unhealthy places.",
+                q7: "The passage mentions that 'the beach in the suburb of Coogee was the first ocean beach to become accessible by tram' and later mentions tram access to Bondi.",
+                q8: "The passage states that Manly 'attracted the city's wealthy class... as well as holiday-makers from farms in the countryside'.",
+                q9: "The passage describes how Bondi's development changed to meet housing needs with 'blocks of flats' for working-class tenants.",
+                q10: "The passage states that 'The suburb and its beach first came to international attention in 1954 when Queen Elizabeth of England... attended a surf carnival there'.",
+                q11: "The passage mentions that 'The film industry quickly built on the fame that Bondi beach acquired' and it has been the location of many Australian films.",
+                q12: "The passage states that Bondi was nominated to host 'the 10,000-seat beach volleyball stadium' for the 2000 Olympics.",
+                q13: "The passage mentions that 'Some people in the Bondi community did not support the proposal because of concerns for the environment'."
+            };
+            
+            let resultsHTML = "";
+            let score = 0;
+            
+            for (let i = 1; i <= 13; i++) {
+                const q = 'q' + i;
+                const userAnswer = answers[q];
+                const correctAnswer = correctAnswers[q];
+                
+                if (i <= 6) {
+                    // True/False/Not Given questions
+                    if (userAnswer === correctAnswer) {
+                        resultsHTML += `<p><span class="correct">Question ${i}: Correct!</span> Your answer: ${userAnswer}<br>
+                            <div class="explanation">${explanations[q]}</div></p>`;
+                        score++;
+                    } else {
+                        resultsHTML += `<p><span class="incorrect">Question ${i}: Incorrect.</span> Your answer: ${userAnswer || 'No answer'} | Correct answer: ${correctAnswer}<br>
+                            <div class="explanation">${explanations[q]}</div></p>`;
+                    }
+                } else {
+                    // Short answer questions
+                    if (userAnswer === correctAnswer) {
+                        resultsHTML += `<p><span class="correct">Question ${i}: Correct!</span> Your answer: ${userAnswer}<br>
+                            <div class="explanation">${explanations[q]}</div></p>`;
+                        score++;
+                    } else {
+                        resultsHTML += `<p><span class="incorrect">Question ${i}: Incorrect.</span> Your answer: ${userAnswer || 'No answer'} | Correct answer: ${correctAnswer}<br>
+                            <div class="explanation">${explanations[q]}</div></p>`;
+                    }
+                }
+            }
+            
+            resultsHTML += `<p><strong>Total score: ${score}/13 (${Math.round((score/13)*100)}%)</strong></p>`;
+            
+            document.getElementById('results').innerHTML = resultsHTML;
+            document.getElementById('result-container').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

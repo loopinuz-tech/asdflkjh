@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Listening Test</title>
+    <style>
+        /* --- CORE STYLES --- */
+        :root {
+            --primary-color: #e31e24;
+            --accent-color: #007acc;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #d9d9d9;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ielts-logo {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .audio-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+
+        audio {
+            height: 32px;
+            width: 300px;
+            border-radius: 16px;
+            outline: none;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.complete {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .main-container {
+            max-width: 900px;
+            margin: 90px auto 100px auto; 
+            padding: 0 20px;
+        }
+
+        .part-header {
+            margin-bottom: 25px;
+        }
+
+        .part-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .part-instruction {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        /* --- CARDS & QUESTIONS --- */
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .instruction-box {
+            background: #e6f2ff;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #004085;
+        }
+
+        .scenario-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        /* --- INPUT STYLES --- */
+        .answer-input {
+            border: 2px solid var(--border-color);
+            background: #fff;
+            padding: 8px 12px;
+            font-size: 15px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            outline: none;
+            text-align: center;
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+
+        .answer-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
+        }
+
+        /* --- MULTIPLE CHOICE STYLES --- */
+        .mcq-option {
+            display: block;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .mcq-option:hover {
+            background: #eef2f5;
+        }
+
+        .mcq-option input[type="radio"],
+        .mcq-option input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+
+        .mcq-option.selected {
+            background: #e6f2ff;
+            border-color: var(--accent-color);
+        }
+
+        /* --- DRAG AND DROP STYLES --- */
+        .draggable-item {
+            padding: 10px 14px;
+            background: white;
+            border: 1.5px solid #d0d7de;
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            transition: box-shadow 0.15s, opacity 0.2s, transform 0.1s;
+            font-size: 15px;
+        }
+
+        .draggable-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(0,122,204,0.18);
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(0.98);
+        }
+
+        .draggable-item.used {
+            opacity: 0.28;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: #f0f0f0;
+        }
+
+        .draggable-item.dragging {
+            opacity: 0.45;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        }
+
+        .drop-zone {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-height: 46px;
+            height: auto;
+            padding: 8px 14px;
+            border: 2px dashed #bbb;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: all 0.2s;
+            font-size: 15px;
+            color: #444;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .drop-zone::before {
+            content: 'Drop here';
+            color: #bbb;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .drop-zone.has-item::before {
+            content: none;
+        }
+
+        .drop-zone.drag-over {
+            background: #e6f2ff;
+            border-color: var(--accent-color);
+            border-style: solid;
+        }
+
+        .drop-zone.has-item {
+            border-style: solid;
+            border-color: var(--accent-color);
+            background: #eef6ff;
+        }
+
+        /* --- TABLES & LISTS --- */
+        .form-layout p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        ul.form-list {
+            list-style-type: disc;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        ul.form-list li {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .question-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .question-table th, .question-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+            background: #fff;
+        }
+
+        .question-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        /* --- FOOTER NAVIGATION --- */
+        .footer {
+            background: white;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .nav-btn:disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            cursor: not-allowed;
+        }
+
+        .part-pills {
+            display: flex;
+            gap: 10px;
+            margin: 0 20px;
+        }
+
+        .part-pill {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .part-pill.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .part-pill.completed {
+            border-color: var(--success);
+        }
+
+        .fade {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="ielts-logo">IELTS</div>
+        </div>
+        <div class="header-right">
+            <div class="audio-wrapper">
+                <audio id="audioPlayer" preload="auto" controls>
+                    <source src="" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            <button id="headerCheckBtn" onclick="checkAnswers()" class="action-btn">Check Answers</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        
+        <div id="part1" class="fade" style="display: none;">
+            <div class="part-header">
+                <div class="part-title">Section 1</div>
+                <div class="part-instruction">Listen and answer questions 1-10.</div>
+            </div>
+
+            <div class="question-card">
+                <div class="instruction-box">
+                    Questions 1-10<br>
+                    Complete the notes below.<br>
+                    Write <strong>ONE WORD AND/OR A NUMBER</strong> for each answer.
+                </div>
+                
+                <div class="scenario-title" style="text-decoration: underline;">Library Services</div>
+                
+                <div class="form-layout" style="background: #fafafa; padding: 25px; border: 1px solid #ddd; border-radius: 8px;">
+                    <p style="font-weight: bold; font-size: 16px;">Area of living:</p>
+                    <ul class="form-list" style="list-style-type: none; margin-left: 0;">
+                        <li>in the west of Perthot</li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 16px;">Best option: Minack Library</p>
+                    <ul class="form-list">
+                        <li>Located in <strong>1</strong> <input type="text" class="answer-input" data-question="1" placeholder="1"> Street, next to the <strong>2</strong> <input type="text" class="answer-input" data-question="2" placeholder="2"></li>
+                        <li>Saturdays: open until <strong>3</strong> <input type="text" class="answer-input" data-question="3" placeholder="3"> p.m.</li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 18px; margin-top: 25px; margin-bottom: 10px;">Children's activities</p>
+                    <ul class="form-list">
+                        <li>a <strong>4</strong> <input type="text" class="answer-input" data-question="4" placeholder="4"> club (5-13 year-olds)</li>
+                        <li>a <strong>5</strong> <input type="text" class="answer-input" data-question="5" placeholder="5"> club (every other Saturday)</li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 18px; margin-top: 25px; margin-bottom: 10px;">Adult activities</p>
+                    <ul class="form-list">
+                        <li>Book of the Month club</li>
+                        <li>can meet local <strong>6</strong> <input type="text" class="answer-input" data-question="6" placeholder="6"> (about one a year)</li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 18px; margin-top: 25px; margin-bottom: 10px;">Services</p>
+                    <ul class="form-list">
+                        <li>can borrow <strong>7</strong> <input type="text" class="answer-input" data-question="7" placeholder="7"></li>
+                        <li>computers are available (can be booked)</li>
+                        <li>various <strong>8</strong> <input type="text" class="answer-input" data-question="8" placeholder="8"> are available</li>
+                        <li>can drop off books, etc. via the letter box (must give card <strong>9</strong> <input type="text" class="answer-input" data-question="9" placeholder="9">)</li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 18px; margin-top: 25px; margin-bottom: 10px;">Library shop sells</p>
+                    <ul class="form-list">
+                        <li>postcards (small selection)</li>
+                        <li><strong>10</strong> <input type="text" class="answer-input" data-question="10" placeholder="10"> (wide range)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="part2" class="fade" style="display: none;">
+            <div class="part-header">
+                <div class="part-title">Section 2</div>
+                <div class="part-instruction">Listen and answer questions 11-20.</div>
+            </div>
+
+            <div class="question-card">
+                <div class="instruction-box">Questions 11-16<br>Choose the correct letter <strong>A, B or C</strong>.</div>
+                <div class="scenario-title">Museum Tour</div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">11. What does the tour guide advise the visitors to do in the museum today?</p>
+                    <label class="mcq-option"><input type="radio" name="q11" value="A" data-question="11"> <strong>A</strong> see the most popular exhibits first</label>
+                    <label class="mcq-option"><input type="radio" name="q11" value="B" data-question="11"> <strong>B</strong> pay a brief visit to each gallery</label>
+                    <label class="mcq-option"><input type="radio" name="q11" value="C" data-question="11"> <strong>C</strong> go to the photography gallery last</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">12. The museum was designed by William Craven, who also designed</p>
+                    <label class="mcq-option"><input type="radio" name="q12" value="A" data-question="12"> <strong>A</strong> a textile factory</label>
+                    <label class="mcq-option"><input type="radio" name="q12" value="B" data-question="12"> <strong>B</strong> the town hall</label>
+                    <label class="mcq-option"><input type="radio" name="q12" value="C" data-question="12"> <strong>C</strong> the railway station</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">13. The museum won an award for the preservation of the</p>
+                    <label class="mcq-option"><input type="radio" name="q13" value="A" data-question="13"> <strong>A</strong> staircase</label>
+                    <label class="mcq-option"><input type="radio" name="q13" value="B" data-question="13"> <strong>B</strong> floor</label>
+                    <label class="mcq-option"><input type="radio" name="q13" value="C" data-question="13"> <strong>C</strong> windows</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">14. Most of the money for the project came from</p>
+                    <label class="mcq-option"><input type="radio" name="q14" value="A" data-question="14"> <strong>A</strong> the public</label>
+                    <label class="mcq-option"><input type="radio" name="q14" value="B" data-question="14"> <strong>B</strong> the government</label>
+                    <label class="mcq-option"><input type="radio" name="q14" value="C" data-question="14"> <strong>C</strong> local businesses</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">15. Over the next five years, the museum will invest mainly in</p>
+                    <label class="mcq-option"><input type="radio" name="q15" value="A" data-question="15"> <strong>A</strong> restoring existing collections</label>
+                    <label class="mcq-option"><input type="radio" name="q15" value="B" data-question="15"> <strong>B</strong> developing educational programmes</label>
+                    <label class="mcq-option"><input type="radio" name="q15" value="C" data-question="15"> <strong>C</strong> purchasing new objects for display</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">16. Visitors who are interested in learning more about the exhibits should</p>
+                    <label class="mcq-option"><input type="radio" name="q16" value="A" data-question="16"> <strong>A</strong> visit the museum's website</label>
+                    <label class="mcq-option"><input type="radio" name="q16" value="B" data-question="16"> <strong>B</strong> read the leaflets on display</label>
+                    <label class="mcq-option"><input type="radio" name="q16" value="C" data-question="16"> <strong>C</strong> attend the monthly lectures</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="instruction-box">
+                    Questions 17-20<br>
+                    Choose FOUR answers from the box and write the correct letter, <strong>A-F</strong>, next to Questions 17-20.
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+                    <div>
+                        <strong style="display:block; margin-bottom: 12px; font-size: 16px;">Collections:</strong>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">17</span>18th-century paintings</div>
+                                <div class="drop-zone answer-input" data-question="17" data-pool="pool-17-20"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">18</span>Farnley collection</div>
+                                <div class="drop-zone answer-input" data-question="18" data-pool="pool-17-20"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">19</span>kitchen appliances</div>
+                                <div class="drop-zone answer-input" data-question="19" data-pool="pool-17-20"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">20</span>fashion gallery</div>
+                                <div class="drop-zone answer-input" data-question="20" data-pool="pool-17-20"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="pool-17-20" class="drag-pool" style="background: #fdfdfd; border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+                        <strong style="display:block; margin-bottom: 4px;">Information</strong>
+                        <p style="font-size:12px; color:#888; margin-bottom:10px;">Drag an item to the matching collection. Double-click a filled slot to return it.</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="draggable-item" draggable="true" data-value="A" data-label="has been shown in different museums"><strong style="margin-right:6px;">A</strong>has been shown in different museums</div>
+                            <div class="draggable-item" draggable="true" data-value="B" data-label="consists of work by a local resident"><strong style="margin-right:6px;">B</strong>consists of work by a local resident</div>
+                            <div class="draggable-item" draggable="true" data-value="C" data-label="has exhibits from various countries"><strong style="margin-right:6px;">C</strong>has exhibits from various countries</div>
+                            <div class="draggable-item" draggable="true" data-value="D" data-label="is only on temporary display"><strong style="margin-right:6px;">D</strong>is only on temporary display</div>
+                            <div class="draggable-item" draggable="true" data-value="E" data-label="is on loan from foreign museum"><strong style="margin-right:6px;">E</strong>is on loan from foreign museum</div>
+                            <div class="draggable-item" draggable="true" data-value="F" data-label="shows things that are no longer common"><strong style="margin-right:6px;">F</strong>shows things that are no longer common</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="part3" class="fade" style="display: none;">
+            <div class="part-header">
+                <div class="part-title">Section 3</div>
+                <div class="part-instruction">Listen and answer questions 21-30.</div>
+            </div>
+
+            <div class="question-card">
+                <div class="instruction-box">
+                    Questions 21-25<br>
+                    Choose FIVE letters from the box and write letters <strong>A-G</strong>, next to questions 21-25.
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+                    <div>
+                        <strong style="display:block; margin-bottom: 12px; font-size: 16px;">Analysis methods:</strong>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">21</span>PEST</div>
+                                <div class="drop-zone answer-input" data-question="21" data-pool="pool-21-25"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">22</span>Drill Down</div>
+                                <div class="drop-zone answer-input" data-question="22" data-pool="pool-21-25"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">23</span>PMI</div>
+                                <div class="drop-zone answer-input" data-question="23" data-pool="pool-21-25"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">24</span>Pareto</div>
+                                <div class="drop-zone answer-input" data-question="24" data-pool="pool-21-25"></div>
+                            </div>
+                            <div>
+                                <div style="font-weight:bold; margin-bottom:5px;"><span style="margin-right:6px;">25</span>SWOT</div>
+                                <div class="drop-zone answer-input" data-question="25" data-pool="pool-21-25"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="pool-21-25" class="drag-pool" style="background: #fdfdfd; border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+                        <strong style="display:block; margin-bottom: 4px;">Characteristics</strong>
+                        <p style="font-size:12px; color:#888; margin-bottom:10px;">Drag an item to the matching method. Double-click a filled slot to return it.</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="draggable-item" draggable="true" data-value="A" data-label="it will save a lot of business time and effort"><strong style="margin-right:6px;">A</strong>it will save a lot of business time and effort</div>
+                            <div class="draggable-item" draggable="true" data-value="B" data-label="it is visualized"><strong style="margin-right:6px;">B</strong>it is visualized</div>
+                            <div class="draggable-item" draggable="true" data-value="C" data-label="it does not fit our company"><strong style="margin-right:6px;">C</strong>it does not fit our company</div>
+                            <div class="draggable-item" draggable="true" data-value="D" data-label="it will take too long"><strong style="margin-right:6px;">D</strong>it will take too long</div>
+                            <div class="draggable-item" draggable="true" data-value="E" data-label="it is easy to use"><strong style="margin-right:6px;">E</strong>it is easy to use</div>
+                            <div class="draggable-item" draggable="true" data-value="F" data-label="it is difficult to apply"><strong style="margin-right:6px;">F</strong>it is difficult to apply</div>
+                            <div class="draggable-item" draggable="true" data-value="G" data-label="it is suitable to almost all sized companies"><strong style="margin-right:6px;">G</strong>it is suitable to almost all sized companies</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="instruction-box">Questions 26-30<br>Choose the correct letter, <strong>A, B or C</strong>.</div>
+                
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">26. What does Frances consider as the best strength of the company?</p>
+                    <label class="mcq-option"><input type="radio" name="q26" value="A" data-question="26"> <strong>A</strong> reputation</label>
+                    <label class="mcq-option"><input type="radio" name="q26" value="B" data-question="26"> <strong>B</strong> experienced employees</label>
+                    <label class="mcq-option"><input type="radio" name="q26" value="C" data-question="26"> <strong>C</strong> management</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">27. What factor did Sam overlook for the future growth of the company?</p>
+                    <label class="mcq-option"><input type="radio" name="q27" value="A" data-question="27"> <strong>A</strong> seek for cheaper suppliers</label>
+                    <label class="mcq-option"><input type="radio" name="q27" value="B" data-question="27"> <strong>B</strong> set up an overseas office</label>
+                    <label class="mcq-option"><input type="radio" name="q27" value="C" data-question="27"> <strong>C</strong> compete with major competitors</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">28. Which of the following can be the threat to a company?</p>
+                    <label class="mcq-option"><input type="radio" name="q28" value="A" data-question="28"> <strong>A</strong> increasing competition</label>
+                    <label class="mcq-option"><input type="radio" name="q28" value="B" data-question="28"> <strong>B</strong> outdated technology</label>
+                    <label class="mcq-option"><input type="radio" name="q28" value="C" data-question="28"> <strong>C</strong> new legislation</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">29. What has Sam learned from the research?</p>
+                    <label class="mcq-option"><input type="radio" name="q29" value="A" data-question="29"> <strong>A</strong> using better tools</label>
+                    <label class="mcq-option"><input type="radio" name="q29" value="B" data-question="29"> <strong>B</strong> cost of a success business</label>
+                    <label class="mcq-option"><input type="radio" name="q29" value="C" data-question="29"> <strong>C</strong> gap between reality and theory</label>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">30. What is the professor's suggestion for the report?</p>
+                    <label class="mcq-option"><input type="radio" name="q30" value="A" data-question="30"> <strong>A</strong> give a final determination</label>
+                    <label class="mcq-option"><input type="radio" name="q30" value="B" data-question="30"> <strong>B</strong> reorganize a clear structure</label>
+                    <label class="mcq-option"><input type="radio" name="q30" value="C" data-question="30"> <strong>C</strong> add more detailed information</label>
+                </div>
+            </div>
+        </div>
+
+        <div id="part4" class="fade" style="display: none;">
+            <div class="part-header">
+                <div class="part-title">Section 4</div>
+                <div class="part-instruction">Listen and answer questions 31-40.</div>
+            </div>
+
+            <div class="question-card">
+                <div class="instruction-box">
+                    Questions 31-40<br>
+                    Complete the notes below.<br>
+                    Write <strong>NO MORE THAN TWO WORDS</strong> for each answer.
+                </div>
+                <div class="scenario-title">Employment Survey on Graduates</div>
+
+                <div style="background: #fafafa; padding: 25px; border: 1px solid #ddd; border-radius: 8px;">
+                    <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">Overview</p>
+                    <ul class="form-list">
+                        <li>interviews from which subject: <strong>31</strong> <input type="text" class="answer-input" data-question="31" placeholder="31"></li>
+                        <li>two research methods: email questionnaires and <strong>32</strong> <input type="text" class="answer-input" data-question="32" placeholder="32"></li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px; margin-top: 25px;">Findings</p>
+                    <ul class="form-list">
+                        <li>32% of students tended to acquire another <strong>33</strong> <input type="text" class="answer-input" data-question="33" placeholder="33"></li>
+                        <li>only 4% were unemployed</li>
+                        <li>most of the students work in the <strong>34</strong> <input type="text" class="answer-input" data-question="34" placeholder="34"> sector</li>
+                        <li>majority are happy with: <strong>35</strong> <input type="text" class="answer-input" data-question="35" placeholder="35"></li>
+                    </ul>
+
+                    <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px; margin-top: 25px;">Feedback</p>
+                    <p><strong>Useful skills learned in college:</strong></p>
+                    <ul class="form-list">
+                        <li>working as a <strong>36</strong> <input type="text" class="answer-input" data-question="36" placeholder="36"> member</li>
+                        <li>personal organization</li>
+                        <li><strong>37</strong> <input type="text" class="answer-input" data-question="37" placeholder="37"> ability</li>
+                    </ul>
+
+                    <p><strong>Useless skills:</strong></p>
+                    <ul class="form-list">
+                        <li><strong>38</strong> <input type="text" class="answer-input" data-question="38" placeholder="38"> (lack of training)</li>
+                        <li>advice on <strong>39</strong> <input type="text" class="answer-input" data-question="39" placeholder="39"> (unnecessary)</li>
+                        <li>advice on finding a <strong>40</strong> <input type="text" class="answer-input" data-question="40" placeholder="40"> (not enough)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="nav-btn" id="prevBtn" onclick="navigatePart(-1)" disabled>← Previous</button>
+        <div class="part-pills" id="navPills">
+            <div class="part-pill active" onclick="goToPart(1)" data-part="1">Section 1</div>
+            <div class="part-pill" onclick="goToPart(2)" data-part="2">Section 2</div>
+            <div class="part-pill" onclick="goToPart(3)" data-part="3">Section 3</div>
+            <div class="part-pill" onclick="goToPart(4)" data-part="4">Section 4</div>
+        </div>
+        <button class="nav-btn" id="nextBtn" onclick="navigatePart(1)">Next →</button>
+    </div>
+
+    <script>
+        // --- STATE ---
+        let currentPart = 1;
+        const totalParts = 4;
+        const totalQuestions = 40;
+
+        // --- ANSWER KEY ---
+        // ⚠️ IMPORTANT: Please replace 'TODO' with the correct answers below!
+        const correctAnswers = {
+            1: 'skellarn', 2: 'park', 3: '4:30', 4: 'drama', 5: 'singing', 6: 'artists', 7: 'films', 8: 'magazines', 9: 'number', 10: 'office',
+            
+            11: 'A', 12: 'B', 13: 'A', 14: 'C', 15: 'A', 16: 'C', 
+            17: 'C', 18: 'B', 19: 'E', 20: 'D', // Drag & drop
+            
+            21: 'C', 22: 'D', 23: 'E', 24: 'A', 25: 'G', // Drag & drop
+            26: 'B', 27: 'B', 28: 'C', 29: 'C', 30: 'A',
+            
+            31: 'business management', 32: 'phone interviews', 33: 'qualification', 34: 'public', 35: 'career development', 36: 'team', 37: 'problem solving', 38: 'presentations', 39: 'essay writing', 40: 'job'
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Standard Radio Buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const group = this.getAttribute('name');
+                    document.querySelectorAll(`input[name="${group}"]`).forEach(r => {
+                        r.closest('.mcq-option').classList.remove('selected');
+                    });
+                    this.closest('.mcq-option').classList.add('selected');
+                    updateProgress();
+                });
+            });
+
+            // Text inputs
+            document.querySelectorAll('.answer-input').forEach(input => {
+                if (input.tagName !== 'DIV') {
+                    input.addEventListener('input', updateProgress);
+                    input.addEventListener('change', updateProgress);
+                }
+            });
+
+            initDragAndDrop();
+            goToPart(1);
+        });
+
+        // --- MULTIPLE DRAG AND DROP LOGIC ---
+        let _draggedValue = null;
+        let _draggedLabel = null;
+        let _draggedSource = null;
+        let _activePoolId = null;
+
+        function initDragAndDrop() {
+            const pools = document.querySelectorAll('.drag-pool');
+            const dropZones = document.querySelectorAll('.drop-zone[data-question]');
+
+            // Setup pools
+            pools.forEach(pool => {
+                pool.querySelectorAll('.draggable-item').forEach(item => {
+                    item.addEventListener('dragstart', function(e) {
+                        _draggedValue = this.dataset.value;
+                        _draggedLabel = this.dataset.label;
+                        _draggedSource = 'pool';
+                        _activePoolId = pool.id;
+                        this.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', _draggedValue);
+                    });
+                    item.addEventListener('dragend', function() {
+                        this.classList.remove('dragging');
+                    });
+                });
+
+                // Allow returning item to pool area
+                pool.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    if (_activePoolId === this.id) {
+                        this.style.boxShadow = '0 0 0 2px var(--accent-color)';
+                    }
+                });
+                pool.addEventListener('dragleave', function() {
+                    this.style.boxShadow = '';
+                });
+                pool.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.boxShadow = '';
+                    if (_activePoolId === this.id && _draggedSource !== 'pool') {
+                        const srcZone = document.querySelector(`.drop-zone[data-question="${_draggedSource}"]`);
+                        if (srcZone) _clearZone(srcZone);
+                        _returnToPool(_draggedValue, _activePoolId);
+                        updateProgress();
+                    }
+                });
+            });
+
+            // Setup drop zones
+            dropZones.forEach(zone => {
+                zone.setAttribute('draggable', 'false');
+                zone.addEventListener('dragstart', function(e) {
+                    if (!this.dataset.value) { e.preventDefault(); return; }
+                    _draggedValue = this.dataset.value;
+                    _draggedLabel = this.dataset.label;
+                    _draggedSource = this.dataset.question;
+                    _activePoolId = this.dataset.pool;
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', _draggedValue);
+                });
+
+                zone.addEventListener('dragover', function(e) {
+                    if (_activePoolId === this.dataset.pool) {
+                        e.preventDefault();
+                        this.classList.add('drag-over');
+                    }
+                });
+                zone.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+                zone.addEventListener('drop', function(e) {
+                    if (_activePoolId !== this.dataset.pool) return;
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    
+                    const incoming = _draggedValue;
+                    const incomingLabel = _draggedLabel;
+                    const currentInZone = this.dataset.value;
+
+                    // If zone already occupied, return its comment back to its pool
+                    if (currentInZone) {
+                        _returnToPool(currentInZone, this.dataset.pool);
+                    }
+
+                    // If dragged from another zone, clear that zone
+                    if (_draggedSource !== 'pool') {
+                        const srcZone = document.querySelector(`.drop-zone[data-question="${_draggedSource}"]`);
+                        if (srcZone) _clearZone(srcZone);
+                    } else {
+                        _useFromPool(incoming, this.dataset.pool);
+                    }
+
+                    _setZone(this, incoming, incomingLabel);
+                    updateProgress();
+                });
+
+                // Double-click a filled zone to return comment to pool
+                zone.addEventListener('dblclick', function() {
+                    if (this.dataset.value) {
+                        _returnToPool(this.dataset.value, this.dataset.pool);
+                        _clearZone(this);
+                        updateProgress();
+                    }
+                });
+            });
+        }
+
+        function _setZone(zone, value, label) {
+            zone.dataset.value = value;
+            zone.dataset.label = label;
+            zone.innerHTML = `<strong style="margin-right:7px;color:var(--accent-color)">${value}</strong>${label}`;
+            zone.classList.add('has-item');
+            zone.setAttribute('draggable', 'true');
+        }
+
+        function _clearZone(zone) {
+            zone.dataset.value = '';
+            zone.dataset.label = '';
+            zone.innerHTML = '';
+            zone.classList.remove('has-item');
+            zone.setAttribute('draggable', 'false');
+        }
+
+        function _useFromPool(value, poolId) {
+            const pool = document.getElementById(poolId);
+            if (!pool) return;
+            const item = pool.querySelector(`.draggable-item[data-value="${value}"]`);
+            if (item) item.classList.add('used');
+        }
+
+        function _returnToPool(value, poolId) {
+            const pool = document.getElementById(poolId);
+            if (!pool) return;
+            const item = pool.querySelector(`.draggable-item[data-value="${value}"]`);
+            if (item) item.classList.remove('used');
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function navigatePart(direction) {
+            let newPart = currentPart + direction;
+            if (newPart >= 1 && newPart <= totalParts) {
+                goToPart(newPart);
+            }
+        }
+
+        function goToPart(partNumber) {
+            document.getElementById(`part${currentPart}`).style.display = 'none';
+            document.querySelector(`.part-pill[data-part="${currentPart}"]`).classList.remove('active');
+            
+            currentPart = partNumber;
+            document.getElementById(`part${currentPart}`).style.display = 'block';
+            document.querySelector(`.part-pill[data-part="${currentPart}"]`).classList.add('active');
+
+            document.getElementById('prevBtn').disabled = (currentPart === 1);
+            document.getElementById('nextBtn').disabled = (currentPart === totalParts);
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- PROGRESS & VALIDATION ---
+        function updateProgress() {
+            let totalAnswered = 0;
+
+            for(let p=1; p<=totalParts; p++) {
+                let answeredInSection = 0;
+                
+                // Texts & Drop Zones
+                document.querySelectorAll(`#part${p} .answer-input`).forEach(input => {
+                    if (input.tagName === 'DIV') {
+                        if (input.dataset.value && input.dataset.value.trim() !== '') answeredInSection++;
+                    } else if (input.value && input.value.trim() !== '') {
+                        answeredInSection++;
+                    }
+                });
+                
+                // Radios
+                document.querySelectorAll(`#part${p} input[type="radio"]:checked`).forEach(() => answeredInSection++);
+                
+                totalAnswered += answeredInSection;
+
+                const pill = document.querySelector(`.part-pill[data-part="${p}"]`);
+                if (answeredInSection === 10) {
+                    pill.classList.add('completed');
+                } else {
+                    pill.classList.remove('completed');
+                }
+            }
+
+            const checkBtn = document.getElementById('headerCheckBtn');
+            if (totalAnswered >= totalQuestions) {
+                checkBtn.classList.add('complete');
+                checkBtn.textContent = '🎉 Submit Test';
+            } else {
+                checkBtn.classList.remove('complete');
+                checkBtn.textContent = `Check Answers (${totalAnswered}/${totalQuestions})`;
+            }
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            let resultsHTML = '';
+
+            const standardQuestions = [];
+            for (let i = 1; i <= 40; i++) standardQuestions.push(i);
+            
+            for(let i of standardQuestions) {
+                let userAnswer = '';
+                let isCorrect = false;
+                let correctAnswerDisplay = Array.isArray(correctAnswers[i]) ? correctAnswers[i][0] : correctAnswers[i];
+
+                const textInput = document.querySelector(`.answer-input[data-question="${i}"]`);
+                if (textInput) {
+                    if (textInput.tagName === 'DIV') {
+                        userAnswer = (textInput.dataset.value || '').trim().toLowerCase();
+                    } else {
+                        userAnswer = textInput.value.trim().toLowerCase();
+                    }
+                    
+                    if (Array.isArray(correctAnswers[i])) {
+                        isCorrect = correctAnswers[i].some(ans => ans.toLowerCase() === userAnswer);
+                    } else {
+                        isCorrect = (userAnswer === correctAnswers[i].toLowerCase());
+                    }
+                    textInput.style.borderColor = isCorrect ? 'var(--success)' : 'var(--danger)';
+                    textInput.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+                }
+
+                const radioInput = document.querySelector(`input[type="radio"][data-question="${i}"]:checked`);
+                if (radioInput) {
+                    userAnswer = radioInput.value;
+                    isCorrect = (userAnswer === correctAnswers[i]);
+                    const optionBlock = radioInput.closest('.mcq-option');
+                    optionBlock.style.borderColor = isCorrect ? 'var(--success)' : 'var(--danger)';
+                    optionBlock.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+                }
+
+                if (isCorrect) correctCount++;
+                
+                const icon = isCorrect ? '✅' : '❌';
+                const color = isCorrect ? '#28a745' : '#dc3545';
+                resultsHTML += `
+                    <div style="padding: 10px; border-bottom: 1px solid #eee;">
+                        <span style="display:inline-block; width: 30px;"><b>${i}.</b></span>
+                        <span style="color: ${color}; font-weight: bold; margin-right: 10px;">${icon}</span>
+                        Your answer: <i>"${userAnswer || 'Blank'}"</i> <br>
+                        <span style="margin-left:40px; color:#666; font-size: 13px;">Correct: <b>${String(correctAnswerDisplay).toUpperCase()}</b></span>
+                    </div>`;
+            }
+
+            showModal(correctCount, resultsHTML);
+        }
+
+        function calculateBand(score) {
+            if (score >= 39) return 9.0;
+            if (score >= 37) return 8.5;
+            if (score >= 35) return 8.0;
+            if (score >= 33) return 7.5;
+            if (score >= 30) return 7.0;
+            if (score >= 26) return 6.5;
+            if (score >= 23) return 6.0;
+            if (score >= 18) return 5.5;
+            if (score >= 16) return 5.0;
+            if (score >= 13) return 4.5;
+            if (score >= 11) return 4.0;
+            if (score >= 8) return 3.5;
+            if (score >= 6) return 3.0;
+            if (score >= 4) return 2.5;
+            return "Below 2.5";
+        }
+
+        function showModal(score, details) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.6); z-index: 9999; display: flex; 
+                align-items: center; justify-content: center; backdrop-filter: blur(4px);
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; padding: 30px; border-radius: 12px; 
+                width: 90%; max-width: 500px; max-height: 85vh; display: flex; flex-direction: column;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            `;
+
+            content.innerHTML = `
+                <h2 style="text-align:center; color: #333; margin-bottom: 15px;">Test Complete!</h2>
+                <div style="background: #e6f2ff; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 16px; color: #666;">Estimated Band Score</div>
+                    <div style="font-size: 48px; font-weight: 800; color: #007acc;">${calculateBand(score)}</div>
+                    <div style="font-weight: bold; color: #333; margin-top: 5px;">${score} / 40 Correct</div>
+                </div>
+                <div style="overflow-y: auto; flex: 1; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; margin-bottom: 20px;">
+                    ${details}
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" style="background: #007acc; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; width: 100%;">Close Review</button>
+            `;
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+    </script>
+</body>
+</html>
