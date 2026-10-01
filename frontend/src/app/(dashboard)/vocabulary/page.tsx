@@ -303,7 +303,7 @@ export default function VocabularyHub() {
               onClick={() => setShowAddModal(true)}
               className="h-9 px-3 text-xs font-semibold rounded-xl bg-primary hover:bg-primary/90 text-black flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <AddCircleIcon className="w-3.5 h-3.5" size={14} />
               <span>Add Word</span>
             </Button>
           )}
@@ -433,7 +433,7 @@ export default function VocabularyHub() {
               onClick={() => setShowAddModal(true)}
               className="h-8 text-xs font-semibold rounded-xl bg-primary text-black"
             >
-              <Plus className="w-3 h-3 mr-1" /> Add First Word
+              <AddCircleIcon className="w-3.5 h-3.5 mr-1" size={14} /> Add First Word
             </Button>
           )}
         </div>

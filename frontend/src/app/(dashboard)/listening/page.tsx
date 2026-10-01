@@ -10,6 +10,8 @@ import {
   CrownStarIcon,
   StarsIcon
 } from '@solar-icons/react/bold-duotone'
+import { Link, useNavigate } from 'react-router-dom'
+import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { cn } from '@/lib/utils'
 import { getTestScope } from '@/lib/test-scope'
 import { SEOHead } from '@/components/seo/SEOHead'
