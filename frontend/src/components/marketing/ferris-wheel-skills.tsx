@@ -998,7 +998,7 @@ export function FerrisWheelSkills() {
          ───────────────────────────────────────────────────────────── */}
 
       {/* RIGHT FERRIS WHEEL (Desktop & Tablet) — pinned next to 4 skills */}
-      <div className="hidden md:block absolute top-[340px] lg:top-[360px] -translate-y-1/2 -right-[180px] lg:-right-[200px] xl:-right-[160px] 2xl:-right-[100px] z-10 pointer-events-none">
+      <div className="hidden md:block absolute top-[280px] lg:top-[290px] -translate-y-1/2 -right-[180px] lg:-right-[200px] xl:-right-[160px] 2xl:-right-[100px] z-10 pointer-events-none">
         <ObservationWheel
           id="right-wheel"
           direction="ccw"
@@ -1011,7 +1011,7 @@ export function FerrisWheelSkills() {
       </div>
 
       {/* MOBILE OBSERVATION WHEEL (Single subtle background wheel) */}
-      <div className="md:hidden absolute top-[260px] -translate-y-1/2 left-1/2 -translate-x-1/2 z-0 opacity-25 dark:opacity-20 pointer-events-none scale-75">
+      <div className="md:hidden absolute top-[220px] -translate-y-1/2 left-1/2 -translate-x-1/2 z-0 opacity-25 dark:opacity-20 pointer-events-none scale-75">
         <ObservationWheel
           id="mobile-wheel"
           direction="cw"
@@ -1154,7 +1154,7 @@ export function FerrisWheelSkills() {
         {/* ─────────────────────────────────────────────────────────────
             THE 12 CERTIFICATES ROTATING SHOWCASE (Full width marquee across bottom)
            ───────────────────────────────────────────────────────────── */}
-        <div className="w-full mt-8 sm:mt-12 lg:mt-14 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
+        <div className="w-full mt-24 sm:mt-32 lg:mt-40 xl:mt-48 pt-10 sm:pt-12 border-t border-slate-200/80 dark:border-slate-800/80 relative z-20">
           <CertificatesMarquee onSelectCertificate={setSelectedCert} />
         </div>
       </div>

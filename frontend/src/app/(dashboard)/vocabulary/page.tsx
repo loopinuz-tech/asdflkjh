@@ -50,6 +50,7 @@ interface VocabWord {
   difficulty?: string
   is_premium?: boolean
   status?: string
+  user_id?: string | null
 }
 
 export default function VocabularyHub() {
@@ -154,12 +155,16 @@ export default function VocabularyHub() {
       const userFolders = getVocabFolders(user?.id || null)
       setFolders(userFolders)
 
-      // Fetch all published vocabulary words
-      const { data: wordsData } = await supabase
-        .from('vocabulary_words')
-        .select('*')
-        .order('word', { ascending: true })
+      // Fetch platform global words (user_id IS NULL) + user's own private words (user_id = user.id)
+      let query = supabase.from('vocabulary_words').select('*').order('word', { ascending: true })
 
+      if (user) {
+        query = query.or(`user_id.is.null,user_id.eq.${user.id}`)
+      } else {
+        query = query.is('user_id', null)
+      }
+
+      const { data: wordsData } = await query
       setWords(wordsData || [])
     } catch (err) {
       console.error('Error loading vocabulary data:', err)
@@ -311,6 +316,7 @@ export default function VocabularyHub() {
         folder_id: wordData.folder_id,
         difficulty: wordData.difficulty || 'medium',
         status: 'published',
+        user_id: currentUserId, // Personal to this user only
       })
       .select()
       .single()
@@ -847,6 +853,11 @@ export default function VocabularyHub() {
                       {word.topic && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border truncate max-w-[120px]">
                           {word.topic}
+                        </span>
+                      )}
+                      {word.user_id && (
+                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+                          My Word
                         </span>
                       )}
                       {/* Action buttons: Edit and Delete */}

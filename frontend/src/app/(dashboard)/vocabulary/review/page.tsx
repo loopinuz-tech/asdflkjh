@@ -26,7 +26,9 @@ export default function VocabularyReviewPage() {
         .select(`
           id, status, next_review_at, mastery_level,
           vocabulary_words:word_id (
-            id, word, part_of_speech, definition, example_sentence, pronunciation
+            id, word, part_of_speech, definition, example_sentence, pronunciation,
+            translation, translation_uz, example_sentence_2, context_sentence,
+            synonyms, antonyms, topic, difficulty, user_id
           )
         `)
         .eq('user_id', user.id)
@@ -43,12 +45,12 @@ export default function VocabularyReviewPage() {
             box_number: item.mastery_level || 0,
           })) || []
 
-      // If no words are due, fetch published words from vocabulary_words
+      // If no words are due, fetch global or user's words from vocabulary_words
       if (words.length === 0) {
         const { data: allVocab } = await supabase
           .from('vocabulary_words')
-          .select('id, word, part_of_speech, definition, example_sentence, pronunciation')
-          .eq('status', 'published')
+          .select('id, word, part_of_speech, definition, example_sentence, pronunciation, translation, translation_uz, example_sentence_2, context_sentence, synonyms, antonyms, topic, difficulty, user_id')
+          .or(`user_id.is.null,user_id.eq.${user.id}`)
           .limit(15)
 
         if (allVocab && allVocab.length > 0) {
@@ -77,7 +79,7 @@ export default function VocabularyReviewPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-140px)] flex items-center justify-center py-8">
+    <div className="w-full flex flex-col items-center justify-center py-2 sm:py-6">
       <VocabularyReviewClient words={wordsToReview} />
     </div>
   )

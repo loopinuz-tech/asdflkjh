@@ -64,10 +64,11 @@ export function AdminVocabularyClientView() {
       setLoading(true)
       const supabase = createClient()
 
-      // 1. Load published words from database
+      // 1. Load published global words from database
       const { data: wordsData } = await supabase
         .from('vocabulary_words')
         .select('*')
+        .is('user_id', null)
         .order('word', { ascending: true })
 
       setWords(wordsData || [])
@@ -129,6 +130,7 @@ export function AdminVocabularyClientView() {
       folder_id: wordData.folder_id,
       difficulty: wordData.difficulty,
       status: 'published',
+      user_id: null,
     }
 
     if (wordData.id) {
