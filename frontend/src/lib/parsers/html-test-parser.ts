@@ -46,14 +46,62 @@ export interface ParsedIeltsTest {
   warnings: string[]
 }
 
-function stripTags(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+export function stripTags(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * Clean question prompt text: remove incomplete tags, rogue quotes/brackets, leading question numbers, etc.
+ */
+export function cleanQuestionPrompt(text: string, qNum: number): string {
+  let cleaned = text
+    .replace(/<select[\s\S]*?<\/select>/gi, ' [____] ')
+    .replace(/<input[^>]*>/gi, ' [____] ')
+    .replace(/<span[^>]*class=["'][^"']*drop-zone[^"']*["'][^>]*>[\s\S]*?<\/span>/gi, ' [____] ')
+    .replace(/<span[^>]*class=["'][^"']*drop-zone[^"']*["'][^>]*>/gi, ' [____] ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  cleaned = cleaned.replace(/^["'>\s]+/, '')
+  cleaned = cleaned.replace(/<[^>]*$/, '').trim()
+
+  // Remove question number prefixes: "15 Sweet Water" -> "Sweet Water", "15. Sweet Water" -> "Sweet Water", "▪"
+  cleaned = cleaned.replace(new RegExp(`^(?:[▪•\\-\\s]*)(?:Question\\s+)?${qNum}[\\.\\:\\)\\-\\s]+`, 'i'), '')
+  cleaned = cleaned.replace(/^[▪•\-\s]+/, '')
+
+  // Remove duplicate question numbers right before [____] (e.g. "21 [____]" -> "[____]")
+  cleaned = cleaned.replace(new RegExp(`\\b${qNum}\\s*\\[____\\]`, 'gi'), '[____]')
+
+  // Cut next question if swallowed: e.g. "16 Season of the Harvest"
+  const nextQ = qNum + 1
+  const nextQMatch = cleaned.match(new RegExp(`\\b${nextQ}\\s+[A-Z]`, 'i'))
+  if (nextQMatch && nextQMatch.index !== undefined && nextQMatch.index > 5) {
+    cleaned = cleaned.substring(0, nextQMatch.index).trim()
+  }
+
+  cleaned = cleaned.replace(new RegExp(`\\[${qNum}\\]`, 'g'), '[____]')
+  cleaned = cleaned.replace(new RegExp(`\\{${qNum}\\}`, 'g'), '[____]')
+  cleaned = cleaned.replace(/\[____\]\s*\[____\]/g, '[____]')
+  cleaned = cleaned.replace(/^["'>\s]+/, '').trim()
+
+  return cleaned || `Question ${qNum}`
 }
 
 /**
  * Pre-extract answer keys from Javascript scripts or embedded data BEFORE stripping scripts
  */
-function extractAnswerKeysFromRawHtml(rawHtml: string): Record<number, { answer: string; explanation?: string }> {
+export function extractAnswerKeysFromRawHtml(rawHtml: string): Record<number, { answer: string; explanation?: string }> {
   const map: Record<number, { answer: string; explanation?: string }> = {}
 
   // 1. Script variable: ANSWER_KEY = { q14: { answer: 'D', explanation: '...' }, ... }
@@ -61,7 +109,6 @@ function extractAnswerKeysFromRawHtml(rawHtml: string): Record<number, { answer:
   if (answerKeyVarMatch) {
     try {
       const objStr = answerKeyVarMatch[1]
-      // Match individual properties like q14: { ... answer: 'D' ... }
       const entryRegex = /(?:['"]?q?(\d+)['"]?\s*:\s*\{[\s\S]*?answer\s*:\s*['"]([^'"]+)['"](?:[\s\S]*?explanation\s*:\s*['"]([^'"]*)['"])?)/gi
       let m
       while ((m = entryRegex.exec(objStr)) !== null) {
@@ -73,24 +120,47 @@ function extractAnswerKeysFromRawHtml(rawHtml: string): Record<number, { answer:
           }
         }
       }
-    } catch (e) {
-      // ignore JSON parse errors
+    } catch {
+      // ignore
     }
   }
 
-  // 2. Script variable: correctAnswers = { 1: 'skellarn', 2: 'park', ... }
+  // 2. Script variable: correctAnswers = { 1: 'weight', '11to12': ['e', 'c'], 15: 'g', ... }
   const correctAnswersMatch = rawHtml.match(/(?:const|let|var)\s+(?:correctAnswers|answers|key)\s*=\s*(\{[\s\S]*?\});/i)
   if (correctAnswersMatch) {
     const objStr = correctAnswersMatch[1]
-    const numEntryRegex = /(?:['"]?(\d+)['"]?\s*:\s*(?:\[\s*['"]([^'"]+)['"]|['"]([^'"]+)['"]))/gi
+
+    // 2a. Multi-question ranges like '11to12': ['e', 'c'] or '13-14': ['b', 'd']
+    const rangeRegex = /(?:['"]?(\d{1,2})(?:to|-|_)?(\d{1,2})['"]?\s*:\s*\[([\s\S]*?)\])/gi
+    let rm
+    while ((rm = rangeRegex.exec(objStr)) !== null) {
+      const startQ = parseInt(rm[1], 10)
+      const endQ = parseInt(rm[2], 10)
+      const listStr = rm[3]
+      const items = [...listStr.matchAll(/['"]([^'"]+)['"]/g)].map(x => x[1].trim())
+
+      if (startQ > 0 && endQ <= 40 && items.length > 0) {
+        for (let q = startQ; q <= endQ; q++) {
+          const itemIdx = q - startQ
+          const val = items[itemIdx] || items[0] || ''
+          if (val && !map[q]) {
+            map[q] = { answer: val.length === 1 ? val.toUpperCase() : val, explanation: '' }
+          }
+        }
+      }
+    }
+
+    // 2b. Standard number entries: 1: 'weight', 15: 'g'
+    const numEntryRegex = /(?:['"]?(\d{1,2})['"]?\s*:\s*(?:\[\s*['"]([^'"]+)['"]|['"]([^'"]+)['"]))/gi
     let m
     while ((m = numEntryRegex.exec(objStr)) !== null) {
       const qNum = parseInt(m[1], 10)
-      const ansVal = (m[2] || m[3] || '').trim()
-      if (qNum > 0 && qNum <= 40 && ansVal) {
-        if (!map[qNum]) {
-          map[qNum] = { answer: ansVal, explanation: '' }
-        }
+      let ansVal = (m[2] || m[3] || '').trim()
+      if (ansVal.length === 1 && /[a-z]/i.test(ansVal)) {
+        ansVal = ansVal.toUpperCase()
+      }
+      if (qNum > 0 && qNum <= 40 && ansVal && !map[qNum]) {
+        map[qNum] = { answer: ansVal, explanation: '' }
       }
     }
   }
@@ -113,7 +183,7 @@ function extractAnswerKeysFromRawHtml(rawHtml: string): Record<number, { answer:
     const qNum = parseInt(dMatch[2], 10)
     const ans = dMatch[1].trim()
     if (qNum > 0 && qNum <= 40 && ans && !map[qNum]) {
-      map[qNum] = { answer: ans, explanation: '' }
+      map[qNum] = { answer: ans.length === 1 ? ans.toUpperCase() : ans, explanation: '' }
     }
   }
 
@@ -137,167 +207,56 @@ function extractAnswerKeysFromRawHtml(rawHtml: string): Record<number, { answer:
 }
 
 /**
- * Pre-extract drag-and-drop pools and options from HTML before sanitizing
+ * Pre-extract drag-and-drop pools and options boxes from HTML
  */
-function extractPoolsFromRawHtml(rawHtml: string): Record<string, ParsedQuestionOption[]> {
+export function extractOptionBoxesFromRawHtml(rawHtml: string): Record<string, ParsedQuestionOption[]> {
   const pools: Record<string, ParsedQuestionOption[]> = {}
-  const poolMatches = [...rawHtml.matchAll(/id=["'](pool-[^"']+)["']/gi)]
-  const allPoolIds = [...new Set(['pool-17-20', 'pool-21-25', ...poolMatches.map(m => m[1])])]
 
-  for (const poolId of allPoolIds) {
-    const pIdx = rawHtml.indexOf(`id="${poolId}"`)
-    if (pIdx !== -1) {
-      const chunk = rawHtml.substring(pIdx, pIdx + 3500)
-      const items: ParsedQuestionOption[] = []
-      const itemRegex = /<div[^>]*class=["'][^"']*draggable-item[^"']*["'][^>]*data-value=["']([^"']+)["'][^>]*data-label=["']([^"']*)["'][^>]*>/gi
-      let m
-      while ((m = itemRegex.exec(chunk)) !== null) {
-        const key = m[1].toUpperCase()
-        if (!items.some(it => it.option_key === key)) {
-          items.push({
-            option_key: key,
-            option_text: m[2].trim(),
-            is_correct: false,
-          })
-        }
-      }
-      if (items.length > 0) {
-        pools[poolId] = items
-      }
-    }
-  }
-  return pools
-}
+  // Match option boxes: <div class="options-box" id="options-part2">
+  const boxHeaderRegex = /<(?:div|ul)[^>]*class=["'][^"']*(?:options-box|drag-container|draggable-container|options-list)[^"']*["'][^>]*id=["']([^"']+)["'][^>]*>/gi
+  let bm
+  while ((bm = boxHeaderRegex.exec(rawHtml)) !== null) {
+    const boxId = bm[1]
+    const startPos = bm.index + bm[0].length
+    const chunk = rawHtml.substring(startPos, startPos + 3000)
+    const stopMatch = chunk.match(/<(?:div|section)[^>]*class=["'][^"']*(?:question|flow-step|section|sub-section|part-section)[^"']*["']/i)
+    const boxContent = stopMatch && stopMatch.index !== undefined ? chunk.substring(0, stopMatch.index) : chunk
 
-/**
- * Extract an individual question by number from clean HTML
- */
-function extractIndividualQuestion(
-  qNum: number,
-  html: string,
-  answerKeyMap: Record<number, { answer: string; explanation?: string }>,
-  pools: Record<string, ParsedQuestionOption[]>
-): ParsedQuestion | null {
-  // 1. Drop-zone matching question: <div class="drop-zone answer-input" data-question="17" data-pool="pool-17-20">
-  const dropZoneRegex = new RegExp(`<div[^>]*class=["'][^"']*drop-zone[^"']*["'][^>]*data-question=["']${qNum}["'][^>]*data-pool=["']([^"']+)["'][^>]*>`, 'i')
-  const dzMatch = html.match(dropZoneRegex)
-  if (dzMatch) {
-    const poolId = dzMatch[1]
-    const poolOptions = pools[poolId] || []
-    const spanMatch = html.match(new RegExp(`<span[^>]*>\\s*${qNum}\\s*<\\/span>\\s*([^<\\n]+)`, 'i'))
-    const qText = spanMatch ? spanMatch[1].trim() : `Question ${qNum}`
-    const ans = answerKeyMap[qNum]?.answer || ''
-
-    return {
-      question_number: qNum,
-      question_type: 'matching',
-      instruction: 'Choose the correct letter from the box and match with each item.',
-      question_text: qText,
-      options: poolOptions.map(opt => ({
-        ...opt,
-        is_correct: opt.option_key.toUpperCase() === ans.toUpperCase(),
-      })),
-      correct_answer: ans,
-      accepted_answers: ans ? [ans] : [],
-      points: 1,
-      difficulty: 'medium',
-      explanation: answerKeyMap[qNum]?.explanation || '',
-    }
-  }
-
-  // 2. Radio Multiple Choice: <input type="radio" name="q26" ...
-  const radioRegex = new RegExp(`<input[^>]*type=["']radio["'][^>]*name=["']q?${qNum}["']`, 'i')
-  if (radioRegex.test(html)) {
-    const rPos = html.search(radioRegex)
-    const beforeRadio = html.substring(Math.max(0, rPos - 500), rPos)
-    const promptMatch = beforeRadio.match(new RegExp(`(?:<p|<div|<li)[^>]*>\\s*(?:<strong>)?\\s*(?:Question\\s+)?${qNum}[\\.\\:\\)]?\\s*([\\s\\S]*?)<\\/(?:p|div|li)>`, 'i'))
-    let prompt = promptMatch ? stripTags(promptMatch[1]).trim() : `Question ${qNum}`
-    prompt = prompt.replace(new RegExp(`^\\s*(?:Question\\s+)?${qNum}[\\.\\:\\)]?\\s*`, 'i'), '').trim()
-
-    const chunk = html.substring(rPos - 100, rPos + 1200)
-    const optRegex = new RegExp(`<(?:label|div)[^>]*class=["'][^"']*mcq-option[^"']*["'][^>]*>[\\s\\S]*?<input[^>]*name=["']q?${qNum}["'][^>]*value=["']([A-H])["'][^>]*>[\\s\\S]*?(?:<strong>[A-H]<\\/strong>)?\\s*([^<]+)<\\/(?:label|div)>`, 'gi')
-    const options: ParsedQuestionOption[] = []
+    const optRegex = /<(?:div|li)[^>]*class=["'][^"']*(?:option|draggable-item|item)[^"']*["'][^>]*>([\s\S]*?)<\/(?:div|li)>/gi
+    const opts: ParsedQuestionOption[] = []
     let om
-    const ans = answerKeyMap[qNum]?.answer || ''
-    while ((om = optRegex.exec(chunk)) !== null) {
-      const key = om[1].toUpperCase()
-      if (!options.some(o => o.option_key === key)) {
-        options.push({
+    while ((om = optRegex.exec(boxContent)) !== null) {
+      const fullText = stripTags(om[1]).trim()
+      const letterMatch = fullText.match(/^([A-I])\b[\.\:\-\s]*(.*)$/i)
+      const key = letterMatch ? letterMatch[1].toUpperCase() : String.fromCharCode(65 + opts.length)
+      const text = letterMatch ? letterMatch[2].trim() : fullText
+
+      if (!opts.some(o => o.option_key === key)) {
+        opts.push({
           option_key: key,
-          option_text: om[2].trim(),
-          is_correct: key === ans.toUpperCase(),
+          option_text: text || `Option ${key}`,
+          is_correct: false,
         })
       }
     }
 
-    if (options.length >= 2) {
-      return {
-        question_number: qNum,
-        question_type: 'multiple_choice',
-        instruction: 'Choose the correct letter, A, B or C.',
-        question_text: prompt || `Question ${qNum}`,
-        options,
-        correct_answer: ans,
-        accepted_answers: ans ? [ans] : [],
-        points: 1,
-        difficulty: 'medium',
-        explanation: answerKeyMap[qNum]?.explanation || '',
-      }
+    if (opts.length > 0) {
+      pools[boxId] = opts
     }
   }
 
-  // 3. Text Input (Note completion / fill-in-the-blank): <input type="text" ... data-question="X"
-  const targetAttr = `data-question="${qNum}"`
-  const pos = html.indexOf(targetAttr)
-  if (pos !== -1) {
-    const before = html.substring(Math.max(0, pos - 250), pos)
-    const lastOpenLi = before.lastIndexOf('<li')
-    const lastOpenP = before.lastIndexOf('<p')
-    const lastOpen = Math.max(lastOpenLi, lastOpenP)
-    const startIdx = lastOpen !== -1 ? Math.max(0, pos - (before.length - lastOpen)) : Math.max(0, pos - 80)
-    const after = html.substring(pos, pos + 250)
-    const firstCloseLi = after.indexOf('</li>')
-    const firstCloseP = after.indexOf('</p>')
-    const firstClose = firstCloseLi !== -1 ? firstCloseLi + 5 : (firstCloseP !== -1 ? firstCloseP + 4 : 100)
-    const endIdx = pos + firstClose
-
-    let snippet = html.substring(startIdx, endIdx)
-    let line = snippet
-      .replace(new RegExp(`<input[^>]*data-question=["']${qNum}["'][^>]*>`, 'gi'), ` [${qNum}] `)
-      .replace(/<input[^>]*>/gi, '')
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-    line = line.replace(new RegExp(`\\b${qNum}\\b\\s*(\\[${qNum}\\])`, 'gi'), '$1')
-    line = line.replace(new RegExp(`^\\s*(?:Question\\s+)?${qNum}[\\.\\:\\)]?\\s*`, 'i'), '').trim()
-    if (!line.includes(`[${qNum}]`)) {
-      line = `${line} [${qNum}]`
-    }
-    const ans = answerKeyMap[qNum]?.answer || ''
-
-    return {
-      question_number: qNum,
-      question_type: 'note_completion',
-      instruction: 'Complete the notes below. Write ONE WORD AND/OR A NUMBER for each answer.',
-      question_text: line,
-      options: [],
-      correct_answer: ans,
-      accepted_answers: ans ? [ans] : [],
-      points: 1,
-      difficulty: 'medium',
-      explanation: answerKeyMap[qNum]?.explanation || '',
-    }
-  }
-
-  return null
+  return pools
 }
 
+/**
+ * Main High-Precision IELTS HTML Parser
+ */
 export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
   const warnings: string[] = []
 
-  // Step 1: Pre-extract answer keys and drag-pools from raw scripts or attributes
+  // Step 1: Pre-extract answer keys and drag-and-drop option boxes
   const answerKeyMap = extractAnswerKeysFromRawHtml(rawHtml)
-  const dragPools = extractPoolsFromRawHtml(rawHtml)
+  const optionBoxes = extractOptionBoxesFromRawHtml(rawHtml)
 
   // Step 2: Global audio link extraction
   let globalAudioUrl = ''
@@ -309,7 +268,7 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
     globalAudioUrl = audioMatch[1]
   }
 
-  // Step 3: Clean HTML (remove scripts, styles, comments)
+  // Step 3: Clean HTML (strip script, style, comments)
   let clean = rawHtml
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
@@ -332,8 +291,6 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
   } else if (titleTagMatch && titleTagMatch[1]) {
     title = titleTagMatch[1].trim()
   }
-
-  // Clean title suffixes like "| IELTS Online Tests"
   title = title.replace(/\s*\|\s*.*$/i, '').trim()
 
   // Step 5: Detect Skill
@@ -359,7 +316,7 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
     } else if (hasReadingHeaders) {
       skill = 'reading'
     } else {
-      skill = 'reading'
+      skill = 'listening'
     }
   }
 
@@ -368,79 +325,81 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
     title: string
     content: string
     audioUrl?: string
+    sectionNumber?: number
   }
   const sectionCandidates: SectionCandidate[] = []
 
-  // Pattern A: <section class="part-section" ...> or <section ...>
-  const sectionTagMatches = [...clean.matchAll(/<section\b([^>]*)>([\s\S]*?)<\/section>/gi)]
-  if (sectionTagMatches.length >= 2) {
-    sectionTagMatches.forEach((m, idx) => {
-      const attrs = m[1]
-      const body = m[2]
-      let secTitle = `Section ${idx + 1}`
-      const partAttr = attrs.match(/data-part=["']?(\d+)["']?/i) || attrs.match(/id=["']part(\d+)["']?/i)
-      if (partAttr) {
-        secTitle = skill === 'listening' ? `Part ${partAttr[1]}` : `Reading Passage ${partAttr[1]}`
-      } else {
-        const hMatch = body.match(/<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/i)
-        if (hMatch) secTitle = stripTags(hMatch[1]).trim()
-      }
-      sectionCandidates.push({ title: secTitle, content: body })
-    })
-  }
+  // Pattern 0: Split by explicit Part / Section markers in headings or divs:
+  const partMarkerRegex = /<(?:div|h[1-5]|header|p)\b[^>]*class=["'][^"']*(?:section-title|part-title|part-header|section-header)[^"']*["'][^>]*>\s*(?:<strong>)?\s*(?:PART|SECTION)\s*([1-4])[\s\S]*?<\/(?:div|h[1-5]|header|p)>/gi
+  const partMarkers = [...clean.matchAll(partMarkerRegex)]
 
-  // Pattern B: Part Headers like <div class="part-header"><div class="part-title">Section 1</div>
-  if (sectionCandidates.length === 0) {
-    const partHeaderPattern = /<(?:div|header)[^>]*class=["'][^"']*(?:part-header|part-title|passage-header)[^"']*["'][^>]*>([\s\S]*?)<\/(?:div|header)>/gi
-    const partHeaderMatches = [...clean.matchAll(partHeaderPattern)]
-    if (partHeaderMatches.length >= 2) {
-      for (let i = 0; i < partHeaderMatches.length; i++) {
-        const start = partHeaderMatches[i].index!
-        const end = (i < partHeaderMatches.length - 1) ? partHeaderMatches[i + 1].index! : clean.length
-        const chunk = clean.substring(start, end)
-        const secTitle = stripTags(partHeaderMatches[i][1]).trim() || `Section ${i + 1}`
-        sectionCandidates.push({ title: secTitle, content: chunk })
-      }
+  if (partMarkers.length >= 2) {
+    for (let i = 0; i < partMarkers.length; i++) {
+      const start = partMarkers[i].index!
+      const end = (i < partMarkers.length - 1) ? partMarkers[i + 1].index! : clean.length
+      const chunk = clean.substring(start, end)
+      const partNum = parseInt(partMarkers[i][1], 10)
+      const secTitle = skill === 'listening' ? `Part ${partNum}` : `Section ${partNum}`
+      sectionCandidates.push({ title: secTitle, content: chunk, sectionNumber: partNum })
     }
   }
 
-  // Pattern C: Headings with Passage X or Part X
+  // Pattern A: <section ...>
   if (sectionCandidates.length === 0) {
-    const headingMatches = [...clean.matchAll(/<h[1-4]\b[^>]*>\s*(?:Reading\s+Passage|Passage|Section|Part)\s+[1-4][\s\S]*?<\/h[1-4]>/gi)]
+    const sectionTagMatches = [...clean.matchAll(/<section\b([^>]*)>([\s\S]*?)<\/section>/gi)]
+    if (sectionTagMatches.length >= 2) {
+      sectionTagMatches.forEach((m, idx) => {
+        const attrs = m[1]
+        const body = m[2]
+        let secTitle = `Section ${idx + 1}`
+        const partAttr = attrs.match(/data-part=["']?(\d+)["']?/i) || attrs.match(/id=["']part(\d+)["']?/i)
+        if (partAttr) {
+          secTitle = skill === 'listening' ? `Part ${partAttr[1]}` : `Reading Passage ${partAttr[1]}`
+        } else {
+          const hMatch = body.match(/<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/i)
+          if (hMatch) secTitle = stripTags(hMatch[1]).trim()
+        }
+        sectionCandidates.push({ title: secTitle, content: body, sectionNumber: idx + 1 })
+      })
+    }
+  }
+
+  // Pattern B: Headings with Passage X or Part X
+  if (sectionCandidates.length === 0) {
+    const headingMatches = [...clean.matchAll(/<h[1-4]\b[^>]*>\s*(?:Reading\s+Passage|Passage|Section|Part)\s+([1-4])[\s\S]*?<\/h[1-4]>/gi)]
     if (headingMatches.length >= 2) {
       for (let i = 0; i < headingMatches.length; i++) {
         const start = headingMatches[i].index!
         const end = (i < headingMatches.length - 1) ? headingMatches[i + 1].index! : clean.length
         const chunk = clean.substring(start, end)
-        const secTitle = stripTags(headingMatches[i][0]).trim() || `Section ${i + 1}`
-        sectionCandidates.push({ title: secTitle, content: chunk })
+        const partNum = parseInt(headingMatches[i][1], 10)
+        const secTitle = stripTags(headingMatches[i][0]).trim() || `Section ${partNum}`
+        sectionCandidates.push({ title: secTitle, content: chunk, sectionNumber: partNum })
       }
     }
   }
 
-  // Fallback: entire cleaned content as 1 section
+  // Fallback
   if (sectionCandidates.length === 0) {
     const fallbackTitle = skill === 'reading' ? 'Reading Passage 1' : 'Part 1'
-    sectionCandidates.push({ title: fallbackTitle, content: clean })
+    sectionCandidates.push({ title: fallbackTitle, content: clean, sectionNumber: 1 })
   }
 
-  // Step 7: Parse questions inside each section candidate
   const sections: ParsedSection[] = []
   const seenGlobalQNums = new Set<number>()
+  const allParsedQuestions: ParsedQuestion[] = []
 
   sectionCandidates.forEach((cand, sIdx) => {
-    const secNum = sIdx + 1
+    const secNum = cand.sectionNumber || sIdx + 1
     const secTitle = cand.title || (skill === 'reading' ? `Reading Passage ${secNum}` : `Part ${secNum}`)
     const chunk = cand.content
 
-    // Audio for section
     let secAudio = globalAudioUrl
     const secAudioMatch = chunk.match(/<audio[^>]*src=["']([^"']+)["']/i) || chunk.match(/<source[^>]*src=["']([^"']+)["']/i)
     if (secAudioMatch && secAudioMatch[1]) {
       secAudio = secAudioMatch[1]
     }
 
-    // Split passage from questions if reading
     let passageHtml = ''
     let questionsHtml = chunk
 
@@ -454,202 +413,232 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
         if (readingPassageBoxMatch && readingPassageBoxMatch[1]) {
           passageHtml = readingPassageBoxMatch[1].trim()
           questionsHtml = chunk.replace(readingPassageBoxMatch[0], '').trim()
-        } else {
-          passageHtml = chunk
         }
       }
     }
 
-    // Parse questions in questionsHtml
-    const parsedQuestions: ParsedQuestion[] = []
+    const sectionQuestions: ParsedQuestion[] = []
 
-    // Helper: Instruction banner
-    let currentInstruction = skill === 'reading' ? 'Answer the questions according to the reading passage.' : 'Listen and answer the questions.'
+    // 7A: Handle Multi-select questions (e.g. Questions 11 and 12, name="q11to12", checkboxes)
+    const multiSelectHeaderRegex = /<(?:div|section)[^>]*id=["']q(\d{1,2})to(\d{1,2})["'][^>]*>/gi
+    let msHeader
+    while ((msHeader = multiSelectHeaderRegex.exec(questionsHtml)) !== null) {
+      const startQ = parseInt(msHeader[1], 10)
+      const endQ = parseInt(msHeader[2], 10)
+      const startPos = msHeader.index
+      const chunkAfter = questionsHtml.substring(startPos, startPos + 2500)
+      const stopMatch = chunkAfter.substring(50).match(/<(?:div|section)[^>]*class=["'][^"']*(?:sub-section-title|section-title|drag-container|question)[^"']*["']/i)
+      const containerContent = stopMatch && stopMatch.index !== undefined ? chunkAfter.substring(0, stopMatch.index + 50) : chunkAfter
 
-    // Question Splitting Logic: Supports all formats
-    // Scan for all question numbers from 1 to 40 that appear inside this section
-    const detectedQNums: number[] = []
+      const beforeContainer = questionsHtml.substring(Math.max(0, startPos - 400), startPos)
+      const instrMatch = beforeContainer.match(/<p[^>]*class=["'][^"']*instructions[^"']*["'][^>]*>([\s\S]*?)<\/p>/i)
+      const subTitleMatch = beforeContainer.match(/<div[^>]*class=["'][^"']*sub-section-title[^"']*["'][^>]*>([\s\S]*?)<\/div>/i)
+      const promptText = stripTags(containerContent.match(/<p>([\s\S]*?)<\/p>/i)?.[1] || '').trim()
 
-    // 1. Check data-question="X" or placeholder="X" on inputs
-    const inputMatches = [...questionsHtml.matchAll(/<(?:input|select)[^>]*(?:data-question|placeholder|name)=["'](?:q)?(\d{1,2})["'][^>]*>/gi)]
-    inputMatches.forEach(m => {
-      const n = parseInt(m[1], 10)
-      if (n > 0 && n <= 40 && !detectedQNums.includes(n) && !seenGlobalQNums.has(n)) {
-        detectedQNums.push(n)
-      }
-    })
+      const fullInstruction = stripTags(instrMatch?.[1] || 'Choose TWO letters, A–E.').trim()
+      const questionPrompt = promptText || (subTitleMatch ? stripTags(subTitleMatch[1]).trim() : `Questions ${startQ} and ${endQ}`)
 
-    // 2. Check <span class="q-num">X</span>
-    const qNumSpanMatches = [...questionsHtml.matchAll(/<span[^>]*class=["'][^"']*q-num[^"']*["'][^>]*>(\d{1,2})<\/span>/gi)]
-    qNumSpanMatches.forEach(m => {
-      const n = parseInt(m[1], 10)
-      if (n > 0 && n <= 40 && !detectedQNums.includes(n) && !seenGlobalQNums.has(n)) {
-        detectedQNums.push(n)
-      }
-    })
+      const optMatches = [...containerContent.matchAll(/<input[^>]*type=["']checkbox["'][^>]*value=["']([a-h0-9])["'][^>]*>([\s\S]*?)<\/label>/gi)]
+      const options: ParsedQuestionOption[] = optMatches.map(om => {
+        const key = om[1].toUpperCase()
+        const text = stripTags(om[2]).replace(/^[A-H][\.\:\-\s]*/i, '').trim()
+        return { option_key: key, option_text: text, is_correct: false }
+      })
 
-    // 3. Check <strong>1.</strong> or <strong>1</strong>
-    const strongNumMatches = [...questionsHtml.matchAll(/(?:<(?:strong|b|span)[^>]*>)?\s*(?:Question\s+)?(\d{1,2})[\.\:\)]\s*(?:<\/(?:strong|b|span)>)?/gi)]
-    strongNumMatches.forEach(m => {
-      const n = parseInt(m[1], 10)
-      if (n > 0 && n <= 40 && !detectedQNums.includes(n) && !seenGlobalQNums.has(n)) {
-        detectedQNums.push(n)
-      }
-    })
+      for (let q = startQ; q <= endQ; q++) {
+        if (!seenGlobalQNums.has(q)) {
+          seenGlobalQNums.add(q)
+          const ans = answerKeyMap[q]?.answer || ''
+          const qOptions = options.map(opt => ({
+            ...opt,
+            is_correct: opt.option_key.toUpperCase() === ans.toUpperCase(),
+          }))
 
-    detectedQNums.sort((a, b) => a - b)
-
-    if (detectedQNums.length > 0) {
-      detectedQNums.forEach((qNum) => {
-        if (seenGlobalQNums.has(qNum)) return
-        seenGlobalQNums.add(qNum)
-        // Find text surrounding this question number in questionsHtml
-        let qText = ''
-        let options: ParsedQuestionOption[] = []
-
-        // Search for container element containing this question number
-        // 1. Look for question-block or question-card
-        const blockRegex = new RegExp(`<(?:div|li|p)[^>]*class=["'][^"']*(?:question|item|row|card)[^"']*["'][^>]*>[\\s\\S]*?(?:data-question=["']?${qNum}["']?|q-num["'][^>]*>\\s*${qNum}\\b|["']q${qNum}["']|>${qNum}[\\.\\:\\)])[\\s\\S]*?<\\/(?:div|li|p)>`, 'i')
-        const blockMatch = questionsHtml.match(blockRegex)
-
-        let contextHtml = blockMatch ? blockMatch[0] : ''
-
-        if (!contextHtml) {
-          // Fallback: Slice from this question marker to next question marker
-          const startMarkerRegex = new RegExp(`(?:q-num["'][^>]*>\\s*${qNum}\\b|data-question=["']?${qNum}["']?|\\b(?:Question\\s+)?${qNum}[\\.\\:\\)])`, 'i')
-          const sMatch = questionsHtml.match(startMarkerRegex)
-          if (sMatch && sMatch.index !== undefined) {
-            const startIdx = Math.max(0, sMatch.index - 50)
-            const nextQ = qNum + 1
-            const nextMarkerRegex = new RegExp(`(?:q-num["'][^>]*>\\s*${nextQ}\\b|data-question=["']?${nextQ}["']?|\\b(?:Question\\s+)?${nextQ}[\\.\\:\\)])`, 'i')
-            const nextMatch = questionsHtml.substring(sMatch.index + 5).match(nextMarkerRegex)
-            const endIdx = nextMatch && nextMatch.index !== undefined ? sMatch.index + 5 + nextMatch.index : startIdx + 300
-            contextHtml = questionsHtml.substring(startIdx, Math.min(questionsHtml.length, endIdx))
+          const parsedQ: ParsedQuestion = {
+            question_number: q,
+            question_type: 'multiple_response',
+            instruction: fullInstruction,
+            question_text: questionPrompt,
+            options: qOptions,
+            correct_answer: ans,
+            accepted_answers: ans ? [ans] : [],
+            points: 1,
+            difficulty: 'medium',
+            explanation: answerKeyMap[q]?.explanation || '',
           }
+          sectionQuestions.push(parsedQ)
+          allParsedQuestions.push(parsedQ)
         }
+      }
+    }
 
-        // Extract options (A, B, C, D) if present in context
-        // 1. Radio inputs: <label class="mcq-option"><input ... value="A"> <strong>A</strong> text</label>
-        const mcqOptionPattern = /<(?:label|div|p)[^>]*>[\s\S]*?<input[^>]*value=["']([A-H])["'][^>]*>[\s\S]*?(?:<strong>[A-H]<\/strong>)?\s*([^<\n]+)/gi
-        let mcqMatch
-        while ((mcqMatch = mcqOptionPattern.exec(contextHtml)) !== null) {
-          const key = mcqMatch[1].toUpperCase()
-          const text = mcqMatch[2].replace(/^[A-H][\.\:\-\s]+/, '').trim()
+    // 7B: Handle Drag-and-drop / Matching questions (items with drop-zone)
+    const dropZoneMatches = [...questionsHtml.matchAll(/<(?:div|p|li)[^>]*class=["'][^"']*(?:question|flow-step|item)[^"']*["'][^>]*>([\s\S]*?)<\/(?:div|p|li)>/gi)]
+    dropZoneMatches.forEach(dz => {
+      const itemHtml = dz[0]
+      const qNumMatch = itemHtml.match(/data-question=["']?(\d{1,2})["']?/i) ||
+        itemHtml.match(/id=["']q(\d{1,2})["']?/i) ||
+        itemHtml.match(/(?:^|>|\s)(\d{1,2})\s+[A-Za-z]/i)
+
+      if (qNumMatch) {
+        const qNum = parseInt(qNumMatch[1], 10)
+        if (qNum > 0 && qNum <= 40 && !seenGlobalQNums.has(qNum)) {
+          seenGlobalQNums.add(qNum)
+
+          const pos = questionsHtml.indexOf(itemHtml)
+          const beforeHtml = pos !== -1 ? questionsHtml.substring(0, pos) : ''
+          const lastBoxMatch = [...beforeHtml.matchAll(/id=["'](options-[^"']+|pool-[^"']+)["']/gi)].pop()
+          const boxId = lastBoxMatch ? lastBoxMatch[1] : Object.keys(optionBoxes)[0]
+          const availableOptions = boxId && optionBoxes[boxId] ? optionBoxes[boxId] : []
+
+          const isFlow = /flow-step|flow-chart|mite/i.test(itemHtml + ' ' + beforeHtml.substring(Math.max(0, beforeHtml.length - 300)))
+          let qText = cleanQuestionPrompt(itemHtml, qNum)
+
+          if (!isFlow) {
+            // For matching items like "Sweet Water Season", keep just the clean name
+            qText = qText.replace(/\s*\[____\]\s*/g, '').trim()
+          }
+
+          const instrMatch = beforeHtml.match(/<p[^>]*class=["'][^"']*instructions[^"']*["'][^>]*>([\s\S]*?)<\/p>(?![\s\S]*<p[^>]*class=["'][^"']*instructions)/i)
+          const instruction = instrMatch ? stripTags(instrMatch[1]).trim() : 'Choose the correct letter and match with each item.'
+
+          const qType = isFlow ? 'flow_chart_completion' : 'matching'
+          const ans = answerKeyMap[qNum]?.answer || ''
+          const qOptions = availableOptions.map(opt => ({
+            ...opt,
+            is_correct: opt.option_key.toUpperCase() === ans.toUpperCase(),
+          }))
+
+          const parsedQ: ParsedQuestion = {
+            question_number: qNum,
+            question_type: qType,
+            instruction,
+            question_text: qText,
+            options: qOptions,
+            correct_answer: ans,
+            accepted_answers: ans ? [ans] : [],
+            points: 1,
+            difficulty: 'medium',
+            explanation: answerKeyMap[qNum]?.explanation || '',
+          }
+          sectionQuestions.push(parsedQ)
+          allParsedQuestions.push(parsedQ)
+        }
+      }
+    })
+
+    // 7C: Handle Standard Inputs / Note Completion
+    const inputMatches = [...questionsHtml.matchAll(/<(?:input|select)[^>]*id=["']q?(\d{1,2})["'][^>]*>/gi)]
+    inputMatches.forEach(im => {
+      const qNum = parseInt(im[1], 10)
+      if (qNum > 0 && qNum <= 40 && !seenGlobalQNums.has(qNum)) {
+        seenGlobalQNums.add(qNum)
+
+        const pos = im.index!
+        const before = questionsHtml.substring(Math.max(0, pos - 300), pos)
+        const lastLi = before.lastIndexOf('<li')
+        const lastP = before.lastIndexOf('<p')
+        const lastTr = before.lastIndexOf('<tr')
+        const lastDiv = before.lastIndexOf('<div')
+        const bestStart = Math.max(lastLi, lastP, lastTr, lastDiv)
+        const startIdx = bestStart !== -1 ? pos - (before.length - bestStart) : Math.max(0, pos - 100)
+
+        const after = questionsHtml.substring(pos, pos + 300)
+        const nextLi = after.indexOf('</li>')
+        const nextP = after.indexOf('</p>')
+        const nextTr = after.indexOf('</tr>')
+        const nextDiv = after.indexOf('</div>')
+        const closes = [nextLi !== -1 ? nextLi + 5 : -1, nextP !== -1 ? nextP + 4 : -1, nextTr !== -1 ? nextTr + 5 : -1, nextDiv !== -1 ? nextDiv + 6 : -1].filter(x => x > 0)
+        const bestEnd = closes.length > 0 ? Math.min(...closes) : 100
+        const endIdx = pos + bestEnd
+
+        const snippet = questionsHtml.substring(startIdx, endIdx)
+        const qText = cleanQuestionPrompt(snippet, qNum)
+
+        const instrMatch = before.match(/<p[^>]*class=["'][^"']*instructions[^"']*["'][^>]*>([\s\S]*?)<\/p>(?![\s\S]*<p[^>]*class=["'][^"']*instructions)/i)
+        const instruction = instrMatch ? stripTags(instrMatch[1]).trim() : 'Complete the notes below. Write ONE WORD ONLY for each answer.'
+        const ans = answerKeyMap[qNum]?.answer || ''
+
+        const parsedQ: ParsedQuestion = {
+          question_number: qNum,
+          question_type: 'note_completion',
+          instruction,
+          question_text: qText,
+          options: [],
+          correct_answer: ans,
+          accepted_answers: ans ? [ans] : [],
+          points: 1,
+          difficulty: 'medium',
+          explanation: answerKeyMap[qNum]?.explanation || '',
+        }
+        sectionQuestions.push(parsedQ)
+        allParsedQuestions.push(parsedQ)
+      }
+    })
+
+    // 7D: Handle Text Paragraph Questions (e.g. Cambridge Reading: <p><strong>1.</strong> Statement</p>)
+    const paragraphQuestions = [...questionsHtml.matchAll(/<(?:p|div|li)[^>]*>\s*(?:<(?:strong|b|span)[^>]*>)?\s*(?:Question\s+)?(\d{1,2})[\.\:\)]\s*(?:<\/(?:strong|b|span)>)?\s*([\s\S]*?)<\/(?:p|div|li)>/gi)]
+    paragraphQuestions.forEach(pq => {
+      const qNum = parseInt(pq[1], 10)
+      if (qNum > 0 && qNum <= 40 && !seenGlobalQNums.has(qNum)) {
+        seenGlobalQNums.add(qNum)
+
+        const rawText = stripTags(pq[2]).trim()
+        const pos = pq.index!
+        const beforeHtml = questionsHtml.substring(Math.max(0, pos - 500), pos)
+        const chunkAfter = questionsHtml.substring(pos, pos + 1000)
+
+        // Check for MCQ options A, B, C, D following this question
+        const options: ParsedQuestionOption[] = []
+        const optRegex = /<(?:p|div|li)[^>]*>\s*(?:<(?:strong|b)[^>]*>)?\s*([A-H])[\.\:\)]\s*(?:<\/(?:strong|b)>)?\s*([^<\n]+)<\/(?:p|div|li)>/gi
+        let om
+        while ((om = optRegex.exec(chunkAfter)) !== null) {
+          const key = om[1].toUpperCase()
+          const text = om[2].trim()
           if (!options.some(o => o.option_key === key)) {
             options.push({ option_key: key, option_text: text, is_correct: false })
           }
         }
 
-        // 2. Select dropdown options: <select name="q..."><option value="A">A</option>...
-        if (options.length === 0) {
-          const selectPattern = /<select[^>]*>([\s\S]*?)<\/select>/i
-          const selMatch = contextHtml.match(selectPattern)
-          if (selMatch && selMatch[1]) {
-            const optMatches = [...selMatch[1].matchAll(/<option[^>]*value=["']([A-H])["'][^>]*>([^<]*)<\/option>/gi)]
-            optMatches.forEach(om => {
-              const key = om[1].toUpperCase()
-              const text = om[2].trim() || `Option ${key}`
-              if (!options.some(o => o.option_key === key)) {
-                options.push({ option_key: key, option_text: text, is_correct: false })
-              }
-            })
-          }
-        }
-
-        // 3. Text options: A. text, B. text, C. text
-        if (options.length === 0) {
-          const textOptPattern = /(?:<p[^>]*>|<div[^>]*>|<li[^>]*>|\n)\s*(?:<(?:strong|b)[^>]*>)?\s*([A-H])[\.\:\)]\s*(?:<\/(?:strong|b)>)?\s*([^<\n]+)/gi
-          let tMatch
-          while ((tMatch = textOptPattern.exec(contextHtml)) !== null) {
-            const key = tMatch[1].toUpperCase()
-            const text = tMatch[2].trim()
-            if (!options.some(o => o.option_key === key) && !/\b[B-I][\.\:\)]\s+/i.test(text)) {
-              options.push({ option_key: key, option_text: text, is_correct: false })
-            }
-          }
-        }
-
-        // Clean prompt text
-        qText = contextHtml
-          .replace(/<select[\s\S]*?<\/select>/gi, ' [____] ')
-          .replace(/<input[^>]*>/gi, ' [____] ')
-          .replace(/<(?:label|div)[^>]*class=["'][^"']*mcq-option[\s\S]*?<\/(?:label|div)>/gi, '')
-        qText = stripTags(qText)
-        qText = qText.replace(new RegExp(`^\\s*(?:Question\\s+)?${qNum}[\\.\\:\\)]?\\s*`, 'i'), '').trim()
-        qText = qText.replace(/\s+/g, ' ')
-
-        if (!qText || qText.length < 3) {
-          qText = `Question ${qNum}`
-        }
-
-        // Detect Question Type
+        // Determine question type & instruction
         let qType = 'short_answer'
-        const contextLower = (currentInstruction + ' ' + contextHtml).toLowerCase()
+        const instrMatch = beforeHtml.match(/<(?:p|div|em|i)[^>]*>[\s\S]*?(?:TRUE|FALSE|NOT GIVEN|Choose the correct letter|Complete the summary)[\s\S]*?<\/(?:p|div|em|i)>/i)
+        const instruction = instrMatch ? stripTags(instrMatch[0]).trim() : 'Answer the question according to the reading passage.'
+        const instrLower = instruction.toLowerCase()
 
-        if (contextLower.includes('true') && contextLower.includes('false')) {
+        if (instrLower.includes('true') && instrLower.includes('false')) {
           qType = 'true_false_not_given'
-        } else if (contextLower.includes('yes') && contextLower.includes('no')) {
+        } else if (instrLower.includes('yes') && instrLower.includes('no')) {
           qType = 'yes_no_not_given'
-        } else if (contextLower.includes('heading') || contextLower.includes('list of headings')) {
-          qType = 'matching_headings'
-        } else if (contextLower.includes('which paragraph') || contextLower.includes('paragraphs a')) {
-          qType = 'matching_information'
-        } else if (contextLower.includes('match') && (contextLower.includes('feature') || contextLower.includes('people') || contextLower.includes('researcher') || contextLower.includes('name'))) {
-          qType = 'matching_features'
-        } else if (contextLower.includes('match') && contextLower.includes('sentence')) {
-          qType = 'matching_sentence_endings'
         } else if (options.length >= 2) {
-          if (contextLower.includes('choose two') || contextLower.includes('choose three') || contextLower.includes('which two')) {
-            qType = 'multiple_response'
-          } else {
-            qType = 'multiple_choice'
-          }
-        } else if (contextLower.includes('note') || contextLower.includes('notes')) {
-          qType = 'note_completion'
-        } else if (contextLower.includes('table')) {
-          qType = 'table_completion'
-        } else if (contextLower.includes('flow chart') || contextLower.includes('flow-chart')) {
-          qType = 'flow_chart_completion'
-        } else if (contextLower.includes('summary')) {
-          qType = 'summary_completion'
-        } else if (contextLower.includes('diagram') || contextLower.includes('label the diagram')) {
-          qType = skill === 'listening' ? 'plan_map_diagram' : 'diagram_label_completion'
-        } else if (contextLower.includes('map') || contextLower.includes('plan')) {
-          qType = 'plan_map_diagram'
-        } else if (contextLower.includes('form') || contextLower.includes('application form')) {
-          qType = 'form_completion'
-        } else if (contextLower.includes('sentence') || qText.includes('____') || qText.includes('[____]')) {
-          qType = 'sentence_completion'
+          qType = 'multiple_choice'
         }
 
-        // Correct answer & explanation from answerKeyMap
-        const keyData = answerKeyMap[qNum]
-        let correctAns = keyData?.answer || ''
-        let explanation = keyData?.explanation || ''
-
-        // Link correct flag to options if applicable
-        if (correctAns && options.length > 0) {
+        const ans = answerKeyMap[qNum]?.answer || ''
+        if (ans && options.length > 0) {
           options.forEach(opt => {
-            if (opt.option_key.toUpperCase() === correctAns.toUpperCase() || opt.option_text.toLowerCase() === correctAns.toLowerCase()) {
+            if (opt.option_key.toUpperCase() === ans.toUpperCase() || opt.option_text.toLowerCase() === ans.toLowerCase()) {
               opt.is_correct = true
             }
           })
         }
 
-        parsedQuestions.push({
+        const parsedQ: ParsedQuestion = {
           question_number: qNum,
           question_type: qType,
-          instruction: currentInstruction,
-          question_text: qText,
+          instruction,
+          question_text: rawText,
           options,
-          correct_answer: correctAns,
-          accepted_answers: correctAns ? [correctAns] : [],
+          correct_answer: ans,
+          accepted_answers: ans ? [ans] : [],
           points: 1,
           difficulty: 'medium',
-          explanation,
-        })
-      })
-    }
+          explanation: answerKeyMap[qNum]?.explanation || '',
+        }
+        sectionQuestions.push(parsedQ)
+        allParsedQuestions.push(parsedQ)
+      }
+    })
 
     sections.push({
       title: secTitle,
@@ -658,93 +647,61 @@ export function parseIeltsHtml(rawHtml: string): ParsedIeltsTest {
       time_limit_minutes: skill === 'listening' ? 10 : 20,
       passage_html: passageHtml,
       audio_url: secAudio,
-      questions: parsedQuestions,
+      questions: sectionQuestions,
     })
   })
 
-  // Step 8: Collect all parsed questions across all sections and recover any missing questions (1 to 40)
-  const allDetectedQs: ParsedQuestion[] = []
-  const seenQNums = new Set<number>()
+  // Global 40-question completion ONLY for listening or full tests with answer keys
+  const hasFullListeningAnswers = skill === 'listening' || Object.keys(answerKeyMap).length >= 25
+  if (hasFullListeningAnswers) {
+    for (let q = 1; q <= 40; q++) {
+      if (!seenGlobalQNums.has(q)) {
+        seenGlobalQNums.add(q)
+        const ans = answerKeyMap[q]?.answer || ''
+        const defaultType = (q >= 11 && q <= 14) ? 'multiple_choice' : ((q >= 15 && q <= 30) ? 'matching' : 'note_completion')
 
-  sections.forEach((s) => {
-    s.questions.forEach((q) => {
-      if (!seenQNums.has(q.question_number)) {
-        seenQNums.add(q.question_number)
-        allDetectedQs.push(q)
-      }
-    })
-  })
-
-  // Recover any missing questions 1 to 40 directly from the clean HTML
-  for (let qNum = 1; qNum <= 40; qNum++) {
-    if (!seenQNums.has(qNum)) {
-      const recovered = extractIndividualQuestion(qNum, clean, answerKeyMap, dragPools)
-      if (recovered) {
-        seenQNums.add(qNum)
-        allDetectedQs.push(recovered)
+        const fallbackQ: ParsedQuestion = {
+          question_number: q,
+          question_type: defaultType,
+          instruction: 'Answer the question according to the recording.',
+          question_text: `Question ${q} [____]`,
+          options: [],
+          correct_answer: ans,
+          accepted_answers: ans ? [ans] : [],
+          points: 1,
+          difficulty: 'medium',
+          explanation: answerKeyMap[q]?.explanation || '',
+        }
+        allParsedQuestions.push(fallbackQ)
       }
     }
   }
 
-  allDetectedQs.sort((a, b) => a.question_number - b.question_number)
+  allParsedQuestions.sort((a, b) => a.question_number - b.question_number)
 
-  // Critical Safeguard: Distribute questions into standard sections so no section is ever empty
-  let finalSections = sections
+  let finalSections: ParsedSection[] = []
 
-  if (skill === 'listening' || sections.length === 4 || allDetectedQs.length >= 25) {
-    while (sections.length < 4) {
-      sections.push({
-        title: `Section ${sections.length + 1}`,
-        order_number: sections.length + 1,
-        instructions: 'Listen to the recording and answer the questions.',
+  if (skill === 'listening' || allParsedQuestions.length >= 35) {
+    const sectionNames = ['Part 1', 'Part 2', 'Part 3', 'Part 4']
+    finalSections = sectionNames.map((name, idx) => {
+      const startQ = idx * 10 + 1
+      const endQ = (idx + 1) * 10
+      const sectionQs = allParsedQuestions.filter(q => q.question_number >= startQ && q.question_number <= endQ)
+      const existingSec = sections[idx]
+
+      return {
+        title: existingSec?.title || name,
+        order_number: idx + 1,
+        instructions: existingSec?.instructions || 'Listen to the recording and answer questions.',
         time_limit_minutes: 10,
-        passage_html: '',
-        audio_url: globalAudioUrl,
-        questions: [],
-      })
-    }
-
-    // Assign questions strictly by standard ranges so Section 1-4 ALWAYS get their exact 10 questions!
-    sections[0].questions = allDetectedQs.filter((q) => q.question_number <= 10)
-    sections[1].questions = allDetectedQs.filter((q) => q.question_number > 10 && q.question_number <= 20)
-    sections[2].questions = allDetectedQs.filter((q) => q.question_number > 20 && q.question_number <= 30)
-    sections[3].questions = allDetectedQs.filter((q) => q.question_number > 30 && q.question_number <= 40)
-    finalSections = sections
-  } else if (skill === 'reading' && (sections.length === 1 || sections.length === 3) && allDetectedQs.length >= 14) {
-    if (sections.length === 1) {
-      finalSections = [
-        {
-          title: 'Reading Passage 1',
-          order_number: 1,
-          instructions: 'Read the passage and answer questions 1 to 13.',
-          time_limit_minutes: 20,
-          passage_html: sections[0].passage_html,
-          audio_url: '',
-          questions: allDetectedQs.filter((q) => q.question_number <= 13),
-        },
-        {
-          title: 'Reading Passage 2',
-          order_number: 2,
-          instructions: 'Read the passage and answer questions 14 to 26.',
-          time_limit_minutes: 20,
-          passage_html: '',
-          audio_url: '',
-          questions: allDetectedQs.filter((q) => q.question_number > 13 && q.question_number <= 26),
-        },
-        {
-          title: 'Reading Passage 3',
-          order_number: 3,
-          instructions: 'Read the passage and answer questions 27 to 40.',
-          time_limit_minutes: 20,
-          passage_html: '',
-          audio_url: '',
-          questions: allDetectedQs.filter((q) => q.question_number > 26),
-        },
-      ].filter((s) => s.questions.length > 0)
-    } else if (sections.length === 3) {
-      sections[0].questions = allDetectedQs.filter((q) => q.question_number <= 13)
-      sections[1].questions = allDetectedQs.filter((q) => q.question_number > 13 && q.question_number <= 26)
-      sections[2].questions = allDetectedQs.filter((q) => q.question_number > 26)
+        passage_html: existingSec?.passage_html || '',
+        audio_url: existingSec?.audio_url || globalAudioUrl,
+        questions: sectionQs,
+      }
+    })
+  } else {
+    finalSections = sections.filter(s => s.questions.length > 0)
+    if (finalSections.length === 0) {
       finalSections = sections
     }
   }
