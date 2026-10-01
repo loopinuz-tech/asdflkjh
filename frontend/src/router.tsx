@@ -70,12 +70,14 @@ export default function AppRouter() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/policy" element={<PolicyRedirect />} />
+        <Route path="/pricing" element={<Navigate to="/premium" replace />} />
       </Route>
 
       {/* Auth */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/register" element={<Navigate to="/signup" replace />} />
       </Route>
 
       {/* Auth callback — standalone */}

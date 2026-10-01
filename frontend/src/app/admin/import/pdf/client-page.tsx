@@ -20,6 +20,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { QuestionRenderer } from '@/components/tests/question-renderer'
+import { parseIeltsHtml } from '@/lib/parsers/html-test-parser'
 import { saveFullTestStructure, createImportRecord } from '@/actions/admin'
 import { cn } from '@/lib/utils'
 
@@ -171,6 +172,26 @@ Answer Key:
 
       setStep('review')
     } catch (err: any) {
+      // If in text mode, attempt high-accuracy algorithmic parser as robust fallback
+      if (importMode === 'text' && textInput.trim()) {
+        try {
+          const htmlContent = textInput
+            .split(/\n\s*\n/)
+            .map((p) => `<p>${p.trim().replace(/\n/g, '<br />')}</p>`)
+            .join('\n')
+          const fallbackParsed = parseIeltsHtml(htmlContent)
+          if (fallbackParsed && fallbackParsed.sections.length > 0 && fallbackParsed.total_questions > 0) {
+            setExtractedData(fallbackParsed)
+            setSelectedQuestionIndex(0)
+            setActiveSectionIdx(0)
+            setStep('review')
+            return
+          }
+        } catch (fallbackErr) {
+          console.warn('Algorithmic text fallback also failed:', fallbackErr)
+        }
+      }
+
       alert(`Parsing failed: ${err.message}`)
       setStep('upload')
     } finally {

@@ -8,12 +8,13 @@ import { cn } from '@/lib/utils'
 
 const plans = [
   {
-    name: 'Free',
+    name: 'Free Trial',
     slug: 'free',
-    price: 'Free',
+    price: '$0',
     description: 'Start practicing for IELTS at no cost.',
-    cta: 'Get Started',
+    cta: 'Get Started Free',
     ctaVariant: 'outline' as const,
+    ctaHref: '/signup',
     highlighted: false,
     features: [
       { text: 'Selected IELTS-style practice tests', included: true },
@@ -24,30 +25,31 @@ const plans = [
       { text: 'Full question library', included: false },
       { text: 'Unlimited practice', included: false },
       { text: 'Advanced progress analytics', included: false },
-      { text: 'Advanced feedback', included: false },
+      { text: 'Detailed AI Writing & Speaking feedback', included: false },
       { text: 'Premium vocabulary collections', included: false },
     ],
   },
   {
-    name: 'Premium',
+    name: 'Premium VIP',
     slug: 'premium',
-    price: 'Premium',
-    priceNote: 'Pricing configured by admin',
-    description: 'Everything you need to reach your target band.',
-    cta: 'Upgrade to Premium',
+    price: '$9',
+    priceNote: '/ month • or $49/year (Save 55%)',
+    description: 'Complete all-in-one preparation to reach your target 7.5+ Band.',
+    cta: 'Upgrade to Premium →',
     ctaVariant: 'default' as const,
+    ctaHref: '/premium',
     highlighted: true,
     features: [
-      { text: 'Full IELTS-style question library', included: true },
-      { text: 'All question types', included: true },
-      { text: 'Unlimited practice sessions', included: true },
-      { text: 'Advanced progress analytics', included: true },
-      { text: 'Complete vocabulary collections', included: true },
-      { text: 'Detailed feedback on Writing', included: true },
-      { text: 'Detailed feedback on Speaking', included: true },
-      { text: 'Advanced scoring insights', included: true },
-      { text: 'Priority content access', included: true },
-      { text: 'All future premium features', included: true },
+      { text: 'Full IELTS Cambridge question library (1–19)', included: true },
+      { text: 'All 15+ official IELTS question types', included: true },
+      { text: 'Unlimited practice tests with timers', included: true },
+      { text: 'Advanced AI progress analytics & band prediction', included: true },
+      { text: 'Complete Academic & General vocabulary collections', included: true },
+      { text: 'Instant AI Evaluation on Writing Task 1 & 2', included: true },
+      { text: 'Audio recording & AI Speaking scoring', included: true },
+      { text: 'In-depth answer explanations & transcripts', included: true },
+      { text: 'Priority customer support & Telegram VIP group', included: true },
+      { text: 'All upcoming mock tests & updates included', included: true },
     ],
   },
 ]
@@ -114,11 +116,11 @@ export function Pricing() {
                 </CardHeader>
 
                 <CardContent>
-                  <Link to="/signup"
+                  <Link to={plan.ctaHref || '/signup'}
                     className={cn(
                       buttonVariants({ variant: plan.ctaVariant }),
                       'w-full mb-6',
-                      plan.highlighted && 'bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold'
+                      plan.highlighted && 'bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold shadow-xs'
                     )}
                   >
                     {plan.cta}
