@@ -529,7 +529,7 @@ function SummaryCompletionSelector({
     )
   }
 
-  // Has box options! Render interactive Word Bank & Selector
+  // Render clean dropdown selector (as requested, without redundant Word Bank card grid)
   const currentStr = String(answer || '').trim()
   const matchedItem = items.find(
     (opt) =>
@@ -538,90 +538,31 @@ function SummaryCompletionSelector({
   )
 
   return (
-    <div className="mt-3 space-y-3">
-      {/* Visual Word Bank Box */}
-      <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-secondary/30 border border-border space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-primary" />
-            Word Bank (Options A–{String.fromCharCode(64 + items.length)}):
-          </span>
-          <span className="text-[11px] text-muted-foreground hidden sm:inline">
-            Click a word to select
-          </span>
-        </div>
+    <div className="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+      <select
+        value={matchedItem?.option_key || currentStr || ''}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full max-w-md p-2.5 rounded-xl border border-border bg-background text-sm text-foreground focus:ring-1 focus:ring-primary focus:border-primary focus:outline-none cursor-pointer"
+      >
+        <option value="">-- Choose matching letter or word --</option>
+        {items.map((opt) => (
+          <option key={opt.option_key} value={opt.option_key}>
+            {opt.option_key}. {stripOptionKeyPrefix(opt.option_key, opt.option_text)}
+          </option>
+        ))}
+      </select>
 
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2">
-          {items.map((opt) => {
-            const isSelected =
-              matchedItem?.option_key === opt.option_key ||
-              (currentStr.length > 0 && currentStr.toUpperCase() === String(opt?.option_key || '').toUpperCase())
-
-            return (
-              <button
-                key={opt.option_key}
-                type="button"
-                disabled={disabled}
-                onClick={() => {
-                  const sel = window.getSelection()
-                  if (sel && !sel.isCollapsed && sel.toString().trim().length > 0) return
-                  onChange(opt.option_key)
-                }}
-                className={cn(
-                  'flex items-start gap-2 p-2 rounded-xl border text-xs font-medium transition-all text-left cursor-pointer select-text',
-                  isSelected
-                    ? 'bg-primary text-black border-primary shadow-xs font-bold ring-2 ring-primary/20 scale-[1.01]'
-                    : 'bg-card border-border text-foreground hover:bg-secondary hover:border-primary/40'
-                )}
-              >
-                <span
-                  className={cn(
-                    'w-5 h-5 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0 transition-colors select-none mt-0.5',
-                    isSelected
-                      ? 'bg-black text-white'
-                      : 'bg-secondary text-primary font-mono'
-                  )}
-                >
-                  {opt.option_key}
-                </span>
-                <QuestionHtmlContent
-                  as="span"
-                  className="break-words leading-snug select-text cursor-text text-xs flex-1 min-w-0"
-                  html={stripOptionKeyPrefix(opt.option_key, opt.option_text)}
-                />
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Selected Answer confirmation & Dropdown Fallback */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-        <select
-          value={matchedItem?.option_key || currentStr || ''}
+      {currentStr && (
+        <button
+          type="button"
           disabled={disabled}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full max-w-md p-2.5 rounded-xl border border-border bg-background text-sm text-foreground focus:ring-1 focus:ring-primary focus:border-primary focus:outline-none cursor-pointer"
+          onClick={() => onChange('')}
+          className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 transition-colors cursor-pointer self-start sm:self-auto"
         >
-          <option value="">-- Choose matching letter or word --</option>
-          {items.map((opt) => (
-            <option key={opt.option_key} value={opt.option_key}>
-              {opt.option_key}. {stripOptionKeyPrefix(opt.option_key, opt.option_text)}
-            </option>
-          ))}
-        </select>
-
-        {currentStr && (
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => onChange('')}
-            className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 transition-colors cursor-pointer self-start sm:self-auto"
-          >
-            Clear selection
-          </button>
-        )}
-      </div>
+          Clear selection
+        </button>
+      )}
     </div>
   )
 }
@@ -834,6 +775,9 @@ export function QuestionRenderer({
 
       // 8. Matching Sentence Endings
       case 'matching_sentence_endings':
+        if (question.options && question.options.length > 0) {
+          return <SummaryCompletionSelector question={question} answer={answer} onChange={onChange} disabled={disabled} />
+        }
         return <MatchingSelector question={question} answer={answer} onChange={onChange} disabled={disabled} label="Select Matching Sentence Ending:" />
 
       // 9. Sentence Completion
