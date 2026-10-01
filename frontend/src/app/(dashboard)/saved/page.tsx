@@ -134,34 +134,34 @@ export default function SavedItemsPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary text-primary-foreground shadow-xs">
-            <BookmarkSquareIcon className="h-6 w-6" size={24} />
+          <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary text-primary-foreground shadow-xs shrink-0">
+            <BookmarkSquareIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">Saved Items</h1>
-            <p className="text-sm text-muted-foreground">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Saved Items</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Your personalized hub of bookmarked tests, tricky questions, vocabulary, and prompts.
             </p>
           </div>
         </div>
 
         {/* Search input */}
-        <div className="relative w-full sm:w-72">
+        <div className="relative w-full sm:w-72 shrink-0">
           <RoundedMagnifierIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search saved items..."
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 sm:pb-3 border-b border-border scrollbar-none -mx-1 px-1">
         {[
           { key: 'all', label: 'All Items', count: counts.all },
           { key: 'test', label: 'Full Tests', count: counts.test },
@@ -176,9 +176,9 @@ export default function SavedItemsPage() {
               type="button"
               onClick={() => setActiveTab(tab.key as CategoryFilter)}
               className={cn(
-                'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border',
+                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border whitespace-nowrap shrink-0',
                 isActive
-                  ? 'bg-foreground text-background border-foreground shadow-xs'
+                  ? 'bg-foreground text-background border-foreground shadow-xs font-bold'
                   : 'bg-card text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
               )}
             >
@@ -348,13 +348,13 @@ function SavedItemCard({
               )}
             </div>
 
-            <div className="pt-2 border-t border-border flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground">
+            <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
+              <span className="text-[10px] text-muted-foreground truncate">
                 Saved {new Date(item.created_at).toLocaleDateString()}
               </span>
               <Link
                 to={targetUrl}
-                className={cn(buttonVariants({ size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
+                className={cn(buttonVariants({ size: 'sm' }), 'h-8 px-3 text-xs gap-1.5 shrink-0')}
               >
                 <span>Take Test</span>
                 <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
@@ -420,13 +420,13 @@ function SavedItemCard({
               </details>
             )}
 
-            <div className="pt-2 border-t border-border flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground">
+            <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
+              <span className="text-[10px] text-muted-foreground truncate">
                 Saved {new Date(item.created_at).toLocaleDateString()}
               </span>
               <Link
                 to={targetUrl}
-                className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
+                className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-8 px-3 text-xs gap-1.5 shrink-0')}
               >
                 <span>Open Test</span>
                 <AltArrowRightIcon className="w-3.5 h-3.5 text-primary" size={14} />
@@ -485,13 +485,13 @@ function SavedItemCard({
               </p>
             )}
 
-            <div className="pt-2 border-t border-border flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground">
+            <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
+              <span className="text-[10px] text-muted-foreground truncate">
                 Saved {new Date(item.created_at).toLocaleDateString()}
               </span>
               <Link
                 to={`/vocabulary?search=${encodeURIComponent(details.word)}`}
-                className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
+                className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-8 px-3 text-xs gap-1.5 shrink-0')}
               >
                 <TranslationIcon className="w-3.5 h-3.5 text-primary" size={14} />
                 <span>Practice Word</span>
@@ -543,13 +543,13 @@ function SavedItemCard({
               {details.prompt_text}
             </p>
 
-            <div className="pt-2 border-t border-border flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground">
+            <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
+              <span className="text-[10px] text-muted-foreground truncate">
                 Saved {new Date(item.created_at).toLocaleDateString()}
               </span>
               <Link
                 to={isWriting ? '/writing' : '/speaking'}
-                className={cn(buttonVariants({ size: 'sm' }), 'h-8 px-3 text-xs gap-1.5')}
+                className={cn(buttonVariants({ size: 'sm' }), 'h-8 px-3 text-xs gap-1.5 shrink-0')}
               >
                 <span>Practice Now</span>
                 <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />

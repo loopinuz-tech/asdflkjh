@@ -1,6 +1,6 @@
 import { Hero } from '@/components/marketing/hero'
 import { TrustStrip } from '@/components/marketing/trust-strip'
-import { Features } from '@/components/marketing/features'
+import { FerrisWheelSkills } from '@/components/marketing/ferris-wheel-skills'
 import { HowItWorks } from '@/components/marketing/how-it-works'
 import { IeltsSection } from '@/components/marketing/ielts-section'
 import { VocabularySection } from '@/components/marketing/vocabulary-section'
@@ -19,7 +19,7 @@ export default function LandingPage() {
       />
       <Hero />
       <TrustStrip />
-      <Features />
+      <FerrisWheelSkills />
       <HowItWorks />
       <IeltsSection />
       <VocabularySection />

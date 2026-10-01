@@ -206,42 +206,42 @@ export default function PracticeHistory() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground shadow-xs">
-            <ClockCircleIcon className="h-6 w-6" size={24} />
+          <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
+            <ClockCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Practice Center</h1>
-            <p className="text-muted-foreground">Select a skill module to practice or review your past attempts.</p>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Practice Center</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">Select a skill module to practice or review your past attempts.</p>
           </div>
         </div>
       </div>
 
       {/* Modules Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {modules.map((m) => {
           const Icon = m.icon
           return (
             <Card key={m.id} className="border-border fox-shadow-sm hover:border-primary/50 transition-all group flex flex-col justify-between">
-              <CardContent className="p-6 flex flex-col h-full justify-between gap-4">
-                <div className="space-y-3">
+              <CardContent className="p-4 sm:p-5 flex flex-col h-full justify-between gap-4">
+                <div className="space-y-2.5 sm:space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center', m.bgColor)}>
-                      <Icon className={cn('w-6 h-6', m.color)} size={24} />
+                    <div className={cn('w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center', m.bgColor)}>
+                      <Icon className={cn('w-5 h-5 sm:w-6 sm:h-6', m.color)} size={22} />
                     </div>
                     <span className="text-xs text-muted-foreground font-medium">{m.count}</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{m.title}</h3>
+                    <h3 className="text-base sm:text-lg font-bold group-hover:text-primary transition-colors">{m.title}</h3>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{m.desc}</p>
                   </div>
                 </div>
 
                 <Link to={m.href}
-                  className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'w-full justify-between group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors')}
+                  className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'w-full justify-between group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors text-xs font-semibold')}
                 >
                   <span>Start Module</span>
                   <AltArrowRightIcon className="w-4 h-4" size={16} />
@@ -254,16 +254,16 @@ export default function PracticeHistory() {
 
       {/* Recent History Table */}
       <Card className="border-border fox-shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
           <div>
-            <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <RestartSquareIcon className="w-5 h-5 text-primary" size={20} />
+            <CardTitle className="text-base sm:text-lg font-bold flex items-center gap-2">
+              <RestartSquareIcon className="w-5 h-5 text-primary shrink-0" size={20} />
               <span>Recent Test Attempts</span>
             </CardTitle>
-            <CardDescription>Your scored practice sessions and progress logs across all 4 IELTS skills</CardDescription>
+            <CardDescription className="text-xs">Your scored practice sessions and progress logs across all 4 IELTS skills</CardDescription>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6 pt-0">
           {loading ? (
             <div className="py-12 flex justify-center items-center">
               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -274,25 +274,25 @@ export default function PracticeHistory() {
                 const config = getSkillConfig(attempt.skill)
                 const Icon = config.icon
                 return (
-                  <div key={attempt.id} className="py-3.5 flex items-center justify-between gap-4 hover:bg-muted/30 px-2 rounded-lg transition-colors">
+                  <div key={attempt.id} className="py-3 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/30 px-2 sm:px-3 rounded-xl transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', config.bg)}>
+                      <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', config.bg)}>
                         <Icon className={cn('w-4 h-4', config.color)} size={18} />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h4 className="text-sm font-semibold text-foreground truncate">
                           {attempt.title}
                         </h4>
                         <p className="text-xs text-muted-foreground capitalize flex items-center gap-1.5">
-                          <span className={cn('font-medium', config.color)}>{config.label}</span>
+                          <span className="font-semibold text-foreground/80">{config.label}</span>
                           <span>·</span>
                           <span>{new Date(attempt.created_at).toLocaleDateString()}</span>
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
-                      <div className="text-right">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t border-border/40 sm:border-0 shrink-0">
+                      <div className="text-left sm:text-right">
                         <div className="text-sm font-bold text-foreground">
                           {attempt.estimated_band ? `Band ${Number(attempt.estimated_band).toFixed(1)}` : 'Completed'}
                         </div>
@@ -304,10 +304,11 @@ export default function PracticeHistory() {
                       {attempt.href && (
                         <Link
                           to={attempt.href}
-                          className="h-8 px-3 rounded-xl bg-primary/10 hover:bg-primary text-primary-foreground dark:text-primary hover:text-black font-bold text-xs border border-primary/30 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                          className="h-8 px-3 rounded-xl bg-primary/10 hover:bg-primary text-foreground hover:text-black font-bold text-xs border border-primary/30 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ml-auto sm:ml-0"
                         >
-                          <EyeIcon className="w-3.5 h-3.5" size={14} />
-                          <span>Review Full Test</span>
+                          <EyeIcon className="w-3.5 h-3.5 text-primary" size={14} />
+                          <span className="hidden sm:inline">Review Full Test</span>
+                          <span className="sm:hidden">Review</span>
                           <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
                         </Link>
                       )}

@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
-import { BookOpen, Headphones, PenTool, Mic } from 'lucide-react'
+import { BookBookmarkIcon, HeadphonesRoundIcon, Pen2Icon, Microphone2Icon } from '@solar-icons/react/bold-duotone'
 import { Badge } from '@/components/ui/badge'
 
 const skills = [
   {
-    icon: BookOpen,
+    icon: BookBookmarkIcon,
     title: 'Reading',
     color: 'text-fox-yellow',
     bgColor: 'bg-fox-yellow/10',
@@ -26,7 +26,7 @@ const skills = [
     ],
   },
   {
-    icon: Headphones,
+    icon: HeadphonesRoundIcon,
     title: 'Listening',
     color: 'text-chart-4',
     bgColor: 'bg-chart-4/10',
@@ -45,7 +45,7 @@ const skills = [
     ],
   },
   {
-    icon: PenTool,
+    icon: Pen2Icon,
     title: 'Writing',
     color: 'text-fox-red',
     bgColor: 'bg-fox-red/10',
@@ -59,7 +59,7 @@ const skills = [
     ],
   },
   {
-    icon: Mic,
+    icon: Microphone2Icon,
     title: 'Speaking',
     color: 'text-fox-success',
     bgColor: 'bg-fox-success/10',
@@ -77,14 +77,14 @@ const skills = [
 
 export function IeltsSection() {
   return (
-    <section id="ielts" className="py-20 sm:py-28">
+    <section id="ielts" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          className="text-center mb-10 sm:mb-12"
         >
           <h2 className="text-3xl font-bold sm:text-4xl">
             Complete IELTS-style practice

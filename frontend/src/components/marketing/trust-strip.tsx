@@ -1,25 +1,31 @@
 import { motion } from 'framer-motion'
-import { CheckCircle, BarChart3, Target, BookOpen, Users } from 'lucide-react'
+import { 
+  CheckCircleIcon, 
+  ChartSquareIcon, 
+  TargetIcon, 
+  BookBookmarkIcon, 
+  UsersGroupTwoRoundedIcon 
+} from '@solar-icons/react/bold-duotone'
 
 const benefits = [
   {
-    icon: CheckCircle,
+    icon: CheckCircleIcon,
     label: 'Real IELTS-style practice',
   },
   {
-    icon: Target,
+    icon: TargetIcon,
     label: 'Personalized learning',
   },
   {
-    icon: BarChart3,
+    icon: ChartSquareIcon,
     label: 'Track your progress',
   },
   {
-    icon: BookOpen,
+    icon: BookBookmarkIcon,
     label: 'Vocabulary building',
   },
   {
-    icon: Users,
+    icon: UsersGroupTwoRoundedIcon,
     label: 'All four skills',
   },
 ]

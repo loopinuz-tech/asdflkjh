@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
+import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/lib/utils'
 import { 
   ChartSquareIcon, 
@@ -28,30 +29,50 @@ interface ProgressClientViewProps {
 
 export function ProgressClientView({ data }: ProgressClientViewProps) {
   const [activeMetric, setActiveMetric] = useState<'overall' | 'reading' | 'listening' | 'writing' | 'speaking'>('overall')
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+
+  const chartColors = {
+    primary: isDark ? '#F5A623' : '#D97706',
+    target: isDark ? '#71717a' : '#94a3b8',
+    grid: isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0',
+    axisText: isDark ? '#a1a1aa' : '#64748b',
+    tooltipBg: isDark ? '#18181b' : '#ffffff',
+    tooltipBorder: isDark ? 'rgba(255, 255, 255, 0.15)' : '#e2e8f0',
+    tooltipText: isDark ? '#f4f4f5' : '#0f172a',
+    radarGrid: isDark ? 'rgba(255, 255, 255, 0.14)' : '#cbd5e1',
+    radarLabel: isDark ? '#f4f4f5' : '#1e293b',
+    radarFill: isDark ? '#F5A623' : '#D97706',
+    barActive: isDark ? '#F5A623' : '#F59E0B',
+    barMedium: isDark ? 'rgba(245, 166, 35, 0.65)' : 'rgba(245, 158, 11, 0.65)',
+    barEmpty: isDark ? 'rgba(255, 255, 255, 0.06)' : '#f1f5f9',
+    dotBg: isDark ? '#18181b' : '#ffffff',
+    cursorBg: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
+  }
 
   const hasTestResults = data.testsCompleted > 0 && data.scoreHistory.length > 0
   const hasActivity = data.studyHoursTotal > 0
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground shadow-xs">
-            <ChartSquareIcon className="h-6 w-6" size={24} />
+          <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
+            <ChartSquareIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Your Progress</h1>
-            <p className="text-muted-foreground">Track your real performance and band score development.</p>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Your Progress</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">Track your real performance and band score development.</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 bg-card border border-border px-4 py-2 rounded-lg fox-shadow-sm">
+        <div className="flex items-center justify-between sm:justify-start gap-4 bg-card border border-border px-3.5 py-2 rounded-xl fox-shadow-sm w-full sm:w-auto">
           <div className="flex items-center gap-2">
             <TargetIcon className="w-4 h-4 text-primary" size={16} />
-            <span className="text-sm font-medium">Target Band:</span>
+            <span className="text-xs sm:text-sm font-medium">Target Band:</span>
           </div>
-          <span className="text-lg font-bold text-foreground">
+          <span className="text-base sm:text-lg font-bold text-foreground">
             {data.targetBand ? data.targetBand.toFixed(1) : '7.0'}
           </span>
         </div>
@@ -164,14 +185,14 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Chart: Score Over Time */}
         <Card className="lg:col-span-2 border-border fox-shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 pb-2 sm:pb-2">
             <div>
-              <CardTitle>Score History</CardTitle>
-              <CardDescription>Your score trajectory across completed practice tests</CardDescription>
+              <CardTitle className="text-base sm:text-lg font-bold">Score History</CardTitle>
+              <CardDescription className="text-xs">Your score trajectory across completed practice tests</CardDescription>
             </div>
             {hasTestResults && (
               <select 
-                className="text-sm border border-border rounded-md px-2 py-1 bg-background"
+                className="text-xs sm:text-sm border border-border rounded-xl px-3 py-1.5 bg-background text-foreground w-full sm:w-auto focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                 value={activeMetric}
                 onChange={(e) => setActiveMetric(e.target.value as any)}
               >
@@ -183,31 +204,39 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
               </select>
             )}
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 sm:p-6 pt-0">
             {hasTestResults ? (
-              <div className="h-[300px] w-full mt-4">
+              <div className="h-[240px] sm:h-[300px] w-full mt-2 sm:mt-4">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data.scoreHistory} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                    <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis domain={[0, 9]} ticks={[0, 2, 4, 6, 7, 8, 9]} stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <LineChart data={data.scoreHistory} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartColors.grid} />
+                    <XAxis dataKey="date" stroke={chartColors.axisText} fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis domain={[0, 9]} ticks={[0, 2, 4, 6, 7, 8, 9]} stroke={chartColors.axisText} fontSize={12} tickLine={false} axisLine={false} />
                     <RechartsTooltip 
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
-                      itemStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600 }}
+                      contentStyle={{ 
+                        backgroundColor: chartColors.tooltipBg, 
+                        borderRadius: '10px', 
+                        border: `1px solid ${chartColors.tooltipBorder}`,
+                        color: chartColors.tooltipText,
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
+                      }}
+                      itemStyle={{ color: chartColors.primary, fontWeight: 700 }}
+                      labelStyle={{ color: chartColors.tooltipText, fontWeight: 600, marginBottom: '4px' }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey={activeMetric} 
-                      stroke="hsl(var(--primary))" 
+                      stroke={chartColors.primary} 
                       strokeWidth={3}
-                      dot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--background))' }}
-                      activeDot={{ r: 6, fill: 'hsl(var(--primary))' }}
+                      dot={{ r: 5, strokeWidth: 2.5, stroke: chartColors.primary, fill: chartColors.dotBg }}
+                      activeDot={{ r: 7, stroke: chartColors.dotBg, strokeWidth: 2, fill: chartColors.primary }}
+                      name={`${activeMetric.charAt(0).toUpperCase() + activeMetric.slice(1)} Band`}
                     />
                     {/* Target Line */}
                     <Line 
                       type="step" 
                       dataKey={() => data.targetBand || 7.0} 
-                      stroke="hsl(var(--muted-foreground))" 
+                      stroke={chartColors.target} 
                       strokeDasharray="5 5" 
                       strokeWidth={2} 
                       dot={false}
@@ -239,27 +268,40 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
 
         {/* Side Chart: Skill Radar */}
         <Card className="border-border fox-shadow-sm">
-          <CardHeader>
-            <CardTitle>Skill Balance</CardTitle>
-            <CardDescription>Areas of strength and improvement</CardDescription>
+          <CardHeader className="p-4 sm:p-6 pb-2">
+            <CardTitle className="text-base sm:text-lg font-bold">Skill Balance</CardTitle>
+            <CardDescription className="text-xs">Areas of strength and improvement</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 sm:p-6 pt-0">
             {hasTestResults ? (
-              <div className="h-[300px] w-full">
+              <div className="h-[250px] sm:h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data.skillBalance}>
-                    <PolarGrid stroke="hsl(var(--border))" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: 'hsl(var(--foreground))', fontSize: 11, fontWeight: 500 }} />
+                    <PolarGrid stroke={chartColors.radarGrid} />
+                    <PolarAngleAxis 
+                      dataKey="subject" 
+                      tick={{ fill: chartColors.radarLabel, fontSize: 12, fontWeight: 600 }} 
+                    />
                     <PolarRadiusAxis angle={30} domain={[0, 9]} tick={false} axisLine={false} />
                     <Radar 
                       name="Student" 
                       dataKey="score" 
-                      stroke="hsl(var(--primary))" 
-                      fill="hsl(var(--primary))" 
-                      fillOpacity={0.4} 
+                      stroke={chartColors.primary} 
+                      strokeWidth={2.5}
+                      fill={chartColors.radarFill} 
+                      fillOpacity={isDark ? 0.35 : 0.25} 
+                      dot={{ r: 4, strokeWidth: 2, stroke: chartColors.primary, fill: chartColors.dotBg }}
                     />
                     <RechartsTooltip 
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
+                      contentStyle={{ 
+                        backgroundColor: chartColors.tooltipBg, 
+                        borderRadius: '10px', 
+                        border: `1px solid ${chartColors.tooltipBorder}`,
+                        color: chartColors.tooltipText,
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
+                      }}
+                      itemStyle={{ color: chartColors.primary, fontWeight: 700 }}
+                      labelStyle={{ color: chartColors.tooltipText, fontWeight: 600 }}
                     />
                   </RadarChart>
                 </ResponsiveContainer>
@@ -295,19 +337,32 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
             {hasActivity ? (
               <div className="h-[200px] w-full mt-2">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.activityData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+                  <BarChart data={data.activityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartColors.grid} />
                     <XAxis dataKey="day" tick={false} axisLine={false} tickLine={false} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke={chartColors.axisText} fontSize={11} tickLine={false} axisLine={false} />
                     <RechartsTooltip 
-                      cursor={{ fill: 'hsl(var(--secondary))' }}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
+                      cursor={{ fill: chartColors.cursorBg }}
+                      contentStyle={{ 
+                        backgroundColor: chartColors.tooltipBg, 
+                        borderRadius: '10px', 
+                        border: `1px solid ${chartColors.tooltipBorder}`,
+                        color: chartColors.tooltipText,
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
+                      }}
+                      labelStyle={{ color: chartColors.tooltipText, fontWeight: 600 }}
                     />
-                    <Bar dataKey="hours" radius={[4, 4, 0, 0]}>
+                    <Bar dataKey="hours" radius={[6, 6, 0, 0]}>
                       {data.activityData.map((entry, index) => (
                         <Cell 
                           key={`cell-${index}`} 
-                          fill={entry.hours > 1.5 ? 'hsl(var(--primary))' : entry.hours > 0 ? 'hsl(var(--primary)/0.6)' : 'hsl(var(--border))'} 
+                          fill={
+                            entry.hours > 1.5 
+                              ? chartColors.barActive 
+                              : entry.hours > 0 
+                              ? chartColors.barMedium 
+                              : chartColors.barEmpty
+                          } 
                         />
                       ))}
                     </Bar>

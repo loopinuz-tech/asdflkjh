@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { AltArrowRightIcon } from '@solar-icons/react/bold-duotone'
 import { createClient } from '@/lib/supabase/client'
 
 export function Hero() {
@@ -15,114 +15,66 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="relative overflow-hidden pt-20 pb-20 sm:pt-28 sm:pb-32 text-center min-h-[85vh] flex items-center justify-center">
-      {/* Background Image — Pure & Crisp London skyline & Big Ben (Zero Blur) */}
-      <div className="absolute inset-0 -z-10 pointer-events-none select-none overflow-hidden">
-        <img
-          src="/landingpageimg.png"
-          alt="London IELTS Background"
-          className="w-full h-full object-cover object-bottom"
-        />
-      </div>
+    <section className="pt-16 sm:pt-24 pb-6 sm:pb-12 px-2.5 sm:px-6 md:px-8 lg:px-[50px] w-full">
+      {/* Hero Banner Card Container with rounded corners & clipping */}
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[36px] min-h-[500px] xs:min-h-[540px] sm:min-h-[75vh] lg:min-h-[82vh] flex flex-col items-center justify-start text-center border border-border/40 shadow-sm">
+        {/* Background Image — Pure & Crisp London skyline & Big Ben (Zero Blur) */}
+        <div className="absolute inset-0 -z-10 pointer-events-none select-none overflow-hidden">
+          <img
+            src="/landingpageimg.png"
+            alt="EduFox IELTS"
+            className="w-full h-full object-cover object-[center_bottom] sm:object-bottom"
+          />
+        </div>
 
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col items-center relative z-10">
-        {/* 3D 9.0 Banner Illustration */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.88 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="relative my-2 sm:my-4 select-none flex items-center justify-center"
-        >
-          {/* Curving Gold Upward Arrow SVG */}
-          <svg
-            className="absolute -top-6 -left-12 sm:-top-10 sm:-left-20 w-[140%] h-[140%] pointer-events-none z-0 overflow-visible"
-            viewBox="0 0 500 300"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div className="mx-auto max-w-5xl px-3 sm:px-6 lg:px-8 pt-16 xs:pt-20 sm:pt-28 md:pt-36 lg:pt-44 pb-32 xs:pb-36 sm:pb-24 lg:pb-32 flex flex-col items-center relative z-10">
+          {/* Main Heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-[1.95rem] xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[4.75rem] font-bold tracking-tight text-slate-950 dark:text-white leading-[1.16] sm:leading-[1.12] max-w-4xl font-sans"
           >
-            <path
-              d="M 40 240 Q 180 200 420 60"
-              stroke="url(#arrow-gradient)"
-              strokeWidth="16"
-              strokeLinecap="round"
-              className="opacity-95"
-            />
-            {/* Arrowhead */}
-            <path
-              d="M 380 45 L 445 52 L 430 115 Z"
-              fill="#F59E0B"
-            />
-            <defs>
-              <linearGradient id="arrow-gradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#FCD34D" stopOpacity="0.2" />
-                <stop offset="60%" stopColor="#F59E0B" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#D97706" stopOpacity="1" />
-              </linearGradient>
-            </defs>
-          </svg>
+            Your IELTS goal <br />
+            is <span className="text-amber-500 dark:text-amber-400 underline decoration-amber-400/80 dark:decoration-amber-400 decoration-wavy underline-offset-4 sm:underline-offset-6">closer</span> than you think.
+          </motion.h1>
 
-          {/* Left Decorative Gold Ring / Circle */}
-          <div className="absolute -left-3 sm:-left-4 z-20 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 border-2 border-amber-200 shadow-md animate-pulse" />
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-3 sm:mt-5 text-sm xs:text-base sm:text-xl lg:text-2xl text-slate-800 dark:text-white/90 font-medium max-w-2xl font-sans px-2"
+          >
+            Real practice. AI feedback. Visible progress.
+          </motion.p>
 
-          {/* 3D 9.0 Graphic Badge (Capsule / Pill Chambar Shape) */}
-          <div className="relative z-10 p-[3px] sm:p-[3.5px] rounded-full bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 shadow-[0_18px_45px_rgba(245,158,11,0.35)]">
-            <div className="rounded-full bg-gradient-to-b from-zinc-900 via-black to-zinc-950 px-6 xs:px-10 sm:px-16 py-2.5 sm:py-6 border border-amber-400/50 flex items-center justify-center shadow-inner">
-              <span className="text-5xl xs:text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-500 drop-shadow-md">
-                9.0
-              </span>
-            </div>
-          </div>
-
-          {/* Right Decorative Gold Ring / Circle */}
-          <div className="absolute -right-3 sm:-right-4 z-20 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 border-2 border-amber-200 shadow-md animate-pulse" />
-        </motion.div>
-
-        {/* Main Heading (Clean Inter font, font-bold) */}
-        <motion.h1
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="mt-6 sm:mt-8 text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.18] max-w-3xl font-sans"
-        >
-          Your IELTS goal <br />
-          is <span className="text-amber-500 underline decoration-amber-400/60 decoration-wavy underline-offset-4">closer</span> than you think.
-        </motion.h1>
-
-        {/* Subtitle (Medium / Normal weight, Inter font) */}
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.25 }}
-          className="mt-3 sm:mt-4 text-base sm:text-lg text-foreground/80 font-medium max-w-lg font-sans"
-        >
-          Real practice. AI feedback. Visible progress.
-        </motion.p>
-
-        {/* Action Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="mt-7 sm:mt-9"
-        >
-          {isLoggedIn ? (
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center gap-2 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-base sm:text-lg px-8 py-3.5 rounded-full shadow-md hover:scale-105 transition-all cursor-pointer"
-            >
-              <span>Go to Dashboard</span>
-              <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-            </Link>
-          ) : (
-            <Link
-              to="/practice"
-              className="inline-flex items-center gap-2 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-base sm:text-lg px-8 py-3.5 rounded-full shadow-md hover:scale-105 transition-all cursor-pointer"
-            >
-              <span>Start Now</span>
-              <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-            </Link>
-          )}
-        </motion.div>
+          {/* Action Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="mt-5 sm:mt-9"
+          >
+            {isLoggedIn ? (
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-base sm:text-xl px-7 py-3 sm:px-9 sm:py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border border-amber-300/40"
+              >
+                <span>Go to Dashboard</span>
+                <AltArrowRightIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+              </Link>
+            ) : (
+              <Link
+                to="/practice"
+                className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-base sm:text-xl px-7 py-3 sm:px-9 sm:py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border border-amber-300/40"
+              >
+                <span>Start Now</span>
+                <AltArrowRightIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+              </Link>
+            )}
+          </motion.div>
+        </div>
       </div>
     </section>
   )

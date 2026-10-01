@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
-import { BookOpen, Trophy, Users, Sparkles } from 'lucide-react'
+import { BookBookmarkIcon, CupStarIcon, UsersGroupRoundedIcon, StarsIcon } from '@solar-icons/react/bold-duotone'
 import { SEOHead } from '@/components/seo/SEOHead'
 
 export default function AboutPage() {
@@ -35,10 +35,10 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-center mb-12">What We Offer</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: BookOpen, title: 'Real IELTS Tests', desc: 'Academic Reading, Listening, Writing & Speaking in authentic exam format.' },
-              { icon: Trophy, title: 'Band Estimation', desc: 'Instant band score estimates after every test based on real IELTS scoring.' },
-              { icon: Sparkles, title: 'Smart Vocabulary', desc: 'Spaced repetition system (SRS) to build academic vocabulary efficiently.' },
-              { icon: Users, title: 'Progress Tracking', desc: 'Detailed analytics to understand your strengths and areas for improvement.' },
+              { icon: BookBookmarkIcon, title: 'Real IELTS Tests', desc: 'Academic Reading, Listening, Writing & Speaking in authentic exam format.' },
+              { icon: CupStarIcon, title: 'Band Estimation', desc: 'Instant band score estimates after every test based on real IELTS scoring.' },
+              { icon: StarsIcon, title: 'Smart Vocabulary', desc: 'Spaced repetition system (SRS) to build academic vocabulary efficiently.' },
+              { icon: UsersGroupRoundedIcon, title: 'Progress Tracking', desc: 'Detailed analytics to understand your strengths and areas for improvement.' },
             ].map((item) => (
               <div key={item.title} className="bg-card border border-border rounded-2xl p-6 flex flex-col gap-3">
                 <item.icon className="w-8 h-8 text-primary" />

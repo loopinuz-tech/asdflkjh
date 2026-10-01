@@ -1,45 +1,52 @@
 import { motion } from 'framer-motion'
-import { BookOpen, Headphones, PenTool, Mic, Languages, BarChart3 } from 'lucide-react'
+import { 
+  BookBookmarkIcon, 
+  HeadphonesRoundIcon, 
+  Pen2Icon, 
+  Microphone2Icon, 
+  TranslationIcon, 
+  ChartSquareIcon 
+} from '@solar-icons/react/bold-duotone'
 import { Card, CardContent } from '@/components/ui/card'
 
 const features = [
   {
-    icon: BookOpen,
+    icon: BookBookmarkIcon,
     title: 'Reading',
     description: 'Practice with authentic IELTS-style passages. Master True/False/Not Given, matching, completion, and more.',
     color: 'text-fox-yellow',
     bgColor: 'bg-fox-yellow/10',
   },
   {
-    icon: Headphones,
+    icon: HeadphonesRoundIcon,
     title: 'Listening',
     description: 'Train your ear with diverse audio sections. Practice multiple choice, matching, map labeling, and completion tasks.',
     color: 'text-chart-4',
     bgColor: 'bg-chart-4/10',
   },
   {
-    icon: PenTool,
+    icon: Pen2Icon,
     title: 'Writing',
     description: 'Improve Task 1 and Task 2 essays with structured practice, word count tracking, and band-oriented feedback.',
     color: 'text-fox-red',
     bgColor: 'bg-fox-red/10',
   },
   {
-    icon: Mic,
+    icon: Microphone2Icon,
     title: 'Speaking',
     description: 'Build confidence across Part 1, 2, and 3. Practice answer structure, timing, and receive targeted feedback.',
     color: 'text-fox-success',
     bgColor: 'bg-fox-success/10',
   },
   {
-    icon: Languages,
+    icon: TranslationIcon,
     title: 'Vocabulary',
     description: 'Build your IELTS vocabulary with topic-based word collections, spaced review, and example sentences.',
     color: 'text-chart-5',
     bgColor: 'bg-chart-5/10',
   },
   {
-    icon: BarChart3,
+    icon: ChartSquareIcon,
     title: 'Progress Tracking',
     description: 'Track your estimated band score across all skills. Visualize improvements and identify areas to focus on.',
     color: 'text-fox-warning',

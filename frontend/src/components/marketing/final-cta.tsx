@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { AltArrowRightIcon } from '@solar-icons/react/bold-duotone'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 
 export function FinalCta() {
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.95 }}
@@ -50,7 +50,7 @@ export function FinalCta() {
                 )}
               >
                 Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <AltArrowRightIcon className="ml-2 h-4 w-4" />
               </Link>
             </div>
           </div>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ArrowRight, User } from 'lucide-react'
+import { HamburgerMenuIcon, CloseCircleIcon, AltArrowRightIcon, UserCircleIcon } from '@solar-icons/react/bold-duotone'
 import { buttonVariants } from '@/components/ui/button'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 const navLinks = [
   { href: '#features', label: 'Features' },
@@ -143,6 +144,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex md:items-center md:gap-3">
+            <ThemeToggle className="w-9 h-9" />
             {currentUser ? (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/60 border border-border/80">
@@ -169,7 +171,7 @@ export function Navbar() {
                   })}
                 >
                   <span>Go to Dashboard</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <AltArrowRightIcon className="w-4 h-4" />
                 </Link>
               </div>
             ) : (
@@ -182,7 +184,7 @@ export function Navbar() {
                   className="bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-sm px-5 py-2 rounded-full shadow-2xs hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Get Started</span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                  <AltArrowRightIcon className="w-4 h-4" />
                 </Link>
               </>
             )}
@@ -196,7 +198,7 @@ export function Navbar() {
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMobileMenuOpen ? <CloseCircleIcon className="h-6 w-6" /> : <HamburgerMenuIcon className="h-6 w-6" />}
           </button>
         </div>
       </nav>
@@ -250,7 +252,7 @@ export function Navbar() {
                       })}
                     >
                       <span>Go to Dashboard</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <AltArrowRightIcon className="w-4 h-4" />
                     </Link>
                   </div>
                 ) : (
@@ -263,6 +265,10 @@ export function Navbar() {
                     </Link>
                   </>
                 )}
+                <div className="pt-2 flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                  <ThemeToggle showLabel />
+                </div>
               </div>
             </div>
           </motion.div>

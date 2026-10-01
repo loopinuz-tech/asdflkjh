@@ -104,42 +104,42 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
   const bandOptions = [5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0]
 
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-6 sm:space-y-8 max-w-4xl pb-4">
       <div className="flex items-center gap-3">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground shadow-xs">
-          <SettingsIcon className="h-6 w-6" size={24} />
+        <div className="inline-flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
+          <SettingsIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
         </div>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Account Settings</h1>
-          <p className="text-muted-foreground">Manage your personal details, target band, and subscription.</p>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Account Settings</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Manage your personal details, target band, and subscription.</p>
         </div>
       </div>
 
       {successMessage && (
         <Alert className="border-fox-success/30 bg-fox-success/10 text-fox-success py-2.5">
-          <CheckCircleIcon className="h-4 w-4" size={16} />
-          <AlertDescription className="text-sm font-medium">{successMessage}</AlertDescription>
+          <CheckCircleIcon className="h-4 w-4 shrink-0" size={16} />
+          <AlertDescription className="text-xs sm:text-sm font-medium">{successMessage}</AlertDescription>
         </Alert>
       )}
 
       {errorMessage && (
         <Alert variant="destructive" className="py-2.5">
-          <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
+          <AlertDescription className="text-xs sm:text-sm">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
-      <form onSubmit={handleSave} className="space-y-6">
+      <form onSubmit={handleSave} className="space-y-5 sm:space-y-6">
         {/* Personal Details */}
         <Card className="border-border fox-shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <UserCircleIcon className="w-4 h-4 text-primary" size={16} />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+              <UserCircleIcon className="w-4 h-4 text-primary shrink-0" size={16} />
               <span>Personal Information</span>
             </CardTitle>
-            <CardDescription>Your name and login credentials</CardDescription>
+            <CardDescription className="text-xs">Your name and login credentials</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1.5">
                 <label htmlFor="settings-first-name" className="text-xs font-semibold text-foreground">First Name</label>
                 <input
@@ -184,13 +184,13 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
 
             {/* Telegram Link Badge */}
             {initialSettings?.telegramUsername && (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/40 border border-border text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg bg-secondary/40 border border-border text-xs">
                 <div className="flex items-center gap-2">
-                  <PlaneIcon className="w-4 h-4 text-primary" size={16} />
+                  <PlaneIcon className="w-4 h-4 text-primary shrink-0" size={16} />
                   <span>Linked Telegram: <strong>@{initialSettings.telegramUsername}</strong></span>
                 </div>
                 <span className="text-primary font-medium flex items-center gap-1">
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-primary" size={14} /> Verified
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} /> Verified
                 </span>
               </div>
             )}
@@ -199,21 +199,21 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
 
         {/* IELTS Goals */}
         <Card className="border-border fox-shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <TargetIcon className="w-4 h-4 text-primary" size={16} />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+              <TargetIcon className="w-4 h-4 text-primary shrink-0" size={16} />
               <span>Target Band Score</span>
             </CardTitle>
-            <CardDescription>The IELTS band score you are aiming to achieve</CardDescription>
+            <CardDescription className="text-xs">The IELTS band score you are aiming to achieve</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
               {bandOptions.map((band) => (
                 <button
                   key={band}
                   type="button"
                   onClick={() => setTargetBand(band)}
-                  className={`py-2 px-3 text-sm font-bold rounded-lg border transition-all ${
+                  className={`py-2 px-2 text-xs sm:text-sm font-bold rounded-lg border transition-all cursor-pointer touch-manipulation ${
                     targetBand === band
                       ? 'bg-primary text-primary-foreground border-primary shadow-sm scale-105'
                       : 'bg-background hover:bg-muted text-foreground border-border'
@@ -231,33 +231,33 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
 
         {/* Appearance & Theme */}
         <Card className="border-border fox-shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Sun2Icon className="w-4 h-4 text-primary" size={16} />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+              <Sun2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
               <span>Appearance & Theme</span>
             </CardTitle>
-            <CardDescription>Customize the interface theme to your preference</CardDescription>
+            <CardDescription className="text-xs">Customize the interface theme to your preference</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <ThemeSelector />
           </CardContent>
         </Card>
 
         {/* Subscription Plan */}
         <Card className="border-border fox-shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+              <ShieldCheckIcon className="w-4 h-4 text-primary shrink-0" size={16} />
               <span>Subscription & Membership</span>
             </CardTitle>
-            <CardDescription>Your current EduFox tier</CardDescription>
+            <CardDescription className="text-xs">Your current EduFox tier</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-base text-foreground">{initialSettings?.planName || 'Free'} Plan</span>
-                  <span className="px-2 py-0.5 rounded-full bg-fox-yellow/10 text-fox-yellow text-[11px] font-bold uppercase tracking-wider">
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-sm sm:text-base text-foreground">{initialSettings?.planName || 'Free'} Plan</span>
+                  <span className="px-2 py-0.5 rounded-full bg-fox-yellow/10 text-fox-yellow text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
                     {initialSettings?.planStatus || 'Active'}
                   </span>
                 </div>
@@ -266,15 +266,21 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
                 </p>
               </div>
 
-              <Button type="button" variant="outline" size="sm">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.href = '/premium'}
+                className="w-full sm:w-auto shrink-0 font-bold"
+              >
                 Manage Plan
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex justify-end">
-          <Button type="submit" disabled={isSaving} className="px-6 font-semibold">
+        <div className="flex justify-end pt-2">
+          <Button type="submit" disabled={isSaving} className="w-full sm:w-auto px-8 font-bold">
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
           </Button>

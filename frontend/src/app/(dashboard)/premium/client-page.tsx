@@ -339,6 +339,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       {/* 4-Column Pricing Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch pt-2">
         {plans.map((plan) => {
+          const isSelected = searchParams.get('planId') === plan.id || searchParams.get('plan') === plan.slug
           const isCurrent = currentSub?.plan_id === plan.id && currentSub?.status === 'active'
           const isFree = plan.price === 0
           const prices = formatPrice(plan)
@@ -347,7 +348,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
           const isLifetime = plan.slug === 'lifetime'
 
           let badgeText = ''
-          if (isYearly) badgeText = 'Best Value • Most Popular'
+          if (isSelected) badgeText = 'Selected Plan'
+          else if (isYearly) badgeText = 'Best Value • Most Popular'
           else if (isMonthly) badgeText = 'Monthly Pass'
           else if (isLifetime) badgeText = 'Lifetime VIP Access'
 
@@ -355,7 +357,9 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
             <div
               key={plan.id}
               className={`relative flex flex-col justify-between rounded-2xl transition-all duration-200 border bg-card text-card-foreground shadow-xs overflow-visible ${
-                isYearly
+                isSelected
+                  ? 'border-primary ring-2 ring-primary shadow-xl shadow-primary/25 scale-[1.02] bg-gradient-to-b from-primary/10 via-card to-card z-10'
+                  : isYearly
                   ? 'border-primary ring-2 ring-primary/40 shadow-md shadow-primary/10 bg-gradient-to-b from-primary/5 via-card to-card'
                   : 'border-border hover:border-primary/40'
               }`}

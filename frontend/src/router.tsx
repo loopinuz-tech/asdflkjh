@@ -11,6 +11,7 @@ import AdminLayout from './app/admin/AdminLayout'
 
 // Marketing pages
 import MarketingPage from './app/(marketing)/page'
+import LandingPage2 from './app/(marketing)/landing-2/page'
 import AboutPage from './app/(marketing)/about/page'
 import PrivacyPage from './app/(marketing)/privacy/page'
 import TermsPage from './app/(marketing)/terms/page'
@@ -59,6 +60,7 @@ import AdminImportAudioPage from './app/admin/import/audio/client-page'
 import AdminAttemptsPage from './app/admin/attempts/client-page'
 import AdminTasksPage from './app/admin/tasks/page'
 import AdminPricingPage from './app/admin/pricing/page'
+import AdminVocabularyPage from './app/admin/vocabulary/page'
 
 export default function AppRouter() {
   return (
@@ -66,6 +68,7 @@ export default function AppRouter() {
       {/* Marketing */}
       <Route element={<MarketingLayout />}>
         <Route path="/" element={<MarketingPage />} />
+        <Route path="/landing-2" element={<LandingPage2 />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
@@ -146,6 +149,7 @@ export default function AppRouter() {
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/tests" element={<AdminTestsPage />} />
         <Route path="/admin/tasks" element={<AdminTasksPage />} />
+        <Route path="/admin/vocabulary" element={<AdminVocabularyPage />} />
         <Route path="/admin/tests/create" element={<AdminTestCreatePage />} />
         <Route path="/admin/tests/:id/edit" element={<AdminTestEditPage />} />
         <Route path="/admin/tests/:id/preview" element={<AdminTestPreviewPage />} />

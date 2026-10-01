@@ -13,6 +13,7 @@ import {
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
   CloseCircleIcon,
+  TranslationIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { cn } from '@/lib/utils'
@@ -30,6 +31,7 @@ const navSections = [
     items: [
       { href: '/admin/tests', label: 'Tests Management', icon: DocumentTextIcon },
       { href: '/admin/tasks', label: 'Writing & Speaking Tasks', icon: PenNewSquareIcon },
+      { href: '/admin/vocabulary', label: 'Vocabulary & Folders', icon: TranslationIcon },
       { href: '/admin/import', label: 'Import Center (AI & Ingestion)', icon: CloudUploadIcon },
     ],
   },
@@ -107,7 +109,7 @@ export function AdminSidebar({
                 'hidden md:flex items-center justify-center rounded-lg border border-border bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground transition-all cursor-pointer',
                 isCollapsed ? 'w-8 h-8' : 'w-7 h-7'
               )}
-              title={isCollapsed ? 'Sidebar ochish' : 'Sidebar yopish'}
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {isCollapsed ? (

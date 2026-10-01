@@ -1,24 +1,29 @@
 import { motion } from 'framer-motion'
-import { BookmarkPlus, Layers, RotateCcw, GraduationCap } from 'lucide-react'
+import { 
+  BookmarkPlusIcon, 
+  LayersMinimalisticIcon, 
+  RestartIcon, 
+  SquareAcademicCapIcon 
+} from '@solar-icons/react/bold-duotone'
 
 const vocabFeatures = [
   {
-    icon: Layers,
+    icon: LayersMinimalisticIcon,
     title: 'Topic-based collections',
     description: 'Vocabulary organized by IELTS topics like environment, education, technology, and more.',
   },
   {
-    icon: BookmarkPlus,
+    icon: BookmarkPlusIcon,
     title: 'Save & organize',
     description: 'Build your personal vocabulary collection. Save words you want to learn and track your progress.',
   },
   {
-    icon: RotateCcw,
+    icon: RestartIcon,
     title: 'Spaced review',
     description: 'Review words at optimal intervals to move them from new to mastered.',
   },
   {
-    icon: GraduationCap,
+    icon: SquareAcademicCapIcon,
     title: 'Rich word cards',
     description: 'Each word comes with definition, example sentence, pronunciation, difficulty level, and part of speech.',
   },
@@ -26,7 +31,7 @@ const vocabFeatures = [
 
 export function VocabularySection() {
   return (
-    <section className="py-20 sm:py-28 bg-secondary/30">
+    <section className="py-14 sm:py-20 bg-secondary/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left — Content */}
