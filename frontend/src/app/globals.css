@@ -75,9 +75,9 @@
   --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* EduFox Brand Tokens */
-  --fox-yellow: oklch(0.82 0.155 85);       /* #F5A623 — warm golden yellow */
-  --fox-yellow-light: oklch(0.93 0.08 85);   /* Soft yellow for backgrounds */
-  --fox-yellow-dark: oklch(0.72 0.16 80);    /* Deeper yellow for hover */
+  --fox-yellow: oklch(0.91 0.21 98);        /* #FFE600 — vibrant luminous bright yellow */
+  --fox-yellow-light: oklch(0.97 0.08 98);   /* Soft luminous yellow for backgrounds */
+  --fox-yellow-dark: oklch(0.83 0.21 95);    /* Vivid deep yellow for hover */
   --fox-red: oklch(0.58 0.22 25);            /* #E53E3E — confident red */
   --fox-red-light: oklch(0.92 0.05 25);      /* Soft red for backgrounds */
   --fox-charcoal: oklch(0.25 0.01 260);      /* #1A202C — dark text */
@@ -91,21 +91,21 @@
   --card-foreground: oklch(0.25 0.01 260);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.25 0.01 260);
-  --primary: oklch(0.82 0.155 85);            /* Fox Yellow */
-  --primary-foreground: oklch(0.2 0.02 85);   /* Dark text on yellow */
+  --primary: oklch(0.91 0.21 98);             /* Vibrant Bright Yellow */
+  --primary-foreground: oklch(0.14 0.02 260); /* High-contrast black/charcoal text on yellow */
   --secondary: oklch(0.965 0.005 260);        /* Soft gray */
   --secondary-foreground: oklch(0.25 0.01 260);
   --muted: oklch(0.965 0.005 260);
   --muted-foreground: oklch(0.5 0.01 260);
-  --accent: oklch(0.93 0.08 85);              /* Soft yellow accent */
+  --accent: oklch(0.95 0.09 98);              /* Soft bright yellow accent */
   --accent-foreground: oklch(0.25 0.01 260);
   --destructive: oklch(0.58 0.22 25);         /* Fox Red */
   --border: oklch(0.91 0.005 260);
   --input: oklch(0.91 0.005 260);
-  --ring: oklch(0.82 0.155 85);               /* Yellow ring */
+  --ring: oklch(0.91 0.21 98);                /* Bright Yellow ring */
 
   /* Chart colors — EduFox palette */
-  --chart-1: oklch(0.82 0.155 85);            /* Yellow */
+  --chart-1: oklch(0.91 0.21 98);             /* Bright Yellow */
   --chart-2: oklch(0.58 0.22 25);             /* Red */
   --chart-3: oklch(0.62 0.17 145);            /* Green */
   --chart-4: oklch(0.6 0.15 260);             /* Blue */
@@ -116,21 +116,21 @@
   /* Sidebar */
   --sidebar: oklch(0.985 0.003 260);
   --sidebar-foreground: oklch(0.25 0.01 260);
-  --sidebar-primary: oklch(0.82 0.155 85);
-  --sidebar-primary-foreground: oklch(0.2 0.02 85);
-  --sidebar-accent: oklch(0.93 0.08 85);
+  --sidebar-primary: oklch(0.91 0.21 98);
+  --sidebar-primary-foreground: oklch(0.14 0.02 260);
+  --sidebar-accent: oklch(0.95 0.09 98);
   --sidebar-accent-foreground: oklch(0.25 0.01 260);
   --sidebar-border: oklch(0.92 0.005 260);
-  --sidebar-ring: oklch(0.82 0.155 85);
+  --sidebar-ring: oklch(0.91 0.21 98);
 }
 
 /* =============================================
    EduFox Dark Theme
    ============================================= */
 .dark {
-  --fox-yellow: oklch(0.82 0.155 85);
-  --fox-yellow-light: oklch(0.3 0.06 85);
-  --fox-yellow-dark: oklch(0.72 0.16 80);
+  --fox-yellow: oklch(0.91 0.21 98);
+  --fox-yellow-light: oklch(0.35 0.10 98);
+  --fox-yellow-dark: oklch(0.83 0.21 95);
   --fox-red: oklch(0.65 0.2 25);
   --fox-red-light: oklch(0.3 0.06 25);
   --fox-charcoal: oklch(0.95 0.005 260);
@@ -143,8 +143,8 @@
   --card-foreground: oklch(0.95 0.005 260);
   --popover: oklch(0.2 0.005 260);
   --popover-foreground: oklch(0.95 0.005 260);
-  --primary: oklch(0.82 0.155 85);
-  --primary-foreground: oklch(0.2 0.02 85);
+  --primary: oklch(0.91 0.21 98);
+  --primary-foreground: oklch(0.14 0.02 260);
   --secondary: oklch(0.25 0.005 260);
   --secondary-foreground: oklch(0.95 0.005 260);
   --muted: oklch(0.25 0.005 260);
@@ -154,9 +154,9 @@
   --destructive: oklch(0.65 0.2 25);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.82 0.155 85);
+  --ring: oklch(0.91 0.21 98);
 
-  --chart-1: oklch(0.82 0.155 85);
+  --chart-1: oklch(0.91 0.21 98);
   --chart-2: oklch(0.65 0.2 25);
   --chart-3: oklch(0.65 0.17 145);
   --chart-4: oklch(0.65 0.15 260);
@@ -164,12 +164,12 @@
 
   --sidebar: oklch(0.18 0.005 260);
   --sidebar-foreground: oklch(0.95 0.005 260);
-  --sidebar-primary: oklch(0.82 0.155 85);
-  --sidebar-primary-foreground: oklch(0.2 0.02 85);
-  --sidebar-accent: oklch(0.25 0.005 260);
+  --sidebar-primary: oklch(0.91 0.21 98);
+  --sidebar-primary-foreground: oklch(0.14 0.02 260);
+  --sidebar-accent: oklch(0.32 0.08 98);
   --sidebar-accent-foreground: oklch(0.95 0.005 260);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.82 0.155 85);
+  --sidebar-ring: oklch(0.91 0.21 98);
 }
 
 /* =============================================

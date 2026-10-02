@@ -16,6 +16,8 @@ import {
   PenNewSquareIcon,
   ShieldCheckIcon,
   CrownStarIcon,
+  BoxIcon,
+  TargetIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { Link } from 'react-router-dom'
@@ -30,6 +32,9 @@ import { FolderIconRenderer } from '@/components/vocabulary/folder-icon-renderer
 import { AddWordModal } from '@/components/vocabulary/add-word-modal'
 import { CreateFolderModal } from '@/components/vocabulary/create-folder-modal'
 import { PremiumUpgradeModal } from '@/components/vocabulary/premium-upgrade-modal'
+import { VocabularyReviewHub } from '@/components/vocabulary/review/vocabulary-review-hub'
+import { enhanceWordsWithLeitner, LEITNER_BOXES } from '@/lib/services/leitner-srs'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 interface VocabWord {
@@ -79,6 +84,7 @@ export default function VocabularyHub() {
   const [premiumModalTitle, setPremiumModalTitle] = useState('')
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'bank' | 'review'>('bank')
 
   // Load all authentic data from PostgreSQL and local storage
   const loadData = async () => {
@@ -494,6 +500,10 @@ export default function VocabularyHub() {
   })
   const newWordsReady = Math.max(0, totalCount - learningCount - masteredCount)
 
+  const enhancedWords = useMemo(() => {
+    return enhanceWordsWithLeitner(words, userVocabMap)
+  }, [words, userVocabMap])
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -572,39 +582,84 @@ export default function VocabularyHub() {
         </div>
       )}
 
-      {/* Main Review Session CTA */}
-      <div className="bg-gradient-to-r from-primary/10 via-card to-card border border-primary/25 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
-        <div className="z-10 flex-1 text-center sm:text-left w-full">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary mb-1">
-            <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
-            <span>Spaced Repetition System</span>
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold text-foreground mb-1.5">
-            Ready for your review session?
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground mb-4 max-w-xl">
-            You have <strong className="text-foreground">{dueToday}</strong> words due for review today, and{' '}
-            <strong className="text-foreground">{newWordsReady}</strong> new IELTS academic words ready in the repository.
-          </p>
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-            <Link
-              to="/vocabulary/review"
-              className={buttonVariants({
-                size: 'default',
-                className:
-                  'w-full sm:w-auto h-9 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 text-black shadow-xs transition-all flex items-center justify-center gap-2 text-xs',
-              })}
-            >
-              <span>Start Flashcard Review</span>
-              <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
-            </Link>
-          </div>
-        </div>
-
-        <div className="z-10 shrink-0 hidden sm:block">
-          <FoxMascot variant="thinking" size="md" className="drop-shadow-sm" />
-        </div>
+      {/* Top Segmented Tab Switcher: Vocabulary Bank vs Leitner Review Modes */}
+      <div className="flex items-center gap-2 p-1.5 bg-muted/60 dark:bg-muted/30 rounded-2xl w-fit border border-border/60">
+        <button
+          type="button"
+          onClick={() => setActiveTab('bank')}
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            activeTab === 'bank'
+              ? 'bg-card text-foreground shadow-xs'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <BookBookmarkIcon size={16} />
+          <span>Vocabulary Bank</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('review')}
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            activeTab === 'review'
+              ? 'bg-primary text-black shadow-xs font-black'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <BoxIcon size={16} />
+          <span>Leitner Review Modes</span>
+          <span className="ml-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-black/15 text-black">
+            8 Modes
+          </span>
+        </button>
       </div>
+
+      {activeTab === 'review' ? (
+        <VocabularyReviewHub
+          words={enhancedWords}
+          onReturnToBank={() => setActiveTab('bank')}
+        />
+      ) : (
+        <>
+          {/* Main Review Session CTA */}
+          <div className="bg-gradient-to-r from-primary/10 via-card to-card border border-primary/25 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
+            <div className="z-10 flex-1 text-center sm:text-left w-full">
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary mb-1">
+                <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
+                <span>Leitner Spaced Repetition System</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-foreground mb-1.5">
+                Ready for your review session?
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4 max-w-xl">
+                You have <strong className="text-foreground">{dueToday}</strong> words due for review today, and{' '}
+                <strong className="text-foreground">{newWordsReady}</strong> new IELTS academic words ready in the repository.
+              </p>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <Button
+                  onClick={() => setActiveTab('review')}
+                  className="w-full sm:w-auto h-9 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 text-black shadow-xs transition-all flex items-center justify-center gap-2 text-xs cursor-pointer"
+                >
+                  <BoxIcon size={16} />
+                  <span>Open 8 Review Modes</span>
+                  <AltArrowRightIcon size={14} />
+                </Button>
+                <Link
+                  to="/vocabulary/review"
+                  className={buttonVariants({
+                    variant: 'outline',
+                    size: 'default',
+                    className: 'h-9 px-4 rounded-xl text-xs font-semibold gap-1.5',
+                  })}
+                >
+                  <span>Dedicated Review Screen</span>
+                </Link>
+              </div>
+            </div>
+
+            <div className="z-10 shrink-0 hidden sm:block">
+              <FoxMascot variant="thinking" size="md" className="drop-shadow-sm" />
+            </div>
+          </div>
 
       {/* Stats Quick Cards with Solar Icons */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
@@ -1000,6 +1055,8 @@ export default function VocabularyHub() {
             )
           })}
         </div>
+      )}
+        </>
       )}
 
       {/* Add Word Modal with AI Generator (Accessible for Premium and Admin) */}

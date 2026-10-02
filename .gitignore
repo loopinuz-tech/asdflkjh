@@ -46,3 +46,9 @@ Thumbs.db
 
 # Scratch directory
 scratch/
+
+# Build info & secrets
+*.tsbuildinfo
+client_secret*.json
+uploads/
+backend/uploads/

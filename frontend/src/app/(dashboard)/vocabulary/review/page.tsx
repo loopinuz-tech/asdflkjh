@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { VocabularyReviewClient } from '@/app/(dashboard)/vocabulary/review/client-page'
 import { useNavigate } from 'react-router-dom'
+import { enhanceWordsWithLeitner } from '@/lib/services/leitner-srs'
 
 export default function VocabularyReviewPage() {
   const [loading, setLoading] = useState(true)
@@ -15,55 +16,44 @@ export default function VocabularyReviewPage() {
         data: { user },
       } = await supabase.auth.getUser()
 
-      if (!user) {
-        navigate('/login')
-        return
-      }
+      // Fetch user's vocabulary progress map
+      let userVocabMap = new Map<string, { status: string; mastery_level: number; next_review_at?: string }>()
 
-      // Fetch words due for review
-      const { data: userVocab } = await supabase
-        .from('user_vocabulary')
-        .select(`
-          id, status, next_review_at, mastery_level,
-          vocabulary_words:word_id (
-            id, word, part_of_speech, definition, example_sentence, pronunciation,
-            translation, translation_uz, example_sentence_2, context_sentence,
-            synonyms, antonyms, topic, difficulty, user_id
-          )
-        `)
-        .eq('user_id', user.id)
-        .lte('next_review_at', new Date().toISOString())
-        .limit(20)
+      if (user) {
+        const { data: userVocab } = await (supabase as any)
+          .from('user_vocabulary')
+          .select('word_id, status, mastery_level, next_review_at')
+          .eq('user_id', user.id)
 
-      let words: any[] =
-        (userVocab as any[])
-          ?.filter((item: any) => item.vocabulary_words)
-          ?.map((item: any) => ({
-            ...item.vocabulary_words,
-            user_vocab_id: item.id,
-            is_new: false,
-            box_number: item.mastery_level || 0,
-          })) || []
-
-      // If no words are due, fetch global or user's words from vocabulary_words
-      if (words.length === 0) {
-        const { data: allVocab } = await supabase
-          .from('vocabulary_words')
-          .select('id, word, part_of_speech, definition, example_sentence, pronunciation, translation, translation_uz, example_sentence_2, context_sentence, synonyms, antonyms, topic, difficulty, user_id')
-          .or(`user_id.is.null,user_id.eq.${user.id}`)
-          .limit(15)
-
-        if (allVocab && allVocab.length > 0) {
-          words = (allVocab as any[]).map((v) => ({
-            ...v,
-            user_vocab_id: null,
-            is_new: true,
-            box_number: 0,
-          }))
+        if (userVocab) {
+          userVocab.forEach((uv: any) => {
+            userVocabMap.set(uv.word_id, {
+              status: uv.status,
+              mastery_level: uv.mastery_level,
+              next_review_at: uv.next_review_at,
+            })
+          })
         }
       }
 
-      setWordsToReview(words)
+      // Fetch all vocabulary words (up to 300)
+      const { data: allVocab } = await (supabase as any)
+        .from('vocabulary_words')
+        .select('id, word, part_of_speech, definition, example_sentence, pronunciation, translation, translation_uz, example_sentence_2, context_sentence, synonyms, antonyms, topic, difficulty, created_at, user_id')
+        .order('word', { ascending: true })
+        .limit(300)
+
+      let words: any[] = allVocab || []
+
+      // If user had specific words in vocabulary_words
+      if (user && words.length > 0) {
+        words = words.filter(
+          (w) => !w.user_id || w.user_id === user.id
+        )
+      }
+
+      const enhanced = enhanceWordsWithLeitner(words, userVocabMap)
+      setWordsToReview(enhanced)
       setLoading(false)
     }
 
