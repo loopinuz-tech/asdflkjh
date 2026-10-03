@@ -30,6 +30,9 @@ import { FolderIconRenderer } from '@/components/vocabulary/folder-icon-renderer
 import { AddWordModal } from '@/components/vocabulary/add-word-modal'
 import { CreateFolderModal } from '@/components/vocabulary/create-folder-modal'
 import { PremiumUpgradeModal } from '@/components/vocabulary/premium-upgrade-modal'
+import { SRSLeitnerBanner, PRACTICE_MODES } from '@/components/vocabulary/srs-leitner-banner'
+import { SRSReviewModal } from '@/components/vocabulary/srs-review-modal'
+import { SRSPracticeSession } from '@/components/vocabulary/srs-practice-session'
 import { cn } from '@/lib/utils'
 
 interface VocabWord {
@@ -51,18 +54,27 @@ interface VocabWord {
   is_premium?: boolean
   status?: string
   user_id?: string | null
+  created_at?: string
+  updated_at?: string
 }
 
 export default function VocabularyHub() {
   const [loading, setLoading] = useState(true)
   const [words, setWords] = useState<VocabWord[]>([])
   const [userVocabMap, setUserVocabMap] = useState<
-    Map<string, { status: string; mastery_level: number }>
+    Map<string, { status: string; mastery_level: number; next_review_at?: string; created_at?: string }>
   >(new Map())
   const [dueToday, setDueToday] = useState<number>(0)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isPremium, setIsPremium] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+
+  // SRS Leitner & Practice Modes
+  const [activePracticeMode, setActivePracticeMode] = useState<string | null>(null)
+  const [practiceWords, setPracticeWords] = useState<VocabWord[]>([])
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [selectedPracticeModeId, setSelectedPracticeModeId] = useState<string>('spaced_repetition')
+  const [selectedWordIds, setSelectedWordIds] = useState<Set<string>>(new Set())
 
   // Folders & Filters
   const [folders, setFolders] = useState<VocabFolder[]>([])
@@ -127,15 +139,20 @@ export default function VocabularyHub() {
         // Fetch user's vocabulary progress
         const { data: userVocab } = await supabase
           .from('user_vocabulary')
-          .select('word_id, status, mastery_level')
+          .select('word_id, status, mastery_level, next_review_at, created_at')
           .eq('user_id', user.id)
 
-        const map = new Map<string, { status: string; mastery_level: number }>()
+        const map = new Map<
+          string,
+          { status: string; mastery_level: number; next_review_at?: string; created_at?: string }
+        >()
         if (userVocab) {
           userVocab.forEach((uv: any) => {
             map.set(uv.word_id, {
               status: uv.status,
               mastery_level: uv.mastery_level || 0,
+              next_review_at: uv.next_review_at,
+              created_at: uv.created_at,
             })
           })
         }
@@ -494,10 +511,84 @@ export default function VocabularyHub() {
   })
   const newWordsReady = Math.max(0, totalCount - learningCount - masteredCount)
 
+  // Leitner SRS box counts
+  const boxCounts = useMemo(() => {
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    userVocabMap.forEach((uv) => {
+      const lvl = Math.min(5, Math.max(1, uv.mastery_level || 1))
+      counts[lvl as 1 | 2 | 3 | 4 | 5] = (counts[lvl as 1 | 2 | 3 | 4 | 5] || 0) + 1
+    })
+    if (words.length > 0 && userVocabMap.size === 0) {
+      counts[1] = words.length
+    }
+    return counts
+  }, [userVocabMap, words])
+
+  const effectiveDueCount = useMemo(() => {
+    if (dueToday > 0) return dueToday
+    const learningBoxes = boxCounts[1] + boxCounts[2] + boxCounts[3] + boxCounts[4]
+    return learningBoxes > 0 ? learningBoxes : words.length > 0 ? 1 : 0
+  }, [dueToday, boxCounts, words])
+
+  const handleOpenMode = (modeId: string) => {
+    setSelectedPracticeModeId(modeId)
+    setShowReviewModal(true)
+  }
+
+  const handleReviewDueWords = () => {
+    setSelectedPracticeModeId('spaced_repetition')
+    setShowReviewModal(true)
+  }
+
+  const handleStartPractice = (subsetWords: any[], _setTitle: string) => {
+    setPracticeWords(subsetWords.length > 0 ? subsetWords : words)
+    setActivePracticeMode(selectedPracticeModeId)
+  }
+
+  const handleExitPractice = () => {
+    setActivePracticeMode(null)
+    loadData()
+  }
+
+  const toggleSelectWord = (wordId: string) => {
+    setSelectedWordIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(wordId)) next.delete(wordId)
+      else next.add(wordId)
+      return next
+    })
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    )
+  }
+
+  // Active Practice Mode (Screenshots 4 & 5)
+  if (activePracticeMode) {
+    return (
+      <div className="w-full max-w-2xl mx-auto flex-1 flex flex-col justify-between">
+        <SRSPracticeSession
+          mode={activePracticeMode}
+          words={practiceWords.length > 0 ? practiceWords : words}
+          userVocabMap={userVocabMap}
+          onExit={handleExitPractice}
+          onWordUpdated={(wordId, newLevel) => {
+            setUserVocabMap((prev) => {
+              const next = new Map(prev)
+              const existing = next.get(wordId)
+              next.set(wordId, {
+                status: newLevel >= 5 ? 'mastered' : 'review',
+                mastery_level: newLevel,
+                created_at: existing?.created_at,
+              })
+              return next
+            })
+          }}
+        />
       </div>
     )
   }
@@ -572,76 +663,50 @@ export default function VocabularyHub() {
         </div>
       )}
 
-      {/* Main Review Session CTA */}
-      <div className="bg-gradient-to-r from-primary/10 via-card to-card border border-primary/25 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
-        <div className="z-10 flex-1 text-center sm:text-left w-full">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary mb-1">
-            <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
-            <span>Spaced Repetition System</span>
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold text-foreground mb-1.5">
-            Ready for your review session?
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground mb-4 max-w-xl">
-            You have <strong className="text-foreground">{dueToday}</strong> words due for review today, and{' '}
-            <strong className="text-foreground">{newWordsReady}</strong> new IELTS academic words ready in the repository.
-          </p>
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-            <Link
-              to="/vocabulary/review"
-              className={buttonVariants({
-                size: 'default',
-                className:
-                  'w-full sm:w-auto h-9 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 text-black shadow-xs transition-all flex items-center justify-center gap-2 text-xs',
-              })}
-            >
-              <span>Start Flashcard Review</span>
-              <AltArrowRightIcon className="w-3.5 h-3.5" size={14} />
-            </Link>
-          </div>
-        </div>
-
-        <div className="z-10 shrink-0 hidden sm:block">
-          <FoxMascot variant="thinking" size="md" className="drop-shadow-sm" />
-        </div>
-      </div>
+      {/* Leitner Spaced Repetition System & 8 Game Modes (Screenshots 1 & 2) */}
+      <SRSLeitnerBanner
+        boxCounts={boxCounts}
+        dueCount={effectiveDueCount}
+        onOpenMode={handleOpenMode}
+        onReviewDue={handleReviewDueWords}
+      />
 
       {/* Stats Quick Cards with Solar Icons */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground font-medium">Total Words</p>
-            <p className="text-xl font-bold text-foreground mt-0.5">{totalCount}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-3.5 shadow-xs flex items-center justify-between min-w-0">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">Total Words</p>
+            <p className="text-lg sm:text-xl font-bold text-foreground mt-0.5">{totalCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
-            <TranslationIcon className="w-4 h-4" size={18} />
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground font-medium">Due for Review</p>
-            <p className="text-xl font-bold text-primary mt-0.5">{dueToday}</p>
-          </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
-            <FireIcon className="w-4 h-4" size={18} />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0 ml-1.5 sm:ml-2">
+            <TranslationIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" size={18} />
           </div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground font-medium">Currently Learning</p>
-            <p className="text-xl font-bold text-primary mt-0.5">{learningCount}</p>
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-3.5 shadow-xs flex items-center justify-between min-w-0">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">Due for Review</p>
+            <p className="text-lg sm:text-xl font-bold text-primary mt-0.5">{dueToday}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
-            <BookBookmarkIcon className="w-4 h-4" size={18} />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0 ml-1.5 sm:ml-2">
+            <FireIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" size={18} />
           </div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground font-medium">Mastered</p>
-            <p className="text-xl font-bold text-primary mt-0.5">{masteredCount}</p>
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-3.5 shadow-xs flex items-center justify-between min-w-0">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">Learning</p>
+            <p className="text-lg sm:text-xl font-bold text-primary mt-0.5">{learningCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
-            <MedalRibbonIcon className="w-4 h-4" size={18} />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0 ml-1.5 sm:ml-2">
+            <BookBookmarkIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" size={18} />
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-3.5 shadow-xs flex items-center justify-between min-w-0">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs text-muted-foreground font-medium truncate">Mastered</p>
+            <p className="text-lg sm:text-xl font-bold text-primary mt-0.5">{masteredCount}</p>
+          </div>
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0 ml-1.5 sm:ml-2">
+            <MedalRibbonIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" size={18} />
           </div>
         </div>
       </div>
@@ -803,12 +868,16 @@ export default function VocabularyHub() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+        <div id="vocabulary-table-section" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
           {filteredWords.map((word) => {
             const userProgress = userVocabMap.get(word.id)
             const isLearning =
               userProgress?.status === 'learning' || userProgress?.status === 'review'
             const isMastered = userProgress?.status === 'mastered'
+            const boxNum = Math.min(
+              5,
+              Math.max(1, userProgress?.mastery_level || (isMastered ? 5 : isLearning ? 2 : 1))
+            )
 
             // Parse synonyms and antonyms if stored as array or string
             const synonymsList = Array.isArray(word.synonyms)
@@ -826,38 +895,53 @@ export default function VocabularyHub() {
             return (
               <div
                 key={word.id}
-                className="bg-card border border-border hover:border-primary/40 rounded-2xl p-4 shadow-xs transition-all flex flex-col justify-between space-y-3 group"
+                className={cn(
+                  'bg-card border rounded-2xl p-4 shadow-xs transition-all flex flex-col justify-between space-y-3 group',
+                  selectedWordIds.has(word.id)
+                    ? 'border-primary ring-1 ring-primary/40 bg-primary/5'
+                    : 'border-border hover:border-primary/40'
+                )}
               >
                 <div className="space-y-2">
-                  {/* Top Line: Word, Part of Speech, Audio, Folder/Topic */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-base font-black text-foreground group-hover:text-primary transition-colors capitalize">
+                  {/* Top Line: Checkbox, Word, Part of Speech, Audio, Box Badge, Folder/Topic */}
+                  <div className="flex items-start justify-between gap-2 flex-wrap sm:flex-nowrap">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={selectedWordIds.has(word.id)}
+                        onChange={() => toggleSelectWord(word.id)}
+                        className="w-4 h-4 rounded text-primary border-border focus:ring-primary cursor-pointer shrink-0 accent-amber-400"
+                        title="Select word for custom practice"
+                      />
+                      <h3 className="text-sm sm:text-base font-black text-foreground group-hover:text-primary transition-colors capitalize">
                         {word.word}
                       </h3>
                       {word.part_of_speech && (
-                        <span className="text-[10px] font-bold italic text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
+                        <span className="text-[9px] sm:text-[10px] font-bold italic text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
                           {word.part_of_speech}
                         </span>
                       )}
                       <button
                         onClick={() => speakWord(word.word)}
                         title="Listen to pronunciation"
-                        className="p-1 rounded-lg hover:bg-secondary text-primary transition-colors cursor-pointer"
+                        className="p-1 rounded-lg hover:bg-secondary text-primary transition-colors cursor-pointer shrink-0"
                       >
                         <VolumeLoudIcon className="w-3.5 h-3.5 text-primary" size={14} />
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 flex-wrap justify-end">
+                      <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/40 shrink-0">
+                        Box {boxNum}
+                      </span>
                       {word.topic && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border truncate max-w-[120px]">
+                        <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border truncate max-w-[90px] sm:max-w-[120px]">
                           {word.topic}
                         </span>
                       )}
                       {word.user_id && (
-                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
-                          My Word
+                        <span className="text-[8px] sm:text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+                          My
                         </span>
                       )}
                       {/* Action buttons: Edit and Delete */}
@@ -1056,6 +1140,55 @@ export default function VocabularyHub() {
           onClose={() => setShowPremiumModal(false)}
           featureTitle={premiumModalTitle}
         />
+      )}
+
+      {/* SRS Practice Set Selection Modal (Screenshot 3) */}
+      <SRSReviewModal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        modeTitle={
+          PRACTICE_MODES.find((m) => m.id === selectedPracticeModeId)?.title ||
+          'Spaced Repetition'
+        }
+        allWords={words}
+        userVocabMap={userVocabMap}
+        onStartPractice={handleStartPractice}
+        selectedTableWordsCount={selectedWordIds.size}
+        onChooseFromTable={() => {
+          if (selectedWordIds.size > 0) {
+            const chosen = words.filter((w) => selectedWordIds.has(w.id))
+            handleStartPractice(chosen, 'Custom Table Selection')
+          } else {
+            const el = document.getElementById('vocabulary-table-section')
+            if (el) el.scrollIntoView({ behavior: 'smooth' })
+            setFeedbackMessage('Select checkboxes on the word cards below, then click Practice Selected!')
+            setTimeout(() => setFeedbackMessage(null), 4000)
+          }
+        }}
+      />
+
+      {/* Floating Action Bar for Selected Words */}
+      {selectedWordIds.size > 0 && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 bg-foreground text-background px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl shadow-2xl flex items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom duration-200 border border-border whitespace-nowrap">
+          <span className="text-xs font-bold">
+            {selectedWordIds.size} word{selectedWordIds.size > 1 ? 's' : ''} selected
+          </span>
+          <button
+            onClick={() => {
+              const chosen = words.filter((w) => selectedWordIds.has(w.id))
+              handleStartPractice(chosen, 'Selected Words')
+            }}
+            className="px-4 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-black font-bold text-xs cursor-pointer shadow-xs transition-colors"
+          >
+            Practice Selected
+          </button>
+          <button
+            onClick={() => setSelectedWordIds(new Set())}
+            className="text-xs text-muted-foreground hover:text-background font-semibold cursor-pointer"
+          >
+            Clear
+          </button>
+        </div>
       )}
     </div>
   )

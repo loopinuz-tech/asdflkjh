@@ -35,7 +35,18 @@ export const FOLDER_COLORS = [
   { id: 'indigo', name: 'Indigo / Navy', bg: 'bg-indigo-500/15', text: 'text-indigo-600 dark:text-indigo-400', border: 'border-indigo-500/30' },
 ] as const
 
-export const DEFAULT_GLOBAL_FOLDERS: VocabFolder[] = []
+export const DEFAULT_GLOBAL_FOLDERS: VocabFolder[] = [
+  {
+    id: 'folder-c1-academic',
+    name: 'C1 Academic Vocabulary',
+    iconName: 'star',
+    color: 'amber',
+    description: '100 ta C1 darajadagi eng muhim akademik IELTS so‘zlari (Band 7.5 - 9.0)',
+    isSystem: true,
+    userId: null,
+    createdAt: '2026-10-03T10:00:00.000Z',
+  },
+]
 
 const DEMO_FOLDER_IDS = new Set([
   'folder-academic-core',
@@ -49,7 +60,7 @@ const GLOBAL_STORAGE_KEY = 'edufox_admin_global_folders_v2'
 const USER_STORAGE_PREFIX = 'edufox_user_vocab_folders_'
 
 export function getVocabFolders(userId?: string | null): VocabFolder[] {
-  if (typeof window === 'undefined') return []
+  if (typeof window === 'undefined') return DEFAULT_GLOBAL_FOLDERS
 
   // 1. Get system / global folders created by admin
   let globalFolders: VocabFolder[] = []
@@ -74,6 +85,16 @@ export function getVocabFolders(userId?: string | null): VocabFolder[] {
   } catch (e) {
     console.warn('Error reading global folders:', e)
   }
+
+  // Ensure default global folders (e.g. C1 Academic Vocabulary) are always present
+  DEFAULT_GLOBAL_FOLDERS.forEach((df) => {
+    if (!globalFolders.some((f) => f.id === df.id)) {
+      globalFolders.unshift(df)
+      try {
+        localStorage.setItem(GLOBAL_STORAGE_KEY, JSON.stringify(globalFolders))
+      } catch {}
+    }
+  })
 
   // 2. Get user personal folders if userId provided
   let userFolders: VocabFolder[] = []

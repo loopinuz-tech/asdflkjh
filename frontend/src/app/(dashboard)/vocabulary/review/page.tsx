@@ -79,7 +79,7 @@ export default function VocabularyReviewPage() {
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center py-2 sm:py-6">
+    <div className="w-full flex-1 flex flex-col justify-between">
       <VocabularyReviewClient words={wordsToReview} />
     </div>
   )

@@ -18,8 +18,8 @@ export default function DashboardLayout() {
           <DashboardMobileHeader />
         </div>
 
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
-          <div className="py-4 px-3 sm:px-6 md:py-8 md:px-8 pb-24 md:pb-8">
+        <main className="flex-1 relative overflow-y-auto focus:outline-none flex flex-col">
+          <div className="py-4 px-3 sm:px-6 md:py-8 md:px-8 pb-24 md:pb-8 flex-1 flex flex-col">
             <Outlet />
           </div>
         </main>
