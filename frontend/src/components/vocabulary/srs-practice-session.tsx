@@ -8,6 +8,7 @@ import {
   BoltIcon,
   StarsIcon,
   EyeIcon,
+  GamepadIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxMascot } from '@/components/mascot/fox-mascot'
 import { recordWordReview } from '@/actions/vocabulary'
@@ -27,6 +28,12 @@ const CYCLE_DAYS: Record<number, number> = {
   4: 14,
   5: 30,
 }
+
+const KEYBOARD_ROWS = [
+  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+  ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'],
+  ['U', 'V', 'W', 'X', 'Y', 'Z'],
+]
 
 export function SRSPracticeSession({
   mode,
@@ -64,6 +71,11 @@ export function SRSPracticeSession({
 
   // Marathon state (5 stages)
   const [marathonStage, setMarathonStage] = useState(1)
+
+  // Hangman (Odam osish) state
+  const [hangmanGuessed, setHangmanGuessed] = useState<Set<string>>(new Set())
+  const [hangmanMistakes, setHangmanMistakes] = useState(0)
+  const [hangmanStatus, setHangmanStatus] = useState<'playing' | 'won' | 'lost'>('playing')
 
   const currentWord = words[currentIndex] || words[0]
 
@@ -298,6 +310,84 @@ export function SRSPracticeSession({
     }, 1000)
   }
 
+  // Hangman word letters
+  const targetLetters = useMemo(() => {
+    if (!currentWord?.word) return []
+    return currentWord.word.toUpperCase().split('')
+  }, [currentWord])
+
+  // Reset hangman when index changes
+  useEffect(() => {
+    setHangmanGuessed(new Set())
+    setHangmanMistakes(0)
+    setHangmanStatus('playing')
+  }, [currentIndex])
+
+  // Handle letter guess
+  const handleHangmanGuess = (letter: string) => {
+    if (hangmanStatus !== 'playing' || hangmanGuessed.has(letter)) return
+
+    const newGuessed = new Set(hangmanGuessed)
+    newGuessed.add(letter)
+    setHangmanGuessed(newGuessed)
+
+    const isMatch = targetLetters.includes(letter)
+    if (!isMatch) {
+      const nextMistakes = hangmanMistakes + 1
+      setHangmanMistakes(nextMistakes)
+      if (nextMistakes >= 6) {
+        setHangmanStatus('lost')
+        playWordAudio(currentWord.word, currentWord.audio_url)
+        if (currentWord?.id) {
+          recordWordReview(currentWord.id, 'again').catch(() => {})
+        }
+      }
+    } else {
+      const won = targetLetters.every((ch) => {
+        if (!/[A-Z]/.test(ch)) return true
+        return newGuessed.has(ch)
+      })
+      if (won) {
+        setHangmanStatus('won')
+        setScore((s) => s + 20)
+        playWordAudio(currentWord.word, currentWord.audio_url)
+        if (currentWord?.id) {
+          recordWordReview(currentWord.id, 'good').catch(() => {})
+          if (onWordUpdated) onWordUpdated(currentWord.id, Math.min(5, currentBox + 1))
+        }
+      }
+    }
+  }
+
+  // Physical keyboard listener for Hangman
+  useEffect(() => {
+    if (mode !== 'hangman') return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (e.ctrlKey || e.altKey || e.metaKey) return
+
+      const key = e.key.toUpperCase()
+      if (/^[A-Z]$/.test(key)) {
+        handleHangmanGuess(key)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [mode, hangmanStatus, hangmanGuessed, hangmanMistakes, targetLetters])
+
+  const handleHangmanNext = () => {
+    setHangmanGuessed(new Set())
+    setHangmanMistakes(0)
+    setHangmanStatus('playing')
+    if (currentIndex < words.length - 1) {
+      setCurrentIndex((i) => i + 1)
+    } else {
+      setIsFinished(true)
+    }
+  }
+
   if (words.length === 0) {
     return (
       <div className="w-full max-w-md mx-auto my-auto p-6 sm:p-8 bg-card border border-border rounded-2xl sm:rounded-3xl text-center space-y-4 shadow-sm flex-1 flex flex-col justify-center">
@@ -384,6 +474,9 @@ export function SRSPracticeSession({
               setRatings({ again: 0, hard: 0, good: 0, easy: 0 })
               setScore(0)
               setMatchedIds([])
+              setHangmanGuessed(new Set())
+              setHangmanMistakes(0)
+              setHangmanStatus('playing')
             }}
             className="w-full sm:w-1/2 py-2.5 rounded-xl border border-border bg-secondary font-bold text-xs hover:bg-secondary/80 cursor-pointer active:scale-98"
           >
@@ -1011,6 +1104,255 @@ export function SRSPracticeSession({
 
         <div className="text-center text-[10px] text-muted-foreground pb-1">
           Word {currentIndex + 1} of {words.length}
+        </div>
+      </div>
+    )
+  }
+
+  // MODE: Hangman (Odam osish — matching user screenshot)
+  if (mode === 'hangman') {
+    return (
+      <div className="w-full flex-1 flex flex-col justify-between py-1 animate-in fade-in duration-200">
+        {/* Top Header */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onExit}
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
+          >
+            <AltArrowLeftIcon className="w-4 h-4 text-primary" size={16} />
+            <span>Hangman (Odam osish)</span>
+          </button>
+
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <span className="text-xs sm:text-sm font-extrabold text-foreground">
+              Score: {score}
+            </span>
+            <span className="text-xs font-bold text-muted-foreground bg-secondary px-2 py-0.5 rounded-lg border border-border">
+              {currentIndex + 1}/{words.length}
+            </span>
+            <button
+              onClick={onExit}
+              className="text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <CloseCircleIcon className="w-5 h-5" size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Center Game Arena */}
+        <div className="my-auto py-1 sm:py-3 flex-1 flex flex-col justify-center space-y-2.5 sm:space-y-3.5 max-w-lg mx-auto w-full">
+          {/* Gallows SVG Graphic */}
+          <div className="flex justify-center">
+            <svg
+              className="w-40 h-32 sm:w-52 sm:h-40 text-slate-600 dark:text-slate-300"
+              viewBox="0 0 200 160"
+              fill="none"
+              stroke="currentColor"
+            >
+              {/* Stand & Structure */}
+              <line x1="30" y1="145" x2="170" y2="145" strokeWidth="4" strokeLinecap="round" />
+              <line x1="65" y1="145" x2="65" y2="18" strokeWidth="4" strokeLinecap="round" />
+              <line x1="65" y1="18" x2="145" y2="18" strokeWidth="4" strokeLinecap="round" />
+              <line x1="65" y1="42" x2="90" y2="18" strokeWidth="3" strokeLinecap="round" />
+              {/* Rope */}
+              <line
+                x1="145"
+                y1="18"
+                x2="145"
+                y2="38"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className={hangmanStatus === 'won' ? 'opacity-20' : ''}
+              />
+
+              {/* Stick Figure Person based on mistakes */}
+              <g
+                className={`transition-colors duration-200 ${
+                  hangmanStatus === 'lost'
+                    ? 'text-rose-500 stroke-rose-500'
+                    : hangmanStatus === 'won'
+                    ? 'text-emerald-500 stroke-emerald-500'
+                    : 'text-slate-800 dark:text-slate-100 stroke-slate-800 dark:stroke-slate-100'
+                }`}
+              >
+                {/* 1. Head */}
+                {hangmanMistakes >= 1 && (
+                  <circle cx="145" cy="50" r="12" strokeWidth="3" fill="none" />
+                )}
+
+                {/* 2. Torso */}
+                {hangmanMistakes >= 2 && (
+                  <line x1="145" y1="62" x2="145" y2="102" strokeWidth="3" strokeLinecap="round" />
+                )}
+
+                {/* 3. Left Arm */}
+                {hangmanMistakes >= 3 && (
+                  <line x1="145" y1="72" x2="126" y2="88" strokeWidth="3" strokeLinecap="round" />
+                )}
+
+                {/* 4. Right Arm */}
+                {hangmanMistakes >= 4 && (
+                  <line x1="145" y1="72" x2="164" y2="88" strokeWidth="3" strokeLinecap="round" />
+                )}
+
+                {/* 5. Left Leg */}
+                {hangmanMistakes >= 5 && (
+                  <line x1="145" y1="102" x2="128" y2="132" strokeWidth="3" strokeLinecap="round" />
+                )}
+
+                {/* 6. Right Leg */}
+                {hangmanMistakes >= 6 && (
+                  <line x1="145" y1="102" x2="162" y2="132" strokeWidth="3" strokeLinecap="round" />
+                )}
+
+                {/* Face details when lost (X eyes and frown) */}
+                {hangmanStatus === 'lost' && (
+                  <>
+                    <line x1="140" y1="47" x2="143" y2="50" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="143" y1="47" x2="140" y2="50" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="147" y1="47" x2="150" y2="50" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="150" y1="47" x2="147" y2="50" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M 141 57 Q 145 53 149 57" strokeWidth="2" strokeLinecap="round" fill="none" />
+                  </>
+                )}
+
+                {/* Face details when won (smile) */}
+                {hangmanStatus === 'won' && (
+                  <>
+                    <circle cx="141" cy="48" r="1.5" fill="currentColor" />
+                    <circle cx="149" cy="48" r="1.5" fill="currentColor" />
+                    <path d="M 141 53 Q 145 57 149 53" strokeWidth="2" strokeLinecap="round" fill="none" />
+                  </>
+                )}
+              </g>
+            </svg>
+          </div>
+
+          {/* Maslahat (Hint) — exactly matching screenshot format */}
+          <div className="text-center px-2">
+            <p className="text-xs sm:text-sm text-foreground/80 font-medium leading-relaxed">
+              Maslahat: '{currentWord.translation_uz || currentWord.translation || currentWord.definition}'
+            </p>
+          </div>
+
+          {/* Letter Slots with Pink Underlines (Matching Screenshot) */}
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 flex-wrap my-1 min-h-[46px]">
+            {targetLetters.map((char, idx) => {
+              const isLetter = /[A-Z]/.test(char)
+              const isRevealed = !isLetter || hangmanGuessed.has(char) || hangmanStatus === 'lost'
+              const isLostLetter = hangmanStatus === 'lost' && !hangmanGuessed.has(char)
+
+              if (char === ' ') {
+                return <div key={idx} className="w-2.5 sm:w-4" />
+              }
+
+              return (
+                <div
+                  key={idx}
+                  className="flex flex-col items-center justify-between w-6 sm:w-8 h-8 sm:h-10 select-none"
+                >
+                  <span
+                    className={`text-sm sm:text-xl font-black uppercase transition-all duration-150 ${
+                      isLostLetter
+                        ? 'text-rose-500 animate-pulse'
+                        : isRevealed
+                        ? 'text-foreground'
+                        : 'text-transparent'
+                    }`}
+                  >
+                    {isRevealed ? char : '_'}
+                  </span>
+                  <div
+                    className={`w-full h-1 sm:h-1.5 rounded-full transition-colors ${
+                      isLostLetter
+                        ? 'bg-rose-400'
+                        : isRevealed
+                        ? 'bg-emerald-500'
+                        : 'bg-rose-300 dark:bg-rose-500/70'
+                    }`}
+                  />
+                </div>
+              )
+            })}
+          </div>
+
+          {/* On-Screen Circular Keyboard (3 Rows, Matching Screenshot) */}
+          <div className="space-y-1.5 sm:space-y-2 max-w-sm sm:max-w-md mx-auto w-full px-1">
+            {KEYBOARD_ROWS.map((row, rowIdx) => (
+              <div key={rowIdx} className="flex items-center justify-center gap-1 sm:gap-1.5">
+                {row.map((letter) => {
+                  const isGuessed = hangmanGuessed.has(letter)
+                  const isCorrect = isGuessed && targetLetters.includes(letter)
+                  const isWrong = isGuessed && !targetLetters.includes(letter)
+
+                  let btnStyle =
+                    'bg-card border-border hover:border-primary/60 text-foreground hover:bg-secondary cursor-pointer shadow-2xs active:scale-95'
+                  if (isCorrect) {
+                    btnStyle =
+                      'bg-emerald-500 text-white border-emerald-500 font-black cursor-default shadow-xs'
+                  } else if (isWrong) {
+                    btnStyle =
+                      'bg-secondary/60 text-muted-foreground/30 border-transparent line-through cursor-not-allowed opacity-40'
+                  }
+
+                  return (
+                    <button
+                      key={letter}
+                      type="button"
+                      disabled={isGuessed || hangmanStatus !== 'playing'}
+                      onClick={() => handleHangmanGuess(letter)}
+                      className={`w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full border text-xs sm:text-sm font-bold flex items-center justify-center transition-all duration-150 ${btnStyle}`}
+                    >
+                      {letter}
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Status & Next Controls */}
+        <div className="text-center pb-1 space-y-2">
+          {hangmanStatus === 'playing' ? (
+            <p className="text-xs sm:text-sm font-semibold text-muted-foreground">
+              {6 - hangmanMistakes} ta xato qoldi
+            </p>
+          ) : (
+            <div className="flex flex-col items-center gap-2 animate-in zoom-in-95">
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => playWordAudio(currentWord.word, currentWord.audio_url)}
+                  className="p-2 sm:p-2.5 rounded-xl border border-border bg-card hover:bg-secondary text-foreground transition-all cursor-pointer"
+                  title="Pronounce word"
+                >
+                  <VolumeLoudIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" size={20} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleHangmanNext}
+                  className="px-5 py-2 sm:py-2.5 rounded-xl bg-primary text-black font-extrabold text-xs sm:text-sm hover:bg-primary/90 transition-all cursor-pointer shadow-xs active:scale-98"
+                >
+                  {currentIndex < words.length - 1 ? "Keyingi so'z →" : "Natijalarni ko'rish →"}
+                </button>
+              </div>
+
+              {hangmanStatus === 'won' && (
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                  🎉 Tabriklaymiz, so'zni to'g'ri topdingiz! (+20 ball)
+                </p>
+              )}
+
+              {hangmanStatus === 'lost' && (
+                <p className="text-xs font-bold text-rose-500">
+                  Afsus, urinishlar tugadi! To'g'ri so'z:{' '}
+                  <span className="underline uppercase font-black">{currentWord.word}</span>
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     )

@@ -8,6 +8,7 @@ import {
   VolumeLoudIcon,
   PenNewSquareIcon,
   CupStarIcon,
+  GamepadIcon,
 } from '@solar-icons/react/bold-duotone'
 
 export interface SRSBoxCounts {
@@ -126,6 +127,18 @@ export const PRACTICE_MODES: PracticeModeConfig[] = [
       bg: 'bg-yellow-50 dark:bg-yellow-950/40',
       text: 'text-yellow-600',
       border: 'hover:border-yellow-300 dark:hover:border-yellow-700',
+    },
+  },
+  {
+    id: 'hangman',
+    title: 'Hangman',
+    category: 'Word Guess',
+    subtitle: "Odam osish — guess word letter by letter",
+    icon: GamepadIcon,
+    color: {
+      bg: 'bg-cyan-50 dark:bg-cyan-950/40',
+      text: 'text-cyan-600 dark:text-cyan-400',
+      border: 'hover:border-cyan-300 dark:hover:border-cyan-700',
     },
   },
 ]
@@ -324,12 +337,12 @@ export function SRSLeitnerBanner({
             </p>
           </div>
           <span className="px-2 sm:px-2.5 py-0.5 rounded-full border border-border bg-secondary text-muted-foreground text-[10px] sm:text-xs font-semibold shrink-0">
-            8 Game Modes
+            {PRACTICE_MODES.length} Game Modes
           </span>
         </div>
 
-        {/* 8 Game Modes Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        {/* Game Modes Grid (3x3 for 9 modes) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
           {PRACTICE_MODES.map((mode) => {
             const Icon = mode.icon
             const isSpacedRepetition = mode.id === 'spaced_repetition'
