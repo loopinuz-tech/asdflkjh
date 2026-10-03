@@ -1120,7 +1120,7 @@ export function SRSPracticeSession({
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
           >
             <AltArrowLeftIcon className="w-4 h-4 text-primary" size={16} />
-            <span>Hangman (Odam osish)</span>
+            <span>Hangman</span>
           </button>
 
           <div className="flex items-center gap-2.5 sm:gap-3">
@@ -1228,10 +1228,10 @@ export function SRSPracticeSession({
             </svg>
           </div>
 
-          {/* Maslahat (Hint) — exactly matching screenshot format */}
-          <div className="text-center px-2">
-            <p className="text-xs sm:text-sm text-foreground/80 font-medium leading-relaxed">
-              Maslahat: '{currentWord.translation_uz || currentWord.translation || currentWord.definition}'
+          {/* Hint (English only) */}
+          <div className="text-center px-3 max-w-lg mx-auto">
+            <p className="text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed">
+              <span className="font-bold text-primary">Hint:</span> '{currentWord.definition || currentWord.translation || currentWord.translation_uz}'
             </p>
           </div>
 
@@ -1316,7 +1316,7 @@ export function SRSPracticeSession({
         <div className="text-center pb-1 space-y-2">
           {hangmanStatus === 'playing' ? (
             <p className="text-xs sm:text-sm font-semibold text-muted-foreground">
-              {6 - hangmanMistakes} ta xato qoldi
+              {6 - hangmanMistakes} {6 - hangmanMistakes === 1 ? 'mistake' : 'mistakes'} remaining
             </p>
           ) : (
             <div className="flex flex-col items-center gap-2 animate-in zoom-in-95">
@@ -1335,19 +1335,19 @@ export function SRSPracticeSession({
                   onClick={handleHangmanNext}
                   className="px-5 py-2 sm:py-2.5 rounded-xl bg-primary text-black font-extrabold text-xs sm:text-sm hover:bg-primary/90 transition-all cursor-pointer shadow-xs active:scale-98"
                 >
-                  {currentIndex < words.length - 1 ? "Keyingi so'z →" : "Natijalarni ko'rish →"}
+                  {currentIndex < words.length - 1 ? 'Next Word →' : 'View Results →'}
                 </button>
               </div>
 
               {hangmanStatus === 'won' && (
                 <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                  🎉 Tabriklaymiz, so'zni to'g'ri topdingiz! (+20 ball)
+                  🎉 Congratulations! You guessed the word! (+20 pts)
                 </p>
               )}
 
               {hangmanStatus === 'lost' && (
                 <p className="text-xs font-bold text-rose-500">
-                  Afsus, urinishlar tugadi! To'g'ri so'z:{' '}
+                  Out of attempts! The correct word was:{' '}
                   <span className="underline uppercase font-black">{currentWord.word}</span>
                 </p>
               )}

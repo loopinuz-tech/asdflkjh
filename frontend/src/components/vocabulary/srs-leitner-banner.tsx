@@ -133,7 +133,7 @@ export const PRACTICE_MODES: PracticeModeConfig[] = [
     id: 'hangman',
     title: 'Hangman',
     category: 'Word Guess',
-    subtitle: "Odam osish — guess word letter by letter",
+    subtitle: 'Guess the hidden word letter by letter',
     icon: GamepadIcon,
     color: {
       bg: 'bg-cyan-50 dark:bg-cyan-950/40',
