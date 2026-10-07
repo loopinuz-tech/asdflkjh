@@ -172,14 +172,14 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Mascot Image with soft shadow and hover effect */}
-            <div className="relative shrink-0 flex items-center justify-center self-center sm:self-auto">
-              <div className="relative group cursor-pointer">
-                <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-xl group-hover:bg-amber-400/35 transition-all scale-95" />
+            {/* Mascot Image - Large, anchored to bottom border, no hover effect */}
+            <div className="relative shrink-0 flex items-end justify-center sm:justify-end self-center sm:self-end -mb-5 sm:-mb-6 lg:-mb-7 -mr-1 sm:-mr-3 lg:-mr-5">
+              <div className="relative">
+                <div className="pointer-events-none absolute -inset-4 rounded-full bg-amber-400/20 blur-2xl dark:bg-amber-400/10" />
                 <img
                   src="/dashboard_mascot.png"
                   alt="EduFox Mascot"
-                  className="relative z-10 w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 object-contain drop-shadow-md select-none transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-1"
+                  className="relative z-10 h-32 sm:h-40 md:h-48 lg:h-52 xl:h-56 w-auto max-w-[300px] sm:max-w-[420px] md:max-w-[500px] lg:max-w-[560px] object-contain object-bottom drop-shadow-md select-none pointer-events-none"
                 />
               </div>
             </div>
