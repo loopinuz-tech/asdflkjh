@@ -139,7 +139,7 @@ export function ReviewModeSelector({ words, onSelectMode }: ReviewModeSelectorPr
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-              <h3 className="text-lg sm:text-xl font-bold text-foreground">
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground">
                 Leitner Spaced Repetition System (SRS)
               </h3>
             </div>
@@ -150,7 +150,7 @@ export function ReviewModeSelector({ words, onSelectMode }: ReviewModeSelectorPr
 
           <Button
             onClick={() => onSelectMode('spaced-repetition')}
-            className="rounded-2xl px-5 py-2.5 bg-primary text-black font-bold text-xs sm:text-sm hover:bg-primary/90 shadow-xs cursor-pointer shrink-0"
+            className="rounded-2xl px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-xs sm:text-sm hover:bg-primary/90 shadow-xs cursor-pointer shrink-0"
           >
             <BoxIcon size={18} className="mr-1.5" />
             Review Due Words ({boxStats.dueCount > 0 ? boxStats.dueCount : words.length})
@@ -168,12 +168,12 @@ export function ReviewModeSelector({ words, onSelectMode }: ReviewModeSelectorPr
                 className={`p-3.5 sm:p-4 rounded-2xl border ${b.border} ${b.bg} flex flex-col justify-between transition-all hover:scale-[1.02] shadow-xs`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-xs font-bold ${b.color}`}>{b.name}</span>
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 font-semibold">
+                  <span className={`text-xs font-semibold ${b.color}`}>{b.name}</span>
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 font-medium">
                     {b.intervalDays}d cycle
                   </Badge>
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">{count}</div>
+                <div className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">{count}</div>
                 <div className="text-[11px] sm:text-xs text-muted-foreground font-medium mt-1">
                   {b.label}
                 </div>
@@ -196,7 +196,7 @@ export function ReviewModeSelector({ words, onSelectMode }: ReviewModeSelectorPr
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h4 className="text-base sm:text-lg font-bold text-foreground">
+            <h4 className="text-base sm:text-lg font-semibold text-foreground">
               Review Practice Modes
             </h4>
             <p className="text-xs text-muted-foreground">
@@ -225,10 +225,10 @@ export function ReviewModeSelector({ words, onSelectMode }: ReviewModeSelectorPr
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <h5 className="font-bold text-sm sm:text-base text-foreground tracking-tight group-hover:text-foreground">
+                      <h5 className="font-semibold text-sm sm:text-base text-foreground tracking-tight group-hover:text-foreground">
                         {mode.title}
                       </h5>
-                      <span className="text-[10px] text-muted-foreground font-semibold shrink-0">
+                      <span className="text-[10px] text-muted-foreground font-medium shrink-0">
                         {mode.badge}
                       </span>
                     </div>

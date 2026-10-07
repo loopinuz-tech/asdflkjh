@@ -216,7 +216,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/25 text-primary text-[11px] font-bold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/25 text-primary text-[11px] font-semibold uppercase tracking-wider">
               <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
               FOX FORD IELTS PRO
             </span>
@@ -227,8 +227,8 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
               </span>
             )}
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Achieve IELTS Band 7.5+ Faster with <span className="text-primary font-bold">Premium</span>
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+            Achieve IELTS Band 7.5+ Faster with <span className="text-primary font-semibold">Premium</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-3xl mt-0.5">
             Authentic Cambridge 16-19 IELTS mock tests, comprehensive answer explanations, AI grading, and unlimited access to all sections.
@@ -248,7 +248,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
           <div className="flex items-start gap-2.5">
             <DangerCircleIcon className="w-4 h-4 shrink-0 mt-0.5" size={16} />
             <div className="space-y-1">
-              <p className="font-bold text-sm">Payment system notification:</p>
+              <p className="font-semibold text-sm">Payment system notification:</p>
               <p className="text-xs leading-relaxed opacity-95">{String(errorMsg)}</p>
             </div>
           </div>
@@ -269,7 +269,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
             <TagPriceIcon className="w-5 h-5" size={20} />
           </div>
           <div>
-            <h4 className="text-xs sm:text-sm font-bold text-foreground">
+            <h4 className="text-xs sm:text-sm font-semibold text-foreground">
               Have a Promo Code or Discount Coupon?
             </h4>
             <p className="text-[11px] text-muted-foreground">
@@ -279,7 +279,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
         </div>
 
         {appliedCoupon ? (
-          <div className="flex items-center gap-2 bg-primary/15 border border-primary/30 px-3 py-1.5 rounded-xl text-xs font-bold text-primary">
+          <div className="flex items-center gap-2 bg-primary/15 border border-primary/30 px-3 py-1.5 rounded-xl text-xs font-semibold text-primary">
             <CheckCircleIcon className="w-4 h-4 text-primary shrink-0" size={16} />
             <span className="font-mono">{appliedCoupon.code}</span>
             <span className="text-[11px] font-medium opacity-90">
@@ -304,13 +304,13 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
               value={couponCodeInput}
               onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
               placeholder="e.g. FOXFORD20"
-              className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary w-full sm:w-44"
+              className="px-3 py-1.5 text-xs font-mono font-semibold uppercase rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary w-full sm:w-44"
             />
             <Button
               type="submit"
               disabled={validatingCoupon || !couponCodeInput.trim()}
               size="sm"
-              className="bg-primary text-black font-bold text-xs shrink-0 shadow-xs cursor-pointer"
+              className="bg-primary text-primary-foreground font-semibold text-xs shrink-0 shadow-xs cursor-pointer"
             >
               {validatingCoupon ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Apply'}
             </Button>
@@ -369,11 +369,11 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                   <Badge
                     className={`text-[10px] font-semibold px-3 py-0.5 shadow-xs uppercase tracking-wider whitespace-nowrap rounded-full border ${
                       isYearly
-                        ? 'bg-primary text-black border-amber-400/80 shadow-amber-500/20'
+                        ? 'bg-primary text-primary-foreground border-primary/50 shadow-primary/20'
                         : 'bg-secondary text-foreground border-border/80'
                     }`}
                   >
-                    {isYearly && <StarsIcon className="w-3 h-3 text-black inline-block mr-1" size={12} />}
+                    {isYearly && <StarsIcon className="w-3 h-3 text-primary-foreground inline-block mr-1" size={12} />}
                     {badgeText}
                   </Badge>
                 </div>
@@ -397,7 +397,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                       </span>
                     )}
                     <span className={cn(
-                      "text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground",
+                      "text-2xl sm:text-3xl font-semibold tracking-tight text-foreground",
                       prices.isDiscounted && "text-emerald-600 dark:text-emerald-400"
                     )}>
                       {typeof prices === 'string' ? prices : prices.usd}
@@ -408,7 +408,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                       </span>
                     )}
                     {prices.isDiscounted && (
-                      <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ml-auto">
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ml-auto">
                         Discount!
                       </span>
                     )}
@@ -448,7 +448,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                   <Button
                     onClick={() => handleDirectCheckout(plan)}
                     disabled={!!submittingPlanId}
-                    className={`w-full h-10 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1.5 ${
+                    className={`w-full h-10 rounded-xl text-xs font-semibold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1.5 ${
                       isYearly
                         ? 'bg-primary hover:bg-fox-yellow-dark text-primary-foreground shadow-primary/25 hover:shadow-md'
                         : 'bg-foreground hover:bg-foreground/90 text-background'
@@ -482,7 +482,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
               <ShieldCheckIcon className="w-4 h-4" size={16} />
             </div>
             <div>
-              <p className="font-bold text-foreground">Official Payment Gateways</p>
+              <p className="font-semibold text-foreground">Official Payment Gateways</p>
               <p className="text-[11px]">Payme, Click, Uzcard, Humo, and Bank Cards</p>
             </div>
           </div>
@@ -517,9 +517,9 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
               <StarsIcon className="w-8 h-8" size={32} />
             </div>
             <div className="space-y-1">
-              <h4 className="text-lg font-bold text-foreground">Congratulations! Subscription Activated!</h4>
+              <h4 className="text-lg font-semibold text-foreground">Congratulations! Subscription Activated!</h4>
               <p className="text-xs text-muted-foreground">
-                Order: <span className="font-mono font-bold text-foreground">#{checkoutSuccess.orderNumber}</span> ({checkoutSuccess.planName})
+                Order: <span className="font-mono font-semibold text-foreground">#{checkoutSuccess.orderNumber}</span> ({checkoutSuccess.planName})
               </p>
               <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-1">
                 All Cambridge IELTS mock tests and AI evaluation systems are now fully unlocked for you.
@@ -531,7 +531,7 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
                   setCheckoutSuccess(null)
                   window.location.href = '/practice'
                 }}
-                className="w-full h-11 rounded-xl bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-bold text-xs cursor-pointer shadow-md"
+                className="w-full h-11 rounded-xl bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold text-xs cursor-pointer shadow-md"
               >
                 Start Practice Tests
               </Button>

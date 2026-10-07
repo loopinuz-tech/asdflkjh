@@ -31,9 +31,9 @@ const vocabFeatures = [
 
 export function VocabularySection() {
   return (
-    <section className="py-14 sm:py-20 bg-secondary/30">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section className="py-10 sm:py-20 bg-secondary/30">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left — Content */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -41,14 +41,14 @@ export function VocabularySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold sm:text-4xl">
+            <h2 className="text-2xl xs:text-3xl font-bold sm:text-4xl">
               Build your IELTS vocabulary
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-2.5 sm:mt-4 text-sm sm:text-lg text-muted-foreground">
               A strong vocabulary is the foundation of a high IELTS score. Learn words that actually appear in the exam.
             </p>
 
-            <div className="mt-8 space-y-6">
+            <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
               {vocabFeatures.map((feature, index) => {
                 const Icon = feature.icon
                 return (
@@ -58,7 +58,7 @@ export function VocabularySection() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1, duration: 0.4 }}
-                    className="flex gap-4"
+                    className="flex gap-3 sm:gap-4"
                   >
                     <div className="flex-shrink-0 mt-1">
                       <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">

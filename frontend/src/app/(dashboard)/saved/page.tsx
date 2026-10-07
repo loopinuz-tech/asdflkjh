@@ -132,7 +132,7 @@ export default function SavedItemsPage() {
   const writingSpeakingCount = (counts.writing || 0) + (counts.speaking || 0)
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="w-full max-w-full space-y-6 pb-12">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3">
@@ -140,7 +140,7 @@ export default function SavedItemsPage() {
             <BookmarkSquareIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Saved Items</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground truncate">Saved Items</h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
               Your personalized hub of bookmarked tests, tricky questions, vocabulary, and prompts.
             </p>
@@ -178,14 +178,14 @@ export default function SavedItemsPage() {
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border whitespace-nowrap shrink-0',
                 isActive
-                  ? 'bg-foreground text-background border-foreground shadow-xs font-bold'
+                  ? 'bg-foreground text-background border-foreground shadow-xs font-semibold'
                   : 'bg-card text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
               )}
             >
               <span>{tab.label}</span>
               <span
                 className={cn(
-                  'px-1.5 py-0.5 rounded-full text-[10px] font-bold font-mono',
+                  'px-1.5 py-0.5 rounded-full text-[10px] font-semibold font-mono',
                   isActive
                     ? 'bg-background/20 text-background'
                     : 'bg-secondary text-muted-foreground'
@@ -221,7 +221,7 @@ export default function SavedItemsPage() {
         <Card className="border-border fox-shadow-sm">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <FoxMascot variant="thinking" size="lg" className="mb-4" />
-            <h3 className="text-lg font-bold text-foreground mb-1">
+            <h3 className="text-lg font-semibold text-foreground mb-1">
               {searchQuery ? 'No matching saved items found' : 'No saved items in this category'}
             </h3>
             <p className="text-muted-foreground text-xs max-w-md mx-auto leading-relaxed">
@@ -303,10 +303,10 @@ function SavedItemCard({
                   {skillIcon}
                 </span>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
                     Full Test • {details.skill}
                   </span>
-                  <CardTitle className="text-sm font-bold text-foreground line-clamp-1">
+                  <CardTitle className="text-sm font-semibold text-foreground line-clamp-1">
                     {details.title}
                   </CardTitle>
                 </div>
@@ -342,7 +342,7 @@ function SavedItemCard({
                 </span>
               )}
               {details.is_premium && (
-                <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold text-[10px]">
+                <span className="px-1.5 py-0.5 rounded bg-primary/15 text-primary font-semibold text-[10px]">
                   ★ Premium
                 </span>
               )}
@@ -375,10 +375,10 @@ function SavedItemCard({
             <div className="flex items-start justify-between gap-2">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary font-bold text-[10px]">
+                  <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary font-semibold text-[10px]">
                     Q#{details.question_number || '?'}
                   </span>
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground">
+                  <span className="text-[10px] uppercase font-semibold text-muted-foreground">
                     {details.question_type?.replace(/_/g, ' ')}
                   </span>
                 </div>
@@ -444,7 +444,7 @@ function SavedItemCard({
             <div className="flex items-start justify-between gap-2">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-black text-foreground">{details.word}</h3>
+                  <h3 className="text-base font-semibold text-foreground">{details.word}</h3>
                   {details.part_of_speech && (
                     <span className="text-[10px] italic px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
                       {details.part_of_speech}
@@ -518,10 +518,10 @@ function SavedItemCard({
                   )}
                 </span>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
                     {isWriting ? `Writing • ${details.task_type || 'Task'}` : `Speaking • Part ${details.part_number || 2}`}
                   </span>
-                  <CardTitle className="text-xs font-bold text-foreground">
+                  <CardTitle className="text-xs font-semibold text-foreground">
                     {details.title || (isWriting ? 'Writing Prompt' : 'Speaking Cue Card')}
                   </CardTitle>
                 </div>

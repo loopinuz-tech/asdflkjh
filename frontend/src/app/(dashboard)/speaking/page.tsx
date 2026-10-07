@@ -14,6 +14,8 @@ import {
   StarsIcon 
 } from '@solar-icons/react/bold-duotone'
 import { cn } from '@/lib/utils'
+import { LiveExaminerAvatar } from '@/components/speaking/live-avatar'
+import { ArrowRight, Mic } from 'lucide-react'
 
 export default function SpeakingHub() {
   const navigate = useNavigate()
@@ -151,46 +153,106 @@ export default function SpeakingHub() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header — Compact & No verbose intro on mobile */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
-            <Microphone2Icon className="h-5 w-5" size={20} />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-2xl font-bold tracking-tight truncate">Speaking Practice</h1>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border shrink-0">
-                {prompts.length} topics
-              </span>
-            </div>
-            {/* Introduction description strictly hidden on mobile as requested */}
-            <p className="hidden md:block text-xs text-muted-foreground mt-0.5">
-              Practice real exam topics with AI speech evaluation and Pronunciation diagnostics.
-            </p>
-          </div>
+      {/* Hero Mascot Banner — Matching Reference Screenshot */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-sky-100/70 via-sky-50/40 to-background dark:from-sky-950/30 dark:via-background/50 dark:to-background border border-sky-200/60 dark:border-sky-900/40 p-5 sm:p-7 md:p-8 text-center flex flex-col items-center justify-center shadow-xs">
+        <div className="absolute top-0 inset-x-0 h-32 bg-radial from-sky-200/40 dark:from-sky-500/10 to-transparent pointer-events-none" />
+
+        {/* Centered Mascot */}
+        <div className="relative z-10 max-w-[260px] sm:max-w-[340px] md:max-w-[420px] w-full transition-transform duration-300 hover:scale-[1.02]">
+          <img
+            src="/dashboard_mascot.png"
+            alt="Speaking Mascot"
+            className="w-full h-auto object-contain drop-shadow-md select-none pointer-events-none"
+          />
         </div>
 
-        {/* Avg Band badge — inline on mobile */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border rounded-xl shadow-2xs shrink-0">
-          <ChartSquareIcon className="w-3.5 h-3.5 text-primary" size={15} />
-          <span className="text-xs text-muted-foreground hidden xs:inline font-medium">Avg:</span>
-          <span className="text-xs sm:text-sm font-bold text-foreground">{avgBand}</span>
+        {/* Title & Description right below mascot */}
+        <div className="relative z-10 mt-3 sm:mt-4 space-y-1.5 max-w-xl">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Simulate IELTS Speaking interviews
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Practice real Part 1, 2, and 3 interview topics with conversational AI examiner simulation, Pronunciation diagnostics, and Lexical scoring.
+          </p>
+
+          {/* Quick Stats Pills */}
+          <div className="flex items-center justify-center gap-2 pt-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-background/80 backdrop-blur-xs border border-border shadow-2xs text-foreground">
+              <Microphone2Icon className="w-3.5 h-3.5 text-emerald-500" size={14} />
+              <span>{prompts.length} Topics</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-background/80 backdrop-blur-xs border border-border shadow-2xs text-foreground">
+              <ChartSquareIcon className="w-3.5 h-3.5 text-blue-500" size={14} />
+              <span>Avg Band: {avgBand}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* FEATURED: Real-time Live AI Speaking Examiner Hero Card — Clean, compact & responsive */}
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border bg-gradient-to-r from-card via-card to-primary/5 dark:to-primary/10 p-3.5 sm:p-5 shadow-xs">
+        {/* Subtle decorative glow */}
+        <div className="absolute top-0 right-1/4 w-36 h-36 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+          <div className="space-y-1.5 sm:space-y-2 max-w-xl text-left">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              Real-Time Voice Practice
+            </div>
+
+            <h2 className="text-base sm:text-xl font-semibold tracking-tight text-foreground">
+              AI Live Speaking Examiner
+            </h2>
+
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Practice 1-on-1 IELTS speaking in real-time with instant Band score diagnostics and speech evaluation.
+            </p>
+
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isPremiumUser) {
+                    navigate('/speaking/live')
+                  } else {
+                    navigate('/premium?reason=speaking_live')
+                  }
+                }}
+                className="px-4 py-2 sm:px-5 sm:py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl shadow-xs text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer transition-all active:scale-95"
+              >
+                <Mic className="w-4 h-4 fill-current" />
+                <span>{isPremiumUser ? 'Start Live Speaking' : 'Unlock Live Examiner'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Character Widget Preview — Clean & compact on tablet/desktop, hidden on small mobile */}
+          <div className="hidden md:flex shrink-0 items-center justify-center">
+            <LiveExaminerAvatar
+              expression="neutral"
+              mode="strict"
+              size="sm"
+              className="drop-shadow-sm"
+              onClick={() => navigate(isPremiumUser ? '/speaking/live' : '/premium?reason=speaking_live')}
+            />
+          </div>
         </div>
       </div>
 
       {/* Search & Part Filter Bar — Ultra-compact on mobile */}
-      <div className="sticky top-1 sm:top-2 z-30 bg-card/95 backdrop-blur-md border border-border rounded-2xl p-2.5 sm:p-4 shadow-xs space-y-2">
-        <div className="flex flex-col sm:flex-row items-center gap-2">
+      <div className="sticky top-1 sm:top-2 z-30 bg-card/95 backdrop-blur-md border border-border rounded-2xl p-2.5 sm:p-3 shadow-xs space-y-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           {/* Search Input */}
-          <div className="relative flex-1 w-full">
-            <RoundedMagnifierIcon className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" size={16} />
+          <div className="relative flex-1 w-full min-w-0">
+            <RoundedMagnifierIcon className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" size={16} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search speaking topics by keyword..."
-              className="w-full pl-9 pr-8 py-1.5 sm:py-2 bg-secondary/50 border border-border rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary focus:bg-card transition-all"
+              className="w-full pl-9 pr-8 py-2 bg-secondary/50 border border-border rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary focus:bg-card transition-all"
             />
             {searchQuery && (
               <button
@@ -208,7 +270,7 @@ export default function SpeakingHub() {
             <select
               value={accessFilter}
               onChange={(e) => setAccessFilter(e.target.value as any)}
-              className="w-full sm:w-auto px-3 py-1.5 sm:py-2 bg-secondary/50 border border-border rounded-xl text-xs font-semibold text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
+              className="w-full sm:w-auto px-3 py-2 bg-secondary/50 border border-border rounded-xl text-xs font-semibold text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
             >
               <option value="all">All Topics</option>
               <option value="free">Free Topics</option>
@@ -218,13 +280,13 @@ export default function SpeakingHub() {
         </div>
 
         {/* Part / Section Filter Tabs — Horizontal scrollable chip row */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 border-t border-border/40 text-xs whitespace-nowrap">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 border-t border-border/40 text-xs whitespace-nowrap">
           <button
             type="button"
             onClick={() => setPartFilter('all')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'all'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -233,9 +295,9 @@ export default function SpeakingHub() {
           <button
             type="button"
             onClick={() => setPartFilter('1')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === '1'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -244,9 +306,9 @@ export default function SpeakingHub() {
           <button
             type="button"
             onClick={() => setPartFilter('2')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === '2'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -255,9 +317,9 @@ export default function SpeakingHub() {
           <button
             type="button"
             onClick={() => setPartFilter('3')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === '3'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -266,13 +328,14 @@ export default function SpeakingHub() {
         </div>
       </div>
 
-      {/* Practice Topics Section (Compact Grid without right sidebar) */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">
-            Practice Topics {displayPrompts.length > 0 && (
+      {/* Practice Topics Section */}
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-base sm:text-lg font-semibold">
+            Practice Topics{' '}
+            {displayPrompts.length > 0 && (
               <span className="text-xs text-muted-foreground font-normal">
-                (Showing {visiblePrompts.length} of {displayPrompts.length} topics)
+                ({visiblePrompts.length} of {displayPrompts.length})
               </span>
             )}
           </h2>
@@ -286,16 +349,16 @@ export default function SpeakingHub() {
               }}
               className="text-xs text-primary hover:underline font-semibold cursor-pointer"
             >
-              Clear all filters
+              Clear filters
             </button>
           )}
         </div>
         
         {displayPrompts.length === 0 ? (
           <Card className="border-border fox-shadow-sm bg-secondary/20 border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <CardContent className="flex flex-col items-center justify-center py-10 sm:py-12 text-center p-4">
               <FoxMascot variant="speaking" size="lg" className="mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No topics match your filter</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">No topics match your filter</h3>
               <p className="text-muted-foreground max-w-md mx-auto text-xs">
                 Try adjusting your search query or selecting "All Topics" to view all available speaking topics.
               </p>
@@ -306,14 +369,14 @@ export default function SpeakingHub() {
                   setPartFilter('all')
                   setAccessFilter('all')
                 }}
-                className="mt-4 px-4 py-2 bg-primary text-black font-bold rounded-xl text-xs cursor-pointer"
+                className="mt-4 px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-xl text-xs cursor-pointer transition-opacity hover:opacity-90 active:scale-95"
               >
                 Reset Filters
               </button>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
             {visiblePrompts.map(prompt => {
               const isLocked = prompt.is_premium && !isPremiumUser
               const partNum = Number(prompt.part_number) || 1
@@ -321,9 +384,9 @@ export default function SpeakingHub() {
               const cardContent = (
                 <div
                   className={cn(
-                    "h-full p-3.5 rounded-xl border transition-all flex flex-col justify-between min-h-[74px] cursor-pointer group bg-card",
+                    "h-full p-3 sm:p-3.5 rounded-xl border transition-all flex flex-col justify-between min-h-[72px] sm:min-h-[76px] cursor-pointer group bg-card",
                     isLocked
-                      ? "border-border/70 hover:border-amber-400 hover:shadow-xs"
+                      ? "border-border/70 hover:border-muted-foreground/40 hover:shadow-xs"
                       : "border-border/80 hover:border-primary/60 hover:shadow-xs"
                   )}
                 >
@@ -333,16 +396,16 @@ export default function SpeakingHub() {
                     </h3>
                     {prompt.is_premium ? (
                       isPremiumUser ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
                           Unlocked
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 shrink-0">
                           Premium
                         </span>
                       )
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
                         Free
                       </span>
                     )}
@@ -371,21 +434,21 @@ export default function SpeakingHub() {
         )}
 
         {displayPrompts.length > visibleCount && (
-          <div className="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="pt-3 pb-2 flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full">
             <button
               type="button"
               onClick={() => setVisibleCount((prev) => prev + 24)}
-              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-black font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-transform active:scale-95"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-transform active:scale-95"
             >
               <span>Load More Topics</span>
-              <span className="px-2 py-0.5 rounded-full bg-black/15 text-[11px] font-extrabold">
+              <span className="px-2 py-0.5 rounded-full bg-black/15 text-[11px] font-semibold">
                 +{Math.min(24, displayPrompts.length - visibleCount)}
               </span>
             </button>
             <button
               type="button"
               onClick={() => setVisibleCount(displayPrompts.length)}
-              className="px-4 py-2.5 rounded-xl border border-border bg-secondary/50 hover:bg-secondary text-foreground text-xs font-semibold cursor-pointer transition-colors"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-border bg-secondary/50 hover:bg-secondary text-foreground text-xs font-semibold cursor-pointer transition-colors text-center"
             >
               Show All ({displayPrompts.length})
             </button>
@@ -395,14 +458,14 @@ export default function SpeakingHub() {
 
       {/* Premium Upgrade Modal */}
       {lockedModalPrompt && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-card text-card-foreground rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95 my-auto max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-semibold">
                   <CrownStarIcon className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold">Premium Speaking Access</h3>
+                <h3 className="text-sm sm:text-base font-semibold">Premium Speaking Access</h3>
               </div>
               <button
                 type="button"
@@ -414,10 +477,10 @@ export default function SpeakingHub() {
             </div>
 
             <div className="space-y-3 text-center py-2">
-              <div className="w-16 h-16 rounded-2xl bg-primary text-primary-foreground shadow-md flex items-center justify-center mx-auto">
-                <LockKeyholeIcon className="w-8 h-8" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary text-primary-foreground shadow-md flex items-center justify-center mx-auto">
+                <LockKeyholeIcon className="w-7 h-7 sm:w-8 sm:h-8" />
               </div>
-              <h4 className="text-lg font-bold text-foreground">{lockedModalPrompt.title}</h4>
+              <h4 className="text-base sm:text-lg font-semibold text-foreground">{lockedModalPrompt.title}</h4>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
                 This official IELTS Speaking topic is exclusively available to <strong className="text-foreground">Premium members</strong>. Upgrade to Premium to unlock all Part 1, 2, and 3 topics, voice recording, and AI examiner evaluations across Fluency, Pronunciation, Lexical Resource, and Grammar!
               </p>
@@ -446,7 +509,7 @@ export default function SpeakingHub() {
               <button
                 type="button"
                 onClick={() => navigate(`/premium?promptId=${lockedModalPrompt.id}&reason=premium_required`)}
-                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold transition-opacity flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
               >
                 <CrownStarIcon className="w-4 h-4" />
                 <span>Upgrade to Premium</span>

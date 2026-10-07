@@ -77,24 +77,24 @@ const skills = [
 
 export function IeltsSection() {
   return (
-    <section id="ielts" className="py-14 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="ielts" className="py-10 sm:py-20">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-10 sm:mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <h2 className="text-3xl font-bold sm:text-4xl">
+          <h2 className="text-2xl xs:text-3xl font-bold sm:text-4xl">
             Complete IELTS-style practice
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-2.5 sm:mt-4 text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
             EduFox covers all four IELTS skills with authentic question types used in the real exam.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {skills.map((skill, index) => {
             const Icon = skill.icon
             return (
@@ -105,17 +105,17 @@ export function IeltsSection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5, type: "spring", stiffness: 100 }}
                 whileHover={{ y: -5, scale: 1.02 }}
-                className={`rounded-xl border ${skill.borderColor} bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl`}
+                className={`rounded-2xl border ${skill.borderColor} bg-card p-4 sm:p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl`}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${skill.bgColor}`}>
-                    <Icon className={`h-5 w-5 ${skill.color}`} />
+                <div className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+                  <div className={`inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${skill.bgColor}`}>
+                    <Icon className={`h-4.5 w-4.5 sm:h-5 sm:w-5 ${skill.color}`} />
                   </div>
-                  <h3 className="text-xl font-semibold">{skill.title}</h3>
+                  <h3 className="text-lg sm:text-xl font-bold">{skill.title}</h3>
                 </div>
 
                 <motion.div 
-                  className="flex flex-wrap gap-2"
+                  className="flex flex-wrap gap-1.5 sm:gap-2"
                   initial="hidden"
                   whileInView="show"
                   viewport={{ once: true }}
@@ -137,7 +137,7 @@ export function IeltsSection() {
                     >
                       <Badge
                         variant="secondary"
-                        className="text-xs font-medium cursor-default hover:bg-primary/20 transition-colors duration-300"
+                        className="text-[11px] sm:text-xs font-medium cursor-default hover:bg-primary/20 transition-colors duration-300 px-2 py-0.5"
                       >
                         {qt}
                       </Badge>

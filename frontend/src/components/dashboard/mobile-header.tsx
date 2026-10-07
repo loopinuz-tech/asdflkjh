@@ -109,34 +109,39 @@ export function DashboardMobileHeader() {
   return (
     <>
       {/* Sticky Mobile Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border h-14 flex items-center justify-between px-3.5 sm:px-4 shadow-2xs select-none">
+      <header className="sticky top-0 z-40 bg-[#0c485e] dark:bg-[#072936] text-white border-b border-white/10 h-14 flex items-center justify-between px-3.5 sm:px-4 shadow-sm select-none">
         {/* Left Side: Hamburger Menu Button + Brand Logo */}
         <div className="flex items-center gap-2.5 min-w-0">
           <button
             type="button"
             onClick={() => setDrawerOpen((prev) => !prev)}
-            className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center cursor-pointer shadow-xs active:scale-95 transition-all shrink-0"
+            className="w-9 h-9 rounded-xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer shadow-xs active:scale-95 transition-all shrink-0 border border-white/10"
             aria-label="Toggle Navigation Menu"
           >
-            <HamburgerMenuIcon className="w-5 h-5" size={20} />
+            <HamburgerMenuIcon className="w-5 h-5 text-amber-300" size={20} />
           </button>
 
           <Link to="/dashboard" className="flex items-center gap-2 truncate">
-            <FoxLogo size="sm" showText showSubtext={false} />
+            <div className="w-7 h-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center p-1 shadow-xs">
+              <img src="/favicon.ico" alt="EduFox" className="w-full h-full object-contain" />
+            </div>
+            <span className="font-semibold text-lg tracking-tight text-white flex items-center">
+              Edu<span className="text-amber-400 font-bold">Fox</span>
+            </span>
           </Link>
 
           {/* Role badge */}
           {isAdmin ? (
             <Link
               to="/admin"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/25 transition-colors shrink-0"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/20 text-amber-300 border border-amber-400/30 hover:bg-white/30 transition-colors shrink-0"
               title="Switch to Admin Panel"
             >
-              <ShieldCheckIcon className="w-3 h-3" size={12} />
+              <ShieldCheckIcon className="w-3 h-3 text-amber-300" size={12} />
               <span>Admin</span>
             </Link>
           ) : (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary text-muted-foreground border border-border shrink-0">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/15 text-white/80 border border-white/10 shrink-0">
               Student
             </span>
           )}
@@ -148,7 +153,7 @@ export function DashboardMobileHeader() {
           {isAdmin && (
             <Link
               to="/admin"
-              className="hidden xs:inline-flex items-center gap-1 h-8 px-2.5 rounded-xl bg-foreground text-background text-[11px] font-bold shadow-2xs active:scale-95 transition-all"
+              className="hidden xs:inline-flex items-center gap-1 h-8 px-2.5 rounded-xl bg-foreground text-background text-[11px] font-semibold shadow-2xs active:scale-95 transition-all"
             >
               <ShieldCheckIcon className="w-3.5 h-3.5 text-primary" size={14} />
               <span>Admin</span>
@@ -171,7 +176,7 @@ export function DashboardMobileHeader() {
                 className="w-8.5 h-8.5 rounded-full object-cover"
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-primary/15 text-foreground font-black text-xs flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-primary/15 text-foreground font-semibold text-xs flex items-center justify-center">
                 {profile?.name ? profile.name.charAt(0).toUpperCase() : 'U'}
               </div>
             )}
@@ -216,12 +221,12 @@ export function DashboardMobileHeader() {
                       className="w-10 h-10 rounded-full object-cover border border-border shrink-0"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-primary/20 text-foreground font-black text-sm flex items-center justify-center shrink-0 border border-primary/30">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 text-foreground font-semibold text-sm flex items-center justify-center shrink-0 border border-primary/30">
                       {profile?.name ? profile.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold text-foreground text-sm truncate">{profile?.name || 'Student'}</p>
+                    <p className="font-semibold text-foreground text-sm truncate">{profile?.name || 'Student'}</p>
                     <p className="text-[11px] text-muted-foreground truncate">{profile?.email}</p>
                   </div>
                 </div>
@@ -229,7 +234,7 @@ export function DashboardMobileHeader() {
                 <div className="flex items-center gap-1.5 pt-1">
                   <span
                     className={cn(
-                      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
+                      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider',
                       isAdmin
                         ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30'
                         : 'bg-secondary text-muted-foreground border border-border'
@@ -240,12 +245,12 @@ export function DashboardMobileHeader() {
                   </span>
 
                   {profile?.isPremium ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                       <CrownStarIcon className="w-3 h-3" size={12} />
                       <span>PRO</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-secondary text-muted-foreground border border-border">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-secondary text-muted-foreground border border-border">
                       Free Tier
                     </span>
                   )}
@@ -257,13 +262,13 @@ export function DashboardMobileHeader() {
                 <Link
                   to="/admin"
                   onClick={() => setDrawerOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-foreground text-background shadow-xs font-bold text-xs active:scale-98 transition-all"
+                  className="flex items-center justify-between p-3 rounded-2xl bg-foreground text-background shadow-xs font-semibold text-xs active:scale-98 transition-all"
                 >
                   <div className="flex items-center gap-2">
                     <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
                     <span>Open Admin Panel</span>
                   </div>
-                  <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-background/20 font-mono">
+                  <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-background/20 font-mono">
                     PRO
                   </span>
                 </Link>
@@ -274,13 +279,13 @@ export function DashboardMobileHeader() {
                 <Link
                   to="/premium"
                   onClick={() => setDrawerOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-500 text-black shadow-xs font-bold text-xs active:scale-98 transition-all"
+                  className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-500 text-black shadow-xs font-semibold text-xs active:scale-98 transition-all"
                 >
                   <div className="flex items-center gap-2">
                     <CrownStarIcon className="w-4 h-4" size={16} />
                     <span>Upgrade to Premium</span>
                   </div>
-                  <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-black/10">
+                  <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-black/10">
                     PRO
                   </span>
                 </Link>
@@ -288,7 +293,7 @@ export function DashboardMobileHeader() {
 
               {/* LEARN & PRACTICE Section */}
               <div className="space-y-1 pt-1">
-                <p className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   LEARN & PRACTICE
                 </p>
 
@@ -310,9 +315,9 @@ export function DashboardMobileHeader() {
                       to={item.href}
                       onClick={() => setDrawerOpen(false)}
                       className={cn(
-                        'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all group',
+                        'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
                         isActive
-                          ? 'bg-secondary text-foreground font-bold border border-border/80 shadow-2xs'
+                          ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
                           : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
                       )}
                     >
@@ -328,7 +333,7 @@ export function DashboardMobileHeader() {
 
               {/* YOUR PROGRESS Section */}
               <div className="space-y-1 pt-3">
-                <p className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   YOUR PROGRESS
                 </p>
 
@@ -346,9 +351,9 @@ export function DashboardMobileHeader() {
                       to={item.href}
                       onClick={() => setDrawerOpen(false)}
                       className={cn(
-                        'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all group',
+                        'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
                         isActive
-                          ? 'bg-secondary text-foreground font-bold border border-border/80 shadow-2xs'
+                          ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
                           : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
                       )}
                     >
@@ -368,7 +373,7 @@ export function DashboardMobileHeader() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-bold transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <Logout2Icon className="w-4 h-4" size={16} />
                 <span>Sign Out</span>

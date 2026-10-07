@@ -83,7 +83,7 @@ export function WordSelectionModal({
       <div className="relative w-full max-w-md bg-card border border-border/80 rounded-3xl shadow-2xl p-6 sm:p-7 overflow-hidden text-foreground">
         {/* Header */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             Which words to review?
           </h2>
           {modeTitle && (
@@ -105,7 +105,7 @@ export function WordSelectionModal({
                 <AltArrowLeftIcon size={16} />
                 Back to options
               </button>
-              <span className="text-xs font-bold text-foreground">
+              <span className="text-xs font-semibold text-foreground">
                 Selected: {customSelectedIds.size} / {allWords.length}
               </span>
             </div>
@@ -138,7 +138,7 @@ export function WordSelectionModal({
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-4 h-4 rounded border flex items-center justify-center ${
-                          isChecked ? 'bg-primary border-primary text-black' : 'border-border'
+                          isChecked ? 'bg-primary border-primary text-primary-foreground' : 'border-border'
                         }`}
                       >
                         {isChecked && <CheckSquareIcon size={12} />}
@@ -164,7 +164,7 @@ export function WordSelectionModal({
                     setCustomSelectedIds(new Set(allWords.map((w) => w.id)))
                   }
                 }}
-                className="flex-1 rounded-xl text-xs"
+                className="flex-1 rounded-xl text-xs font-medium"
               >
                 {customSelectedIds.size === allWords.length ? 'Deselect All' : 'Select All'}
               </Button>
@@ -175,7 +175,7 @@ export function WordSelectionModal({
                   handleStartReview(picked)
                 }}
                 disabled={customSelectedIds.size === 0}
-                className="flex-1 rounded-xl bg-primary text-black font-bold text-xs hover:bg-primary/90"
+                className="flex-1 rounded-xl bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary/90"
               >
                 Start ({customSelectedIds.size})
               </Button>
@@ -195,13 +195,13 @@ export function WordSelectionModal({
                   <BookBookmarkIcon size={22} className="text-foreground/80" />
                 </div>
                 <div>
-                  <div className="font-bold text-sm sm:text-base text-foreground">
+                  <div className="font-semibold text-sm sm:text-base text-foreground">
                     All Words
                   </div>
                   <div className="text-xs text-muted-foreground">Full active vocabulary bank</div>
                 </div>
               </div>
-              <Badge variant="secondary" className="rounded-lg text-xs font-semibold px-2.5 py-1">
+              <Badge variant="secondary" className="rounded-lg text-xs font-medium px-2.5 py-1">
                 {allWords.length} words
               </Badge>
             </button>
@@ -217,13 +217,13 @@ export function WordSelectionModal({
                   <StarIcon size={22} />
                 </div>
                 <div>
-                  <div className="font-bold text-sm sm:text-base text-emerald-700 dark:text-emerald-400">
+                  <div className="font-semibold text-sm sm:text-base text-emerald-700 dark:text-emerald-400">
                     Mastered Words
                   </div>
                   <div className="text-xs text-muted-foreground">Box 5 completed vocabulary</div>
                 </div>
               </div>
-              <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-semibold px-2.5 py-1">
+              <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-medium px-2.5 py-1">
                 {masteredWords.length} words
               </Badge>
             </button>
@@ -239,13 +239,13 @@ export function WordSelectionModal({
                   <BookmarkOpenedIcon size={22} />
                 </div>
                 <div>
-                  <div className="font-bold text-sm sm:text-base text-amber-700 dark:text-amber-400">
+                  <div className="font-semibold text-sm sm:text-base text-amber-700 dark:text-amber-400">
                     Learning Words
                   </div>
                   <div className="text-xs text-muted-foreground">In active Leitner boxes (1 to 4)</div>
                 </div>
               </div>
-              <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-lg text-xs font-semibold px-2.5 py-1">
+              <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-lg text-xs font-medium px-2.5 py-1">
                 {learningWords.length} words
               </Badge>
             </button>
@@ -258,13 +258,13 @@ export function WordSelectionModal({
                     <CalendarDateIcon size={22} />
                   </div>
                   <div>
-                    <div className="font-bold text-sm sm:text-base text-rose-700 dark:text-rose-400">
+                    <div className="font-semibold text-sm sm:text-base text-rose-700 dark:text-rose-400">
                       Filter by Date
                     </div>
                     <div className="text-xs text-muted-foreground">Words from chosen study date</div>
                   </div>
                 </div>
-                <Badge className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-lg text-xs font-semibold px-2.5 py-1">
+                <Badge className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-lg text-xs font-medium px-2.5 py-1">
                   {dateWords.length} words
                 </Badge>
               </div>
@@ -297,7 +297,7 @@ export function WordSelectionModal({
                   <ChecklistMinimalisticIcon size={22} />
                 </div>
                 <div>
-                  <div className="font-bold text-sm sm:text-base text-blue-700 dark:text-blue-400">
+                  <div className="font-semibold text-sm sm:text-base text-blue-700 dark:text-blue-400">
                     Select from Table
                   </div>
                   <div className="text-xs text-muted-foreground">Pick custom words manually</div>

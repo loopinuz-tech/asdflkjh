@@ -150,15 +150,15 @@ export default function PracticeHistory() {
   const getSkillConfig = (skill: string) => {
     switch (skill) {
       case 'reading':
-        return { icon: BookBookmarkIcon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Reading' }
+        return { icon: BookBookmarkIcon, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-500/15 shadow-2xs', label: 'Reading' }
       case 'listening':
-        return { icon: HeadphonesRoundIcon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Listening' }
+        return { icon: HeadphonesRoundIcon, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-500/15 shadow-2xs', label: 'Listening' }
       case 'writing':
-        return { icon: Pen2Icon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Writing' }
+        return { icon: Pen2Icon, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500/15 shadow-2xs', label: 'Writing' }
       case 'speaking':
-        return { icon: Microphone2Icon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Speaking' }
+        return { icon: Microphone2Icon, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/15 shadow-2xs', label: 'Speaking' }
       default:
-        return { icon: CheckSquareIcon, color: 'text-primary-foreground', bg: 'bg-primary shadow-2xs', label: 'Practice' }
+        return { icon: CheckSquareIcon, color: 'text-foreground', bg: 'bg-secondary shadow-2xs', label: 'Practice' }
     }
   }
 
@@ -166,10 +166,10 @@ export default function PracticeHistory() {
     {
       id: 'reading',
       title: 'Reading',
-      desc: 'Academic & General reading passages with 15 question types.',
+      desc: 'Authentic Cambridge reading passages with 15 question types.',
       icon: BookBookmarkIcon,
-      color: 'text-primary-foreground',
-      bgColor: 'bg-primary shadow-xs',
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-500/15 shadow-xs',
       href: '/reading',
       count: 'Full Tests',
     },
@@ -178,8 +178,8 @@ export default function PracticeHistory() {
       title: 'Listening',
       desc: 'Realistic audio recordings across 4 sections with timed playback.',
       icon: HeadphonesRoundIcon,
-      color: 'text-primary-foreground',
-      bgColor: 'bg-primary shadow-xs',
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-500/15 shadow-xs',
       href: '/listening',
       count: 'Audio Tests',
     },
@@ -188,8 +188,8 @@ export default function PracticeHistory() {
       title: 'Writing',
       desc: 'Task 1 and Task 2 prompts evaluated with detailed criteria.',
       icon: Pen2Icon,
-      color: 'text-primary-foreground',
-      bgColor: 'bg-primary shadow-xs',
+      color: 'text-amber-600 dark:text-amber-400',
+      bgColor: 'bg-amber-500/15 shadow-xs',
       href: '/writing',
       count: 'Tasks 1 & 2',
     },
@@ -198,15 +198,15 @@ export default function PracticeHistory() {
       title: 'Speaking',
       desc: 'Part 1, 2, and 3 interview questions with simulated examiners.',
       icon: Microphone2Icon,
-      color: 'text-primary-foreground',
-      bgColor: 'bg-primary shadow-xs',
+      color: 'text-emerald-600 dark:text-emerald-400',
+      bgColor: 'bg-emerald-500/15 shadow-xs',
       href: '/speaking',
       count: 'Parts 1-3',
     },
   ]
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="w-full max-w-full space-y-6 sm:space-y-8 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-3">
@@ -214,7 +214,7 @@ export default function PracticeHistory() {
             <ClockCircleIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Practice Center</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground truncate">Practice Center</h1>
             <p className="text-xs sm:text-sm text-muted-foreground">Select a skill module to practice or review your past attempts.</p>
           </div>
         </div>
@@ -235,7 +235,7 @@ export default function PracticeHistory() {
                     <span className="text-xs text-muted-foreground font-medium">{m.count}</span>
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold group-hover:text-primary transition-colors">{m.title}</h3>
+                    <h3 className="text-base sm:text-lg font-semibold group-hover:text-primary transition-colors">{m.title}</h3>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{m.desc}</p>
                   </div>
                 </div>
@@ -256,7 +256,7 @@ export default function PracticeHistory() {
       <Card className="border-border fox-shadow-sm">
         <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
           <div>
-            <CardTitle className="text-base sm:text-lg font-bold flex items-center gap-2">
+            <CardTitle className="text-base sm:text-lg font-semibold flex items-center gap-2">
               <RestartSquareIcon className="w-5 h-5 text-primary shrink-0" size={20} />
               <span>Recent Test Attempts</span>
             </CardTitle>
@@ -293,7 +293,7 @@ export default function PracticeHistory() {
 
                     <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t border-border/40 sm:border-0 shrink-0">
                       <div className="text-left sm:text-right">
-                        <div className="text-sm font-bold text-foreground">
+                        <div className="text-sm font-semibold text-foreground">
                           {attempt.estimated_band ? `Band ${Number(attempt.estimated_band).toFixed(1)}` : 'Completed'}
                         </div>
                         <div className="text-[11px] text-muted-foreground capitalize">
@@ -304,7 +304,7 @@ export default function PracticeHistory() {
                       {attempt.href && (
                         <Link
                           to={attempt.href}
-                          className="h-8 px-3 rounded-xl bg-primary/10 hover:bg-primary text-foreground hover:text-black font-bold text-xs border border-primary/30 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ml-auto sm:ml-0"
+                          className="h-8 px-3 rounded-xl bg-primary/10 hover:bg-primary text-foreground hover:text-primary-foreground font-semibold text-xs border border-primary/30 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ml-auto sm:ml-0"
                         >
                           <EyeIcon className="w-3.5 h-3.5 text-primary" size={14} />
                           <span className="hidden sm:inline">Review Full Test</span>

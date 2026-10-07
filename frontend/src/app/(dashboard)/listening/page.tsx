@@ -154,31 +154,39 @@ export default function ListeningHub() {
         description="Online IELTS Listening mock tests. 4 complete sections, audio tracks, map labeling and completion questions with real-time scoring."
         canonicalUrl="/listening"
       />
-      {/* Header — Compact & No verbose intro on mobile */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
-            <HeadphonesRoundIcon className="h-5 w-5" size={20} />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-2xl font-bold tracking-tight truncate">Listening Practice</h1>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border shrink-0">
-                {tests.length} tests
-              </span>
-            </div>
-            {/* Introduction description strictly hidden on mobile as requested */}
-            <p className="hidden md:block text-xs text-muted-foreground mt-0.5">
-              Improve listening comprehension with authentic IELTS-style audio tracks and questions.
-            </p>
-          </div>
+      {/* Hero Mascot Banner — Matching Reference Screenshot */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-sky-100/70 via-sky-50/40 to-background dark:from-sky-950/30 dark:via-background/50 dark:to-background border border-sky-200/60 dark:border-sky-900/40 p-5 sm:p-7 md:p-8 text-center flex flex-col items-center justify-center shadow-xs">
+        <div className="absolute top-0 inset-x-0 h-32 bg-radial from-sky-200/40 dark:from-sky-500/10 to-transparent pointer-events-none" />
+
+        {/* Centered Mascot */}
+        <div className="relative z-10 max-w-[260px] sm:max-w-[340px] md:max-w-[420px] w-full transition-transform duration-300 hover:scale-[1.02]">
+          <img
+            src="/listening_mascot.png"
+            alt="Listening Mascot"
+            className="w-full h-auto object-contain drop-shadow-md select-none pointer-events-none"
+          />
         </div>
 
-        {/* Avg Score badge — inline on mobile */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border rounded-xl shadow-2xs shrink-0">
-          <ChartSquareIcon className="w-3.5 h-3.5 text-primary" size={15} />
-          <span className="text-xs text-muted-foreground hidden xs:inline font-medium">Avg:</span>
-          <span className="text-xs sm:text-sm font-bold text-foreground">{avgScore}</span>
+        {/* Title & Description right below mascot */}
+        <div className="relative z-10 mt-3 sm:mt-4 space-y-1.5 max-w-xl">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Sharpen your IELTS Listening skills
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Listen to realistic Cambridge audio recordings across all 4 sections with timed playback, map labeling, and instant scoring.
+          </p>
+
+          {/* Quick Stats Pills */}
+          <div className="flex items-center justify-center gap-2 pt-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-background/80 backdrop-blur-xs border border-border shadow-2xs text-foreground">
+              <HeadphonesRoundIcon className="w-3.5 h-3.5 text-purple-500" size={14} />
+              <span>{tests.length} Audio Tests</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-background/80 backdrop-blur-xs border border-border shadow-2xs text-foreground">
+              <ChartSquareIcon className="w-3.5 h-3.5 text-amber-500" size={14} />
+              <span>Avg Score: {avgScore}</span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -227,7 +235,7 @@ export default function ListeningHub() {
             onClick={() => setPartFilter('all')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'all'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -238,7 +246,7 @@ export default function ListeningHub() {
             onClick={() => setPartFilter('part_1')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'part_1'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -249,7 +257,7 @@ export default function ListeningHub() {
             onClick={() => setPartFilter('part_2')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'part_2'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -260,7 +268,7 @@ export default function ListeningHub() {
             onClick={() => setPartFilter('part_3')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'part_3'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -271,7 +279,7 @@ export default function ListeningHub() {
             onClick={() => setPartFilter('part_4')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'part_4'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -282,7 +290,7 @@ export default function ListeningHub() {
             onClick={() => setPartFilter('full')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               partFilter === 'full'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -294,7 +302,7 @@ export default function ListeningHub() {
       {/* Practice Tests Section (Compact Grid without right sidebar) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">
+          <h2 className="text-lg font-semibold">
             Available Tests {displayTests.length > 0 && <span className="text-xs text-muted-foreground font-normal">({displayTests.length} tests)</span>}
           </h2>
           {(searchQuery || partFilter !== 'all' || accessFilter !== 'all') && (
@@ -327,7 +335,7 @@ export default function ListeningHub() {
                   setPartFilter('all')
                   setAccessFilter('all')
                 }}
-                className="mt-4 px-4 py-2 bg-primary text-black font-bold rounded-xl text-xs cursor-pointer"
+                className="mt-4 px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-xl text-xs cursor-pointer"
               >
                 Reset Filters
               </button>
@@ -345,7 +353,7 @@ export default function ListeningHub() {
                   className={cn(
                     "h-full p-3.5 rounded-xl border transition-all flex flex-col justify-between min-h-[74px] cursor-pointer group bg-card",
                     isLocked
-                      ? "border-border/70 hover:border-amber-400 hover:shadow-xs"
+                      ? "border-border/70 hover:border-muted-foreground/40 hover:shadow-xs"
                       : "border-border/80 hover:border-primary/60 hover:shadow-xs"
                   )}
                 >
@@ -355,16 +363,16 @@ export default function ListeningHub() {
                     </h3>
                     {test.is_premium ? (
                       isPremiumUser ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
                           Unlocked
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 shrink-0">
                           Premium
                         </span>
                       )
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
                         Free
                       </span>
                     )}
@@ -399,10 +407,10 @@ export default function ListeningHub() {
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-semibold">
                   <CrownStarIcon className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold">Premium Test Access</h3>
+                <h3 className="text-base font-semibold">Premium Test Access</h3>
               </div>
               <button
                 type="button"
@@ -417,7 +425,7 @@ export default function ListeningHub() {
               <div className="w-16 h-16 rounded-2xl bg-primary text-primary-foreground shadow-md flex items-center justify-center mx-auto">
                 <LockKeyholeIcon className="w-8 h-8" />
               </div>
-              <h4 className="text-lg font-bold text-foreground">{lockedModalTest.title}</h4>
+              <h4 className="text-lg font-semibold text-foreground">{lockedModalTest.title}</h4>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
                 This Cambridge IELTS Listening test is exclusively available to <strong className="text-foreground">Premium members</strong>. Upgrade to Premium for unlimited access to all authentic Cambridge audio tests and comprehensive answer explanations!
               </p>
@@ -446,7 +454,7 @@ export default function ListeningHub() {
               <button
                 type="button"
                 onClick={() => navigate(`/premium?testId=${lockedModalTest.id}&reason=premium_required`)}
-                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <CrownStarIcon className="w-4 h-4" />
                 <span>Upgrade to Premium</span>

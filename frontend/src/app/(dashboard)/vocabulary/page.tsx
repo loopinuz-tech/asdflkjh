@@ -522,14 +522,14 @@ export default function VocabularyHub() {
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
                 Vocabulary Bank
               </h1>
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border">
                 {totalCount} Words
               </span>
               {isPremium && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
                   <CrownStarIcon className="w-3 h-3 text-primary" size={12} /> PRO Vocab
                 </span>
               )}
@@ -546,7 +546,7 @@ export default function VocabularyHub() {
           {isAdmin && (
             <Link
               to="/admin/vocabulary"
-              className="h-8 sm:h-9 px-3 text-xs font-bold rounded-xl bg-foreground text-background flex items-center gap-1.5 shadow-xs transition-all hover:opacity-90"
+              className="h-8 sm:h-9 px-3 text-xs font-semibold rounded-xl bg-foreground text-background flex items-center gap-1.5 shadow-xs transition-all hover:opacity-90"
               title="Manage vocabulary and global folders in Admin Panel"
             >
               <ShieldCheckIcon className="w-3.5 h-3.5 text-primary" size={14} />
@@ -557,19 +557,19 @@ export default function VocabularyHub() {
           {/* Add Word Button (Available for Premium, prompts upgrade for Free students) */}
           <Button
             onClick={handleAddWordClick}
-            className="h-8 sm:h-9 px-3.5 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="h-8 sm:h-9 px-3.5 text-xs font-semibold rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
-            <StarsIcon className="w-4 h-4 text-black" size={16} />
+            <StarsIcon className="w-4 h-4 text-primary-foreground" size={16} />
             <span>Add Word (AI)</span>
             {!isPremium && !isAdmin && (
-              <span className="ml-1 text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-black/15 text-black">
+              <span className="ml-1 text-[9px] font-semibold uppercase px-1.5 py-0.2 rounded bg-primary-foreground/15 text-primary-foreground">
                 PRO
               </span>
             )}
           </Button>
 
-          <div className="flex items-center gap-2 bg-card border border-border px-3 py-1.5 rounded-xl text-xs font-semibold text-primary">
-            <FireIcon className="w-4 h-4 text-primary" size={16} />
+          <div className="flex items-center gap-2 bg-card border border-border px-3 py-1.5 rounded-xl text-xs font-medium text-foreground">
+            <FireIcon className="w-4 h-4 text-amber-500" size={16} />
             <span>Deck: {learningCount + masteredCount} words</span>
           </div>
         </div>
@@ -587,7 +587,7 @@ export default function VocabularyHub() {
         <button
           type="button"
           onClick={() => setActiveTab('bank')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'bank'
               ? 'bg-card text-foreground shadow-xs'
               : 'text-muted-foreground hover:text-foreground'
@@ -599,15 +599,19 @@ export default function VocabularyHub() {
         <button
           type="button"
           onClick={() => setActiveTab('review')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'review'
-              ? 'bg-primary text-black shadow-xs font-black'
+              ? 'bg-primary text-primary-foreground shadow-xs font-semibold'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
           <BoxIcon size={16} />
           <span>Leitner Review Modes</span>
-          <span className="ml-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-black/15 text-black">
+          <span className={`ml-1 text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
+            activeTab === 'review'
+              ? 'bg-primary-foreground/15 text-primary-foreground'
+              : 'bg-muted text-muted-foreground'
+          }`}>
             8 Modes
           </span>
         </button>
@@ -621,13 +625,13 @@ export default function VocabularyHub() {
       ) : (
         <>
           {/* Main Review Session CTA */}
-          <div className="bg-gradient-to-r from-primary/10 via-card to-card border border-primary/25 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
+          <div className="bg-card border border-border/80 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
             <div className="z-10 flex-1 text-center sm:text-left w-full">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary mb-1">
-                <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground mb-1">
+                <StarsIcon className="w-3.5 h-3.5 text-amber-500" size={14} />
                 <span>Leitner Spaced Repetition System</span>
               </div>
-              <h2 className="text-lg sm:text-xl font-bold text-foreground mb-1.5">
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1.5">
                 Ready for your review session?
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground mb-4 max-w-xl">
@@ -637,7 +641,7 @@ export default function VocabularyHub() {
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
                 <Button
                   onClick={() => setActiveTab('review')}
-                  className="w-full sm:w-auto h-9 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 text-black shadow-xs transition-all flex items-center justify-center gap-2 text-xs cursor-pointer"
+                  className="w-full sm:w-auto h-9 px-6 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs transition-all flex items-center justify-center gap-2 text-xs cursor-pointer"
                 >
                   <BoxIcon size={16} />
                   <span>Open 8 Review Modes</span>
@@ -666,36 +670,36 @@ export default function VocabularyHub() {
         <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground font-medium">Total Words</p>
-            <p className="text-xl font-bold text-foreground mt-0.5">{totalCount}</p>
+            <p className="text-xl font-semibold text-foreground mt-0.5">{totalCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-secondary text-foreground shadow-xs flex items-center justify-center shrink-0">
             <TranslationIcon className="w-4 h-4" size={18} />
           </div>
         </div>
         <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground font-medium">Due for Review</p>
-            <p className="text-xl font-bold text-primary mt-0.5">{dueToday}</p>
+            <p className="text-xl font-semibold text-amber-600 dark:text-amber-400 mt-0.5">{dueToday}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-xs flex items-center justify-center shrink-0">
             <FireIcon className="w-4 h-4" size={18} />
           </div>
         </div>
         <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground font-medium">Currently Learning</p>
-            <p className="text-xl font-bold text-primary mt-0.5">{learningCount}</p>
+            <p className="text-xl font-semibold text-blue-600 dark:text-blue-400 mt-0.5">{learningCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-xs flex items-center justify-center shrink-0">
             <BookBookmarkIcon className="w-4 h-4" size={18} />
           </div>
         </div>
         <div className="bg-card border border-border rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground font-medium">Mastered</p>
-            <p className="text-xl font-bold text-primary mt-0.5">{masteredCount}</p>
+            <p className="text-xl font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5">{masteredCount}</p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-xs flex items-center justify-center shrink-0">
             <MedalRibbonIcon className="w-4 h-4" size={18} />
           </div>
         </div>
@@ -705,7 +709,7 @@ export default function VocabularyHub() {
       <div className="space-y-2 pt-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Collections & Folders:
             </span>
           </div>
@@ -713,12 +717,12 @@ export default function VocabularyHub() {
           <button
             type="button"
             onClick={handleCreateFolderClick}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline cursor-pointer"
           >
             <AddCircleIcon className="w-3.5 h-3.5" size={15} />
             <span>+ New Folder</span>
             {!isPremium && !isAdmin && (
-              <span className="text-[9px] font-extrabold uppercase px-1 rounded bg-primary/20 text-primary">
+              <span className="text-[9px] font-semibold uppercase px-1 rounded bg-primary/20 text-primary">
                 PRO
               </span>
             )}
@@ -731,7 +735,7 @@ export default function VocabularyHub() {
             type="button"
             onClick={() => setSelectedFolderId('all')}
             className={cn(
-              'px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5',
+              'px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5',
               selectedFolderId === 'all'
                 ? 'bg-foreground text-background border-foreground shadow-xs'
                 : 'bg-card text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
@@ -754,7 +758,7 @@ export default function VocabularyHub() {
                 className={cn(
                   'px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0',
                   isSelected
-                    ? 'ring-2 ring-primary border-primary bg-primary/10 text-primary font-bold shadow-xs'
+                    ? 'ring-2 ring-primary border-primary bg-primary/10 text-primary font-semibold shadow-xs'
                     : 'bg-card hover:bg-secondary/60 text-foreground border-border'
                 )}
               >
@@ -769,7 +773,7 @@ export default function VocabularyHub() {
                     {count}
                   </span>
                   {!folder.isSystem && (
-                    <span className="text-[9px] font-bold text-primary uppercase">My</span>
+                    <span className="text-[9px] font-semibold text-primary uppercase">My</span>
                   )}
                 </button>
 
@@ -824,7 +828,7 @@ export default function VocabularyHub() {
               className={cn(
                 'px-3 py-1.5 rounded-xl text-xs font-semibold capitalize transition-all cursor-pointer whitespace-nowrap',
                 selectedDifficulty === diff
-                  ? 'bg-primary text-black font-bold shadow-xs'
+                  ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
                   : 'bg-card border border-border text-muted-foreground hover:text-foreground'
               )}
             >
@@ -852,7 +856,7 @@ export default function VocabularyHub() {
           </p>
           <Button
             onClick={handleAddWordClick}
-            className="h-8 text-xs font-bold rounded-xl bg-primary text-black cursor-pointer"
+            className="h-8 text-xs font-semibold rounded-xl bg-primary text-primary-foreground cursor-pointer"
           >
             <StarsIcon className="w-3.5 h-3.5 mr-1" size={14} /> Add Word with AI
           </Button>
@@ -887,11 +891,11 @@ export default function VocabularyHub() {
                   {/* Top Line: Word, Part of Speech, Audio, Folder/Topic */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-base font-black text-foreground group-hover:text-primary transition-colors capitalize">
+                      <h3 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors capitalize">
                         {word.word}
                       </h3>
                       {word.part_of_speech && (
-                        <span className="text-[10px] font-bold italic text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold italic text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
                           {word.part_of_speech}
                         </span>
                       )}
@@ -906,12 +910,12 @@ export default function VocabularyHub() {
 
                     <div className="flex items-center gap-1.5 shrink-0">
                       {word.topic && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border truncate max-w-[120px]">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border truncate max-w-[120px]">
                           {word.topic}
                         </span>
                       )}
                       {word.user_id && (
-                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+                        <span className="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
                           My Word
                         </span>
                       )}
@@ -944,11 +948,11 @@ export default function VocabularyHub() {
 
                   {/* Uzbek Meaning Highlight (User requirement: o'zbekcha ma'nosi) */}
                   {(word.translation || word.translation_uz) && (
-                    <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 space-y-0.5">
-                      <span className="text-[9px] font-black uppercase tracking-wider text-primary block">
+                    <div className="p-2.5 rounded-xl bg-secondary/60 border border-border/80 space-y-0.5">
+                      <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground block">
                         Uzbek Meaning:
                       </span>
-                      <p className="text-xs font-bold text-foreground">
+                      <p className="text-xs font-semibold text-foreground">
                         {word.translation || word.translation_uz}
                       </p>
                     </div>
@@ -964,7 +968,7 @@ export default function VocabularyHub() {
                     <div className="space-y-1 pt-1 border-t border-border/50 text-[10px]">
                       {synonymsList.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-muted-foreground uppercase tracking-wider text-[9px]">
+                          <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[9px]">
                             Synonyms:
                           </span>
                           {synonymsList.slice(0, 3).map((s, idx) => (
@@ -980,7 +984,7 @@ export default function VocabularyHub() {
 
                       {antonymsList.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-muted-foreground uppercase tracking-wider text-[9px]">
+                          <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[9px]">
                             Antonyms:
                           </span>
                           {antonymsList.slice(0, 3).map((a, idx) => (
@@ -1017,12 +1021,12 @@ export default function VocabularyHub() {
                 <div className="pt-2 border-t border-border/50 flex items-center justify-between">
                   <div>
                     {isMastered ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary">
-                        <CheckSquareIcon className="w-3.5 h-3.5 text-primary" size={14} /> Mastered
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                        <CheckSquareIcon className="w-3.5 h-3.5 text-emerald-500" size={14} /> Mastered
                       </span>
                     ) : isLearning ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
-                        <FireIcon className="w-3.5 h-3.5 text-primary" size={14} /> Stage{' '}
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                        <FireIcon className="w-3.5 h-3.5 text-amber-500" size={14} /> Stage{' '}
                         {userProgress?.mastery_level || 1}
                       </span>
                     ) : (

@@ -9,10 +9,9 @@ import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 const navLinks = [
-  { href: '#features', label: 'Features' },
+  { href: '#skills', label: 'Skills' },
   { href: '#ielts', label: 'IELTS' },
   { href: '#how-it-works', label: 'How it works' },
-  { href: '#pricing', label: 'Pricing' },
 ]
 
 interface UserSessionInfo {
@@ -211,7 +210,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden border-b border-border bg-background/95 backdrop-blur-lg"
+            className="md:hidden border-b border-border bg-background/95 backdrop-blur-lg max-h-[calc(100vh-4rem)] overflow-y-auto"
           >
             <div className="px-4 py-4 space-y-3">
               {navLinks.map((link) => (

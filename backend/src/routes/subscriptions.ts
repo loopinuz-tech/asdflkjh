@@ -5,6 +5,22 @@ import { inpayService } from '../services/inpay.js'
 
 const router = Router()
 
+// 0. GET ALL ACTIVE MEMBERSHIP PLANS (PUBLIC)
+router.get('/plans', async (_req: Request, res: Response) => {
+  try {
+    const result = await query(
+      'SELECT * FROM plans WHERE is_active = true ORDER BY sort_order ASC, price ASC'
+    )
+    return res.json({
+      success: true,
+      plans: result.rows,
+    })
+  } catch (error: any) {
+    console.error('Fetch public plans error:', error)
+    return res.status(500).json({ error: 'Failed to fetch membership plans' })
+  }
+})
+
 // 1. GET CURRENT USER SUBSCRIPTION STATUS
 router.get('/me', authenticateToken, async (req: Request, res: Response) => {
   try {

@@ -38,8 +38,8 @@ function ThemeSelector() {
             onClick={() => setTheme(t.id)}
             className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
               isSelected
-                ? 'border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs'
-                : 'border-border bg-card hover:bg-secondary text-foreground'
+                ? 'border-primary/80 bg-primary/5 ring-1 ring-primary/30 shadow-xs'
+                : 'border-border bg-card hover:bg-secondary/60 text-foreground'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
@@ -49,7 +49,7 @@ function ThemeSelector() {
               {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
             </div>
             <div>
-              <div className="font-bold text-sm text-foreground">{t.label}</div>
+              <div className="font-semibold text-sm text-foreground">{t.label}</div>
               <div className="text-[11px] text-muted-foreground mt-0.5">{t.desc}</div>
             </div>
           </button>
@@ -104,27 +104,27 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
   const bandOptions = [5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0]
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-4xl pb-4">
+    <div className="w-full max-w-full space-y-6 sm:space-y-8 pb-8">
       <div className="flex items-center gap-3">
-        <div className="inline-flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
-          <SettingsIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
+        <div className="inline-flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-secondary border border-border text-foreground shadow-xs shrink-0">
+          <SettingsIcon className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" size={22} />
         </div>
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Account Settings</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground truncate">Account Settings</h1>
           <p className="text-xs sm:text-sm text-muted-foreground">Manage your personal details, target band, and subscription.</p>
         </div>
       </div>
 
       {successMessage && (
-        <Alert className="border-fox-success/30 bg-fox-success/10 text-fox-success py-2.5">
-          <CheckCircleIcon className="h-4 w-4 shrink-0" size={16} />
+        <Alert className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 py-2.5">
+          <CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-500" size={16} />
           <AlertDescription className="text-xs sm:text-sm font-medium">{successMessage}</AlertDescription>
         </Alert>
       )}
 
       {errorMessage && (
         <Alert variant="destructive" className="py-2.5">
-          <AlertDescription className="text-xs sm:text-sm">{errorMessage}</AlertDescription>
+          <AlertDescription className="text-xs sm:text-sm font-medium">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
@@ -132,8 +132,10 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         {/* Personal Details */}
         <Card className="border-border fox-shadow-sm">
           <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-              <UserCircleIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+            <CardTitle className="flex items-center gap-2.5 text-sm sm:text-base">
+              <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <UserCircleIcon className="w-4 h-4" size={16} />
+              </div>
               <span>Personal Information</span>
             </CardTitle>
             <CardDescription className="text-xs">Your name and login credentials</CardDescription>
@@ -149,7 +151,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
                   autoComplete="given-name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
                   placeholder="Your first name"
                 />
               </div>
@@ -163,7 +165,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
                   autoComplete="family-name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
                   placeholder="Your last name"
                 />
               </div>
@@ -184,13 +186,15 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
 
             {/* Telegram Link Badge */}
             {initialSettings?.telegramUsername && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg bg-secondary/40 border border-border text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-secondary/50 border border-border text-xs">
                 <div className="flex items-center gap-2">
-                  <PlaneIcon className="w-4 h-4 text-primary shrink-0" size={16} />
-                  <span>Linked Telegram: <strong>@{initialSettings.telegramUsername}</strong></span>
+                  <div className="w-6 h-6 rounded-md bg-[#229ED9]/15 text-[#229ED9] flex items-center justify-center shrink-0">
+                    <PlaneIcon className="w-3.5 h-3.5" size={14} />
+                  </div>
+                  <span>Linked Telegram: <strong className="text-foreground">@{initialSettings.telegramUsername}</strong></span>
                 </div>
-                <span className="text-primary font-medium flex items-center gap-1">
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} /> Verified
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-500 shrink-0" size={14} /> Verified
                 </span>
               </div>
             )}
@@ -200,8 +204,10 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         {/* IELTS Goals */}
         <Card className="border-border fox-shadow-sm">
           <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-              <TargetIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+            <CardTitle className="flex items-center gap-2.5 text-sm sm:text-base">
+              <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <TargetIcon className="w-4 h-4" size={16} />
+              </div>
               <span>Target Band Score</span>
             </CardTitle>
             <CardDescription className="text-xs">The IELTS band score you are aiming to achieve</CardDescription>
@@ -213,10 +219,10 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
                   key={band}
                   type="button"
                   onClick={() => setTargetBand(band)}
-                  className={`py-2 px-2 text-xs sm:text-sm font-bold rounded-lg border transition-all cursor-pointer touch-manipulation ${
+                  className={`py-2 px-2 text-xs sm:text-sm font-semibold rounded-lg border transition-all cursor-pointer touch-manipulation ${
                     targetBand === band
-                      ? 'bg-primary text-primary-foreground border-primary shadow-sm scale-105'
-                      : 'bg-background hover:bg-muted text-foreground border-border'
+                      ? 'bg-foreground text-background border-foreground shadow-xs'
+                      : 'bg-card hover:bg-secondary text-foreground border-border'
                   }`}
                 >
                   {band.toFixed(1)}
@@ -232,8 +238,10 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         {/* Appearance & Theme */}
         <Card className="border-border fox-shadow-sm">
           <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-              <Sun2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+            <CardTitle className="flex items-center gap-2.5 text-sm sm:text-base">
+              <div className="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                <Sun2Icon className="w-4 h-4" size={16} />
+              </div>
               <span>Appearance & Theme</span>
             </CardTitle>
             <CardDescription className="text-xs">Customize the interface theme to your preference</CardDescription>
@@ -246,18 +254,20 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         {/* Subscription Plan */}
         <Card className="border-border fox-shadow-sm">
           <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-              <ShieldCheckIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+            <CardTitle className="flex items-center gap-2.5 text-sm sm:text-base">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <ShieldCheckIcon className="w-4 h-4" size={16} />
+              </div>
               <span>Subscription & Membership</span>
             </CardTitle>
             <CardDescription className="text-xs">Your current EduFox tier</CardDescription>
           </CardHeader>
           <CardContent className="p-4 sm:p-6 pt-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-secondary/40 border border-border/80">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-sm sm:text-base text-foreground">{initialSettings?.planName || 'Free'} Plan</span>
-                  <span className="px-2 py-0.5 rounded-full bg-fox-yellow/10 text-fox-yellow text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+                  <span className="font-semibold text-sm sm:text-base text-foreground">{initialSettings?.planName || 'Free'} Plan</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
                     {initialSettings?.planStatus || 'Active'}
                   </span>
                 </div>
@@ -271,7 +281,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => window.location.href = '/premium'}
-                className="w-full sm:w-auto shrink-0 font-bold"
+                className="w-full sm:w-auto shrink-0 font-semibold hover:bg-secondary cursor-pointer"
               >
                 Manage Plan
               </Button>
@@ -280,7 +290,7 @@ export function SettingsClientView({ initialSettings }: SettingsClientProps) {
         </Card>
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" disabled={isSaving} className="w-full sm:w-auto px-8 font-bold">
+          <Button type="submit" disabled={isSaving} className="w-full sm:w-auto px-8 font-semibold cursor-pointer">
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
           </Button>

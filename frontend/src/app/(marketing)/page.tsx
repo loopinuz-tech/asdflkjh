@@ -5,7 +5,6 @@ import { HowItWorks } from '@/components/marketing/how-it-works'
 import { IeltsSection } from '@/components/marketing/ielts-section'
 import { VocabularySection } from '@/components/marketing/vocabulary-section'
 import { ProgressSection } from '@/components/marketing/progress-section'
-import { Pricing } from '@/components/marketing/pricing'
 import { FinalCta } from '@/components/marketing/final-cta'
 import { SEOHead } from '@/components/seo/SEOHead'
 
@@ -24,7 +23,6 @@ export default function LandingPage() {
       <IeltsSection />
       <VocabularySection />
       <ProgressSection />
-      <Pricing />
       <FinalCta />
     </>
   )

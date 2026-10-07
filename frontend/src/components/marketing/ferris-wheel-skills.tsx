@@ -1010,19 +1010,6 @@ export function FerrisWheelSkills() {
         />
       </div>
 
-      {/* MOBILE OBSERVATION WHEEL (Single subtle background wheel) */}
-      <div className="md:hidden absolute top-[220px] -translate-y-1/2 left-1/2 -translate-x-1/2 z-0 opacity-25 dark:opacity-20 pointer-events-none scale-75">
-        <ObservationWheel
-          id="mobile-wheel"
-          direction="cw"
-          duration={36}
-          activeSkillId={activeSkillId}
-          onHoverSkill={setActiveSkillId}
-          wheelCertificates={leftWheelCerts}
-          onSelectCertificate={setSelectedCert}
-        />
-      </div>
-
       {/* ─────────────────────────────────────────────────────────────
           LAYER 5 & 6: 2-COLUMN MAIN CONTENT & FULL-WIDTH MARQUEE
           Left Column: Headline, Subtitle, 4 Interactive Skill Cards, CTAs
@@ -1031,17 +1018,17 @@ export function FerrisWheelSkills() {
          ───────────────────────────────────────────────────────────── */}
       <div className="relative z-20 w-full flex flex-col">
         {/* Top 2-Column Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
           {/* LEFT CONTENT COLUMN: Fills the left space with rich, compelling content */}
           <div className="lg:col-span-7 xl:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl xl:max-w-3xl">
             {/* Eyebrow badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 mb-4 shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-widest uppercase bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 mb-3 sm:mb-4 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               ALL FOUR IELTS SKILLS
             </div>
 
             {/* Main Headline */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12] mb-4">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15] sm:leading-[1.12] mb-3 sm:mb-4">
               Master All 4{' '}
               <span className="relative whitespace-nowrap">
                 <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 bg-clip-text text-transparent">
@@ -1154,7 +1141,7 @@ export function FerrisWheelSkills() {
         {/* ─────────────────────────────────────────────────────────────
             THE 12 CERTIFICATES ROTATING SHOWCASE (Full width marquee across bottom)
            ───────────────────────────────────────────────────────────── */}
-        <div className="w-full mt-24 sm:mt-32 lg:mt-40 xl:mt-48 pt-10 sm:pt-12 border-t border-slate-200/80 dark:border-slate-800/80 relative z-20">
+        <div className="w-full mt-8 sm:mt-16 lg:mt-40 xl:mt-48 pt-6 sm:pt-12 border-t border-slate-200/80 dark:border-slate-800/80 relative z-20">
           <CertificatesMarquee onSelectCertificate={setSelectedCert} />
         </div>
       </div>

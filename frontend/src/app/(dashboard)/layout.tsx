@@ -5,21 +5,22 @@ import { MobileNav } from '@/components/dashboard/mobile-nav'
 
 export default function DashboardLayout() {
   return (
-    <div className="flex h-screen overflow-hidden bg-secondary/20">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50">
+    <div className="flex h-screen w-full overflow-hidden bg-[#0c485e] dark:bg-[#072936]">
+      {/* Desktop Sidebar - Standard w-64 width */}
+      <aside className="hidden md:flex md:flex-col shrink-0 h-full w-64 bg-[#0c485e] dark:bg-[#072936] select-none">
         <Sidebar />
-      </div>
+      </aside>
 
-      {/* Main Content Area */}
-      <div className="flex flex-col flex-1 w-full md:pl-64 overflow-hidden">
-        {/* Mobile Top Header (with dynamic user role, theme toggle, brand logo & hamburger menu) */}
+      {/* Main Content Area - fills remaining horizontal space next to sidebar */}
+      <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden md:p-2.5 md:pl-0">
+        {/* Mobile Top Header */}
         <div className="md:hidden">
           <DashboardMobileHeader />
         </div>
 
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
-          <div className="py-4 px-3 sm:px-6 md:py-8 md:px-8 pb-24 md:pb-8">
+        {/* Main Content Canvas with curved rounded corners */}
+        <main className="flex-1 relative overflow-y-auto focus:outline-none bg-background md:rounded-[24px] shadow-2xl transition-all duration-300">
+          <div className="py-4 px-4 sm:px-6 md:py-6 md:px-8 pb-24 md:pb-8 w-full">
             <Outlet />
           </div>
         </main>

@@ -61,8 +61,21 @@ export async function ensureCoreTables(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         UNIQUE(user_id, item_type, item_id)
       );
+
+      CREATE TABLE IF NOT EXISTS live_speaking_sessions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        topic VARCHAR(255),
+        part VARCHAR(50) DEFAULT '1',
+        mode VARCHAR(50) DEFAULT 'roast',
+        estimated_band NUMERIC(3,1) DEFAULT 6.0,
+        transcript JSONB DEFAULT '[]'::jsonb,
+        feedback_summary TEXT,
+        duration_seconds INTEGER DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
     `)
-    console.log('✓ Verified core database tables (coupons, saved_items)')
+    console.log('✓ Verified core database tables (coupons, saved_items, live_speaking_sessions)')
 
     // Auto-seed speaking prompts if missing or low count
     await ensureSpeakingPrompts()

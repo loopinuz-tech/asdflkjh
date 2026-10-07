@@ -17,6 +17,7 @@ import subscriptionsRouter from './routes/subscriptions.js'
 import savedRouter from './routes/saved.js'
 import sitemapRouter from './routes/sitemap.js'
 import telegramRouter from './routes/telegram.js'
+import speakingLiveRouter from './routes/speaking-live.js'
 import { initTelegramBot } from './services/telegramBot.js'
 
 dotenv.config()
@@ -59,6 +60,7 @@ app.use('/api/data', dataProxyRouter)
 app.use('/api/subscriptions', subscriptionsRouter)
 app.use('/api/saved', savedRouter)
 app.use('/api/telegram', telegramRouter)
+app.use('/api/speaking-live', speakingLiveRouter)
 app.use('/api/sitemap', sitemapRouter)
 app.use('/sitemap.xml', sitemapRouter)
 

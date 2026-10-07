@@ -31,6 +31,7 @@ import ReadingPage from './app/(dashboard)/reading/page'
 import ListeningPage from './app/(dashboard)/listening/page'
 import WritingPage from './app/(dashboard)/writing/page'
 import SpeakingPage from './app/(dashboard)/speaking/page'
+import SpeakingLivePage from './app/(dashboard)/speaking/live/page'
 import VocabularyPage from './app/(dashboard)/vocabulary/page'
 import VocabularyReviewPage from './app/(dashboard)/vocabulary/review/page'
 import PracticePage from './app/(dashboard)/practice/page'
@@ -111,6 +112,7 @@ export default function AppRouter() {
         <Route path="/listening" element={<ListeningPage />} />
         <Route path="/writing" element={<WritingPage />} />
         <Route path="/speaking" element={<SpeakingPage />} />
+        <Route path="/speaking/live" element={<SpeakingLivePage />} />
         <Route path="/vocabulary" element={<VocabularyPage />} />
         <Route path="/vocabulary/review" element={<VocabularyReviewPage />} />
         <Route path="/practice" element={<PracticePage />} />
@@ -134,6 +136,7 @@ export default function AppRouter() {
         <Route path="/listening/:id" element={<ListeningTestPage />} />
         <Route path="/tests/writing/:id" element={<WritingTestPage />} />
         <Route path="/writing/:id" element={<WritingTestPage />} />
+        <Route path="/tests/speaking/live" element={<SpeakingLivePage />} />
         <Route path="/tests/speaking/:id" element={<SpeakingTestPage />} />
         <Route path="/speaking/:id" element={<SpeakingTestPage />} />
       </Route>

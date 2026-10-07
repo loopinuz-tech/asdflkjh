@@ -153,31 +153,39 @@ export default function WritingHub() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header — Compact & No verbose intro on mobile */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
-            <Pen2Icon className="h-5 w-5" size={20} />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-2xl font-bold tracking-tight truncate">Writing Practice</h1>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border shrink-0">
-                {prompts.length} tasks
-              </span>
-            </div>
-            {/* Introduction description strictly hidden on mobile as requested */}
-            <p className="hidden md:block text-xs text-muted-foreground mt-0.5">
-              Practice real Task 1 and Task 2 prompts with AI feedback and band score evaluation.
-            </p>
-          </div>
+      {/* Hero Mascot Banner — Matching Reference Screenshot */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-sky-100/70 via-sky-50/40 to-background dark:from-sky-950/30 dark:via-background/50 dark:to-background border border-sky-200/60 dark:border-sky-900/40 p-5 sm:p-7 md:p-8 text-center flex flex-col items-center justify-center shadow-xs">
+        <div className="absolute top-0 inset-x-0 h-32 bg-radial from-sky-200/40 dark:from-sky-500/10 to-transparent pointer-events-none" />
+
+        {/* Centered Mascot */}
+        <div className="relative z-10 max-w-[260px] sm:max-w-[340px] md:max-w-[420px] w-full transition-transform duration-300 hover:scale-[1.02]">
+          <img
+            src="/writing_mascot.png"
+            alt="Writing Mascot"
+            className="w-full h-auto object-contain drop-shadow-md select-none pointer-events-none"
+          />
         </div>
 
-        {/* Avg Band badge — inline on mobile */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border rounded-xl shadow-2xs shrink-0">
-          <ChartSquareIcon className="w-3.5 h-3.5 text-primary" size={15} />
-          <span className="text-xs text-muted-foreground hidden xs:inline font-medium">Avg:</span>
-          <span className="text-xs sm:text-sm font-bold text-foreground">{avgBand}</span>
+        {/* Title & Description right below mascot */}
+        <div className="relative z-10 mt-3 sm:mt-4 space-y-1.5 max-w-xl">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Get instant feedback on your IELTS essay
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Practice authentic Task 1 and Task 2 prompts with comprehensive AI grading, band score evaluation, and grammar diagnostics.
+          </p>
+
+          {/* Quick Stats Pills */}
+          <div className="flex items-center justify-center gap-2 pt-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-background/80 backdrop-blur-xs border border-border shadow-2xs text-foreground">
+              <Pen2Icon className="w-3.5 h-3.5 text-amber-500" size={14} />
+              <span>{prompts.length} Tasks</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-background/80 backdrop-blur-xs border border-border shadow-2xs text-foreground">
+              <ChartSquareIcon className="w-3.5 h-3.5 text-blue-500" size={14} />
+              <span>Avg Band: {avgBand}</span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -226,7 +234,7 @@ export default function WritingHub() {
             onClick={() => setTaskFilter('all')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               taskFilter === 'all'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -237,7 +245,7 @@ export default function WritingHub() {
             onClick={() => setTaskFilter('task_1')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               taskFilter === 'task_1'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -248,7 +256,7 @@ export default function WritingHub() {
             onClick={() => setTaskFilter('task_2')}
             className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               taskFilter === 'task_2'
-                ? 'bg-primary text-black font-bold shadow-2xs'
+                ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
                 : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
@@ -260,7 +268,7 @@ export default function WritingHub() {
       {/* Practice Prompts Section (Compact Grid without right sidebar) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">
+          <h2 className="text-lg font-semibold">
             Practice Prompts {displayPrompts.length > 0 && (
               <span className="text-xs text-muted-foreground font-normal">
                 (Showing {visiblePrompts.length} of {displayPrompts.length} tasks)
@@ -297,7 +305,7 @@ export default function WritingHub() {
                   setTaskFilter('all')
                   setAccessFilter('all')
                 }}
-                className="mt-4 px-4 py-2 bg-primary text-black font-bold rounded-xl text-xs cursor-pointer"
+                className="mt-4 px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-xl text-xs cursor-pointer"
               >
                 Reset Filters
               </button>
@@ -315,7 +323,7 @@ export default function WritingHub() {
                   className={cn(
                     "h-full p-3.5 rounded-xl border transition-all flex flex-col justify-between min-h-[74px] cursor-pointer group bg-card",
                     isLocked
-                      ? "border-border/70 hover:border-amber-400 hover:shadow-xs"
+                      ? "border-border/70 hover:border-muted-foreground/40 hover:shadow-xs"
                       : "border-border/80 hover:border-primary/60 hover:shadow-xs"
                   )}
                 >
@@ -325,16 +333,16 @@ export default function WritingHub() {
                     </h3>
                     {prompt.is_premium ? (
                       isPremiumUser ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
                           Unlocked
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 shrink-0">
                           Premium
                         </span>
                       )
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
                         Free
                       </span>
                     )}
@@ -370,10 +378,10 @@ export default function WritingHub() {
             <button
               type="button"
               onClick={() => setVisibleCount((prev) => prev + 24)}
-              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-black font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-transform active:scale-95"
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-transform active:scale-95"
             >
               <span>Load More Prompts</span>
-              <span className="px-2 py-0.5 rounded-full bg-black/15 text-[11px] font-extrabold">
+              <span className="px-2 py-0.5 rounded-full bg-black/15 text-[11px] font-semibold">
                 +{Math.min(24, displayPrompts.length - visibleCount)}
               </span>
             </button>
@@ -394,10 +402,10 @@ export default function WritingHub() {
           <div className="bg-card text-card-foreground rounded-3xl max-w-md w-full p-6 shadow-2xl border border-border space-y-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-2xs flex items-center justify-center font-semibold">
                   <CrownStarIcon className="w-4 h-4" size={16} />
                 </div>
-                <h3 className="text-base font-bold">Premium Writing Access</h3>
+                <h3 className="text-base font-semibold">Premium Writing Access</h3>
               </div>
               <button
                 type="button"
@@ -412,7 +420,7 @@ export default function WritingHub() {
               <div className="w-16 h-16 rounded-2xl bg-primary text-primary-foreground shadow-md flex items-center justify-center mx-auto">
                 <LockKeyholeIcon className="w-8 h-8" size={32} />
               </div>
-              <h4 className="text-lg font-bold text-foreground">{lockedModalPrompt.title}</h4>
+              <h4 className="text-lg font-semibold text-foreground">{lockedModalPrompt.title}</h4>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
                 This official IELTS Writing task is exclusively available for <strong className="text-foreground">Premium members</strong>. Activate your subscription to unlock all Task 1 diagrams, Task 2 topics, and diagnostic AI evaluation across all 4 IELTS criteria!
               </p>
@@ -441,7 +449,7 @@ export default function WritingHub() {
               <button
                 type="button"
                 onClick={() => navigate(`/premium?promptId=${lockedModalPrompt.id}&reason=premium_required`)}
-                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-black text-xs font-bold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold transition-opacity flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <CrownStarIcon className="w-3.5 h-3.5" size={15} />
                 <span>Upgrade to Premium</span>

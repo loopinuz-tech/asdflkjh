@@ -71,15 +71,33 @@ export function Pricing() {
           if (isMounted) setActiveSub(subData || null)
         }
 
-        // Real active plans
-        const { data: plansData } = await supabase
-          .from('plans')
-          .select('*')
-          .eq('is_active', true)
-          .order('sort_order', { ascending: true })
+        // Real active plans - fetch directly from backend API with fallback
+        try {
+          const res = await fetch('/api/subscriptions/plans')
+          const json = await res.json()
+          if (isMounted && res.ok && json.success && Array.isArray(json.plans) && json.plans.length > 0) {
+            setPlans(json.plans)
+          } else {
+            const { data: plansData } = await supabase
+              .from('plans')
+              .select('*')
+              .eq('is_active', true)
+              .order('sort_order', { ascending: true })
 
-        if (isMounted && plansData && plansData.length > 0) {
-          setPlans(plansData)
+            if (isMounted && plansData && plansData.length > 0) {
+              setPlans(plansData)
+            }
+          }
+        } catch {
+          const { data: plansData } = await supabase
+            .from('plans')
+            .select('*')
+            .eq('is_active', true)
+            .order('sort_order', { ascending: true })
+
+          if (isMounted && plansData && plansData.length > 0) {
+            setPlans(plansData)
+          }
         }
       } catch (err) {
         console.warn('Pricing plans load error:', err)
@@ -99,13 +117,20 @@ export function Pricing() {
 
   const isUserPremium = activeSub && activeSub.status === 'active'
 
-  // Dynamic pricing values
+  // Dynamic pricing values from database
   const isYearly = billingCycle === 'yearly'
-  const premiumPrice = isYearly ? '$49' : '$9'
+  const monthlyPriceUsd = monthlyPlan ? Math.round(monthlyPlan.price / 100) : 19
+  const yearlyPriceUsd = yearlyPlan ? Math.round(yearlyPlan.price / 100) : 149
+  const premiumPrice = isYearly ? `$${yearlyPriceUsd}` : `$${monthlyPriceUsd}`
+  const savingsPct = monthlyPriceUsd > 0
+    ? Math.max(5, Math.round((1 - yearlyPriceUsd / (monthlyPriceUsd * 12)) * 100))
+    : 35
   const premiumIntervalNote = isYearly
-    ? '/ year • or $49/year (Save 55%)'
-    : '/ month • or $49/year (Save 55%)'
-  const premiumUzs = isYearly ? '~625,000 UZS / yil' : '~115,000 UZS / oy'
+    ? `/ year • or $${yearlyPriceUsd}/year (Save ${savingsPct}%)`
+    : `/ month • or $${yearlyPriceUsd}/year (Save ${savingsPct}%)`
+  const premiumUzs = isYearly
+    ? `~${(yearlyPriceUsd * 12800).toLocaleString('en-US')} UZS / yil`
+    : `~${(monthlyPriceUsd * 12800).toLocaleString('en-US')} UZS / oy`
   const targetPlanId = isYearly ? (yearlyPlan?.id || 'yearly') : (monthlyPlan?.id || 'monthly')
 
   const handleAction = (isPremium: boolean) => {
@@ -131,41 +156,41 @@ export function Pricing() {
   }
 
   return (
-    <section id="pricing" className="py-14 sm:py-20 bg-secondary/30 relative overflow-hidden">
+    <section id="pricing" className="py-10 sm:py-20 bg-secondary/30 relative overflow-hidden">
       {/* Ambient glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-primary/5 rounded-full blur-[140px]" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-6 sm:mb-8"
         >
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-primary text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2.5 sm:mb-3 shadow-xs">
             <TagPriceIcon className="w-3.5 h-3.5" size={14} />
             <span>TRANSPARENT PRICING</span>
           </div>
-          <h2 className="text-3xl font-extrabold sm:text-4xl text-foreground tracking-tight">
+          <h2 className="text-2xl xs:text-3xl font-extrabold sm:text-4xl text-foreground tracking-tight">
             Practice with purpose
           </h2>
-          <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
             Start free, upgrade when you&apos;re ready. No tricks, no hidden fees.
           </p>
         </motion.div>
 
         {/* Real Interactive Monthly / Yearly Toggle */}
-        <div className="flex items-center justify-center mb-10">
-          <div className="inline-flex items-center p-1 rounded-full bg-slate-200/80 dark:bg-slate-800 border border-slate-300/70 dark:border-slate-700/80 shadow-xs">
+        <div className="flex items-center justify-center mb-8 sm:mb-10">
+          <div className="inline-flex items-center p-1 rounded-full bg-slate-200/80 dark:bg-slate-800 border border-slate-300/70 dark:border-slate-700/80 shadow-xs max-w-full">
             <button
               type="button"
               onClick={() => setBillingCycle('monthly')}
               className={cn(
-                'px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer',
+                'px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer',
                 billingCycle === 'monthly'
                   ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-sm font-extrabold'
                   : 'text-muted-foreground hover:text-foreground'
@@ -177,14 +202,14 @@ export function Pricing() {
               type="button"
               onClick={() => setBillingCycle('yearly')}
               className={cn(
-                'flex items-center gap-2 px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer',
+                'flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer',
                 billingCycle === 'yearly'
                   ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-sm font-extrabold'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
               <span>Yearly VIP</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs">
+              <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs">
                 Save 55%
               </span>
             </button>
@@ -192,7 +217,7 @@ export function Pricing() {
         </div>
 
         {/* 2-Card Comparison Matrix */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 max-w-4xl mx-auto">
           {/* Card 1: Free Trial */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -297,7 +322,7 @@ export function Pricing() {
                 <Button
                   type="button"
                   onClick={() => handleAction(true)}
-                  className="w-full mb-6 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-200 cursor-pointer active:scale-[0.99]"
+                  className="w-full mb-6 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm py-2.5 sm:py-3 h-auto min-h-[44px] shadow-md hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-200 cursor-pointer active:scale-[0.99] whitespace-normal"
                 >
                   {isUserPremium
                     ? 'Active VIP Member • View Details →'

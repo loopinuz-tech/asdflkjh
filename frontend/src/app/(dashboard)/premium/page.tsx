@@ -1,54 +1,74 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { createClient } from '@/lib/supabase/client'
+import { apiUrl } from '@/lib/api-config'
 import { PremiumClientPage } from './client-page'
 
 const DEFAULT_PLANS = [
   {
-    id: 'plan-monthly',
-    name: 'Monthly Pro',
-    slug: 'monthly',
-    price: 900,
+    id: 'e2b64efe-f875-4990-9174-46ce81fc5a62',
+    name: 'Free Trial',
+    slug: 'free',
+    price: 0,
     currency: 'USD',
     interval: 'monthly',
     is_active: true,
+    sort_order: 1,
     features: [
-      'Unlimited IELTS Cambridge Reading tests',
-      'Full IELTS Listening audio tests',
-      'AI-powered band estimation & answer keys',
-      'Personal progress analytics & weak skill insights',
-      'Ad-free premium test experience',
+      '3 Full Mock Tests',
+      'Basic Reading & Listening Practice',
+      'Vocabulary Flashcards',
+      'Community Support',
     ],
   },
   {
-    id: 'plan-yearly',
-    name: 'Annual VIP Pass',
+    id: 'e56936b7-4e05-4e9f-a41c-34d53c918f4d',
+    name: 'Monthly Pro',
+    slug: 'monthly',
+    price: 1900,
+    currency: 'USD',
+    interval: 'monthly',
+    is_active: true,
+    sort_order: 2,
+    features: [
+      'Unlimited Reading & Listening Tests',
+      'AI Writing Evaluation with Band Score',
+      'AI Speaking Examiner Simulation',
+      'Full Answer Explanations',
+      'Telegram Bot Notifications',
+    ],
+  },
+  {
+    id: '1f68cd71-54d0-49b4-aad6-9a44ff54e79f',
+    name: 'Yearly Premium',
     slug: 'yearly',
-    price: 4900,
+    price: 14900,
     currency: 'USD',
     interval: 'yearly',
     is_active: true,
+    sort_order: 3,
     features: [
-      'All Monthly Pro features included',
-      'Full access for 12 complete months (save >50%)',
-      'Exclusive Writing & Speaking evaluation tools',
-      'Priority AI test generation & Cambridge tests',
-      'Official EduFox Certificate upon band completion',
+      'All Monthly Pro Features',
+      'Save 35% compared to monthly',
+      'Personalized IELTS Study Plan',
+      'Priority AI Grading Queue',
+      'Downloadable Cambridge PDFs',
     ],
   },
   {
-    id: 'plan-lifetime',
+    id: '41b1a547-f54d-4fcc-8d7c-9bdeb4ed499d',
     name: 'Lifetime Access',
     slug: 'lifetime',
-    price: 9900,
+    price: 29900,
     currency: 'USD',
     interval: 'lifetime',
     is_active: true,
+    sort_order: 4,
     features: [
-      'One-time payment — lifetime unlimited access',
-      'Every upcoming IELTS practice test update',
-      'Unlimited vocabulary flashcards & audio',
-      'Direct Telegram VIP student support group',
+      'Permanent Full Access',
+      'All Future Updates Included',
+      '1-on-1 Mentor Strategy Session',
+      'VIP Telegram Channel Access',
     ],
   },
 ]
@@ -72,13 +92,32 @@ export default function PremiumPage() {
           setUser({ id: authUser.id, email: authUser.email })
         }
 
-        const { data: plansData } = await supabase
-          .from('plans')
-          .select('*')
-          .eq('is_active', true)
-          .order('price', { ascending: true })
+        // 1. Fetch real active plans from backend API directly
+        let fetchedPlans: any[] = []
+        try {
+          const res = await fetch(apiUrl('/api/subscriptions/plans'))
+          const json = await res.json()
+          if (res.ok && json.success && Array.isArray(json.plans) && json.plans.length > 0) {
+            fetchedPlans = json.plans
+          }
+        } catch (apiErr) {
+          console.warn('Direct plans endpoint error, falling back:', apiErr)
+        }
 
-        setPlans(plansData && plansData.length > 0 ? plansData : DEFAULT_PLANS)
+        // 2. Fallback to supabase client query if direct fetch didn't return plans
+        if (fetchedPlans.length === 0) {
+          const { data: plansData } = await supabase
+            .from('plans')
+            .select('*')
+            .eq('is_active', true)
+            .order('sort_order', { ascending: true })
+
+          if (plansData && plansData.length > 0) {
+            fetchedPlans = plansData
+          }
+        }
+
+        setPlans(fetchedPlans.length > 0 ? fetchedPlans : DEFAULT_PLANS)
 
         if (authUser) {
           const { data: subData } = await supabase

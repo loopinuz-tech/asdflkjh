@@ -31,14 +31,21 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
       setUser(user)
 
       if (adminOnly) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', user.id)
-          .single()
-        const profile = profileData as { role: string } | null
-        if (mounted) {
-          setIsAdmin(profile?.role === 'admin')
+        try {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('user_id', user.id)
+            .maybeSingle()
+          const profile = profileData as { role: string } | null
+          const resolvedRole = profile?.role || user.role
+          if (mounted) {
+            setIsAdmin(resolvedRole === 'admin')
+          }
+        } catch {
+          if (mounted) {
+            setIsAdmin(user.role === 'admin')
+          }
         }
       }
 
@@ -74,7 +81,7 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />
   }
 
-  if (adminOnly && !isAdmin && (import.meta.env as any).PROD) {
+  if (adminOnly && !isAdmin) {
     return <Navigate to="/dashboard" replace />
   }
 

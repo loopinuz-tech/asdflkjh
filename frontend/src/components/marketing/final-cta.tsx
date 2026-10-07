@@ -7,8 +7,8 @@ import { FoxMascot } from '@/components/mascot/fox-mascot'
 
 export function FinalCta() {
   return (
-    <section className="py-14 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-10 sm:py-20">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.95 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -21,7 +21,7 @@ export function FinalCta() {
           <div className="absolute inset-0 fox-gradient opacity-95" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
 
-          <div className="relative px-6 py-16 sm:px-12 sm:py-20 text-center">
+          <div className="relative px-4 py-12 sm:px-12 sm:py-20 text-center">
             {/* Mascot */}
             <motion.div
               initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
@@ -29,15 +29,15 @@ export function FinalCta() {
               viewport={{ once: true }}
               animate={{ y: [0, -10, 0] }}
               transition={{ delay: 0.3, duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="flex justify-center mb-6"
+              className="flex justify-center mb-5 sm:mb-6"
             >
               <FoxMascot variant="celebration" size="lg" />
             </motion.div>
 
-            <h2 className="text-3xl font-bold sm:text-4xl text-primary-foreground">
+            <h2 className="text-2xl xs:text-3xl font-bold sm:text-4xl text-primary-foreground">
               Your IELTS goal starts here.
             </h2>
-            <p className="mt-4 text-lg text-primary-foreground/80 max-w-xl mx-auto">
+            <p className="mt-2.5 sm:mt-4 text-sm sm:text-lg text-primary-foreground/80 max-w-xl mx-auto px-2">
               Join EduFox and start preparing for your IELTS exam with confidence. 
               Practice smarter, track your progress, and reach your target band.
             </p>

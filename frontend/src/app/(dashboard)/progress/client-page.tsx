@@ -54,25 +54,25 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
   const hasActivity = data.studyHoursTotal > 0
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="w-full max-w-full space-y-6 sm:space-y-8 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary text-primary-foreground shadow-xs shrink-0">
-            <ChartSquareIcon className="h-5 w-5 sm:h-6 sm:w-6" size={22} />
+          <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-secondary border border-border text-foreground shadow-xs shrink-0">
+            <ChartSquareIcon className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" size={22} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">Your Progress</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground truncate">Your Progress</h1>
             <p className="text-xs sm:text-sm text-muted-foreground">Track your real performance and band score development.</p>
           </div>
         </div>
         
         <div className="flex items-center justify-between sm:justify-start gap-4 bg-card border border-border px-3.5 py-2 rounded-xl fox-shadow-sm w-full sm:w-auto">
           <div className="flex items-center gap-2">
-            <TargetIcon className="w-4 h-4 text-primary" size={16} />
+            <TargetIcon className="w-4 h-4 text-amber-500" size={16} />
             <span className="text-xs sm:text-sm font-medium">Target Band:</span>
           </div>
-          <span className="text-base sm:text-lg font-bold text-foreground">
+          <span className="text-base sm:text-lg font-semibold text-foreground">
             {data.targetBand ? data.targetBand.toFixed(1) : '7.0'}
           </span>
         </div>
@@ -86,18 +86,18 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
             <div className="flex justify-between items-start">
               <div className="space-y-1 sm:space-y-2">
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">Current Band</p>
-                <p className="text-2xl sm:text-3xl font-bold">
+                <p className="text-2xl sm:text-3xl font-semibold">
                   {data.currentBand !== null ? data.currentBand.toFixed(1) : '—'}
                 </p>
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-xs flex items-center justify-center shrink-0">
                 <MedalRibbonIcon className="w-4 h-4 sm:w-5 sm:h-5" size={20} />
               </div>
             </div>
             <div className="mt-3 sm:mt-4 flex items-center text-[11px] sm:text-xs text-muted-foreground">
               {data.currentBand !== null ? (
-                <span className="text-fox-success font-medium flex items-center truncate">
-                  <GraphUpIcon className="w-3.5 h-3.5 mr-1 shrink-0 text-fox-success" size={14} />
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center truncate">
+                  <GraphUpIcon className="w-3.5 h-3.5 mr-1 shrink-0 text-emerald-500" size={14} />
                   Average band
                 </span>
               ) : (
@@ -113,9 +113,9 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
             <div className="flex justify-between items-start">
               <div className="space-y-1 sm:space-y-2">
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">Completed</p>
-                <p className="text-2xl sm:text-3xl font-bold">{data.testsCompleted}</p>
+                <p className="text-2xl sm:text-3xl font-semibold">{data.testsCompleted}</p>
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-xs flex items-center justify-center shrink-0">
                 <CheckSquareIcon className="w-4 h-4 sm:w-5 sm:h-5" size={20} />
               </div>
             </div>
@@ -135,11 +135,11 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
             <div className="flex justify-between items-start">
               <div className="space-y-1 sm:space-y-2 min-w-0">
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">Best Skill</p>
-                <p className="text-2xl sm:text-3xl font-bold truncate">
+                <p className="text-2xl sm:text-3xl font-semibold truncate">
                   {data.strongestSkill ? data.strongestSkill.skill : '—'}
                 </p>
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-xs flex items-center justify-center shrink-0">
                 <GraphUpIcon className="w-4 h-4 sm:w-5 sm:h-5" size={20} />
               </div>
             </div>
@@ -161,17 +161,17 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
             <div className="flex justify-between items-start">
               <div className="space-y-1 sm:space-y-2">
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">Study Time</p>
-                <p className="text-2xl sm:text-3xl font-bold">
+                <p className="text-2xl sm:text-3xl font-semibold">
                   {data.studyHoursTotal > 0 ? `${data.studyHoursTotal}h` : '0h'}
                 </p>
               </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-500/15 text-purple-600 dark:text-purple-400 shadow-xs flex items-center justify-center shrink-0">
                 <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5" size={20} />
               </div>
             </div>
             <div className="mt-3 sm:mt-4 flex items-center text-[11px] sm:text-xs text-muted-foreground">
               {data.studyHoursThisWeek > 0 ? (
-                <span className="text-fox-success font-medium truncate">
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium truncate">
                   {data.studyHoursThisWeek}h this week
                 </span>
               ) : (
@@ -187,7 +187,7 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
         <Card className="lg:col-span-2 border-border fox-shadow-sm">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 pb-2 sm:pb-2">
             <div>
-              <CardTitle className="text-base sm:text-lg font-bold">Score History</CardTitle>
+              <CardTitle className="text-base sm:text-lg font-semibold">Score History</CardTitle>
               <CardDescription className="text-xs">Your score trajectory across completed practice tests</CardDescription>
             </div>
             {hasTestResults && (
@@ -247,8 +247,8 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center mb-4">
-                  <GraphUpIcon className="w-7 h-7" size={28} />
+                <div className="w-14 h-14 rounded-2xl bg-secondary border border-border text-foreground shadow-xs flex items-center justify-center mb-4">
+                  <GraphUpIcon className="w-7 h-7 text-muted-foreground" size={28} />
                 </div>
                 <h3 className="text-base font-semibold text-foreground">No test scores recorded yet</h3>
                 <p className="text-xs text-muted-foreground max-w-sm mt-1 mb-6">
@@ -269,7 +269,7 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
         {/* Side Chart: Skill Radar */}
         <Card className="border-border fox-shadow-sm">
           <CardHeader className="p-4 sm:p-6 pb-2">
-            <CardTitle className="text-base sm:text-lg font-bold">Skill Balance</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold">Skill Balance</CardTitle>
             <CardDescription className="text-xs">Areas of strength and improvement</CardDescription>
           </CardHeader>
           <CardContent className="p-3 sm:p-6 pt-0">
@@ -308,14 +308,14 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground shadow-xs flex items-center justify-center mb-4">
-                  <MagicWand2Icon className="w-7 h-7" size={28} />
+                <div className="w-14 h-14 rounded-2xl bg-secondary border border-border text-foreground shadow-xs flex items-center justify-center mb-4">
+                  <MagicWand2Icon className="w-7 h-7 text-muted-foreground" size={28} />
                 </div>
                 <h3 className="text-base font-semibold text-foreground">Skill Radar Inactive</h3>
                 <p className="text-xs text-muted-foreground max-w-xs mt-1 mb-4">
                   Evaluate each IELTS skill section to visualize your balance across Reading, Listening, Writing, and Speaking.
                 </p>
-                <span className="text-[11px] text-primary font-medium bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">
+                <span className="text-[11px] text-muted-foreground font-medium bg-secondary px-2.5 py-1 rounded-full border border-border">
                   0 of 4 skills evaluated
                 </span>
               </div>
@@ -371,7 +371,7 @@ export function ProgressClientView({ data }: ProgressClientViewProps) {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-8 px-4 text-center border border-dashed border-border rounded-xl">
-                <StarsIcon className="w-6 h-6 text-primary mb-2 mx-auto" size={24} />
+                <StarsIcon className="w-6 h-6 text-amber-500 mb-2 mx-auto" size={24} />
                 <p className="text-sm font-medium text-foreground">Your practice timeline starts today</p>
                 <p className="text-xs text-muted-foreground mt-1 max-w-sm">
                   Daily practice builds your streak and helps you achieve your target band faster.

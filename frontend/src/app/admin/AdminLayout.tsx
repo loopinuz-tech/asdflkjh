@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { createClient } from '@/lib/supabase/client'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
 import { AdminHeader } from '@/components/admin/admin-header'
@@ -30,28 +30,39 @@ export default function AdminLayout() {
     })
   }
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     async function loadAdminInfo() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('first_name, last_name, role')
-          .eq('user_id', user.id)
-          .single()
-
-        setAdminInfo({
-          adminName: profile
-            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Admin'
-            : 'Admin',
-          adminEmail: user.email || 'admin@foxford.ielts',
-          adminRole: profile?.role || 'admin',
-        })
+      if (!user) {
+        navigate('/login', { replace: true })
+        return
       }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, role')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      const role = profile?.role || user.role
+      if (role !== 'admin') {
+        navigate('/dashboard', { replace: true })
+        return
+      }
+
+      setAdminInfo({
+        adminName: profile
+          ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Admin'
+          : 'Admin',
+        adminEmail: user.email || 'admin@foxford.ielts',
+        adminRole: 'admin',
+      })
     }
     loadAdminInfo()
-  }, [])
+  }, [navigate])
 
   // Auto-close sidebar when route changes on mobile
   useEffect(() => {
