@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { HamburgerMenuIcon, CloseCircleIcon, AltArrowRightIcon, UserCircleIcon } from '@solar-icons/react/bold-duotone'
+import {
+  HamburgerMenuIcon,
+  CloseCircleIcon,
+  AltArrowRightIcon,
+  AltArrowDownIcon,
+  Widget2Icon,
+  SettingsIcon,
+  Logout2Icon,
+} from '@solar-icons/react/bold-duotone'
 import { buttonVariants } from '@/components/ui/button'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { createClient } from '@/lib/supabase/client'
@@ -23,9 +31,28 @@ interface UserSessionInfo {
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const profileDropdownRef = useRef<HTMLDivElement>(null)
   const [currentUser, setCurrentUser] = useState<UserSessionInfo | null>(null)
   const location = useLocation()
   const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    setCurrentUser(null)
+    navigate('/')
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const scrollToSection = (sectionId: string) => {
     const el = document.getElementById(sectionId)
@@ -98,10 +125,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled
-          ? 'bg-background/90 backdrop-blur-lg border-b border-border fox-shadow-sm'
-          : 'bg-transparent'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#0c485e] border-b border-white/10 shadow-sm'
       )}
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -119,11 +143,11 @@ export function Navbar() {
           >
             {/* Mobile: no subtitle */}
             <span className="md:hidden">
-              <FoxLogo showSubtext={false} size="sm" />
+              <FoxLogo showSubtext={false} size="sm" inverseText={true} />
             </span>
             {/* Desktop: full logo with subtitle */}
             <span className="hidden md:block">
-              <FoxLogo showSubtext={true} />
+              <FoxLogo showSubtext={true} inverseText={true} />
             </span>
           </Link>
 
@@ -134,7 +158,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                className="text-sm font-medium text-white/80 transition-colors hover:text-white cursor-pointer"
               >
                 {link.label}
               </a>
@@ -143,47 +167,87 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex md:items-center md:gap-3">
-            <ThemeToggle className="w-9 h-9" />
+            <ThemeToggle className="w-9 h-9 rounded-full justify-center p-0 shrink-0 text-white/80 hover:text-white hover:bg-white/15 border-white/20" />
             {currentUser ? (
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/60 border border-border/80">
-                  {currentUser.avatarUrl ? (
-                    <img
-                      src={currentUser.avatarUrl}
-                      alt={currentUser.name}
-                      className="w-6 h-6 rounded-full object-cover border border-border"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary font-bold text-[11px] flex items-center justify-center">
-                      {currentUser.name.charAt(0).toUpperCase()}
+              <div className="flex items-center gap-2">
+                {/* Profile Pill with Dropdown (Go to Dashboard button removed as requested) */}
+                <div className="relative" ref={profileDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsProfileOpen((prev) => !prev)}
+                    className="h-9 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 select-none"
+                    aria-expanded={isProfileOpen}
+                    aria-label="User profile menu"
+                  >
+                    {currentUser.avatarUrl ? (
+                      <img
+                        src={currentUser.avatarUrl}
+                        alt={currentUser.name}
+                        className="w-[22px] h-[22px] rounded-full object-cover ring-1 ring-white/40 shrink-0"
+                      />
+                    ) : (
+                      <div className="w-[22px] h-[22px] rounded-full bg-amber-400 text-slate-900 font-black text-[11px] flex items-center justify-center shrink-0">
+                        {currentUser.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="text-xs font-semibold text-white max-w-[130px] truncate">
+                      {currentUser.name}
+                    </span>
+                    <AltArrowDownIcon className={cn("w-3.5 h-3.5 text-white/70 transition-transform duration-200", isProfileOpen && "rotate-180")} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isProfileOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-56 p-1.5 bg-card border border-border rounded-2xl shadow-xl z-50 animate-in fade-in-50 zoom-in-95">
+                      <div className="px-3 py-2 border-b border-border/70 mb-1">
+                        <p className="text-xs font-semibold text-foreground truncate">{currentUser.name}</p>
+                        <p className="text-[11px] text-muted-foreground truncate mt-0.5">{currentUser.email}</p>
+                      </div>
+
+                      <div className="space-y-0.5">
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                        >
+                          <Widget2Icon className="w-4 h-4 text-primary" />
+                          <span>Student Dashboard</span>
+                        </Link>
+                        <Link
+                          to="/settings"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                        >
+                          <SettingsIcon className="w-4 h-4 text-muted-foreground" />
+                          <span>Settings</span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsProfileOpen(false)
+                            handleSignOut()
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors text-left cursor-pointer"
+                        >
+                          <Logout2Icon className="w-4 h-4 text-destructive" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
                     </div>
                   )}
-                  <span className="text-xs font-bold text-foreground max-w-[130px] truncate">
-                    {currentUser.name}
-                  </span>
                 </div>
-                <Link
-                  to="/dashboard"
-                  className={buttonVariants({
-                    size: "sm",
-                    className: "bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold flex items-center gap-1.5 shadow-2xs",
-                  })}
-                >
-                  <span>Go to Dashboard</span>
-                  <AltArrowRightIcon className="w-4 h-4" />
-                </Link>
               </div>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-semibold text-foreground hover:text-primary transition-colors px-3 py-2 cursor-pointer">
+                <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-3 py-2 cursor-pointer">
                   Log in
                 </Link>
                 <Link 
                   to="/signup" 
-                  className="bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-sm px-5 py-2 rounded-full shadow-2xs hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="h-9 px-5 rounded-full bg-[#FFC000] hover:bg-[#E6AD00] text-black font-semibold text-xs shadow-xs hover:shadow-sm hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer border border-amber-400/40"
                 >
                   <span>Get Started</span>
-                  <AltArrowRightIcon className="w-4 h-4" />
+                  <AltArrowRightIcon className="w-4 h-4 text-black font-bold" />
                 </Link>
               </>
             )}
@@ -192,7 +256,7 @@ export function Navbar() {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
@@ -210,7 +274,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden border-b border-border bg-background/95 backdrop-blur-lg max-h-[calc(100vh-4rem)] overflow-y-auto"
+            className="md:hidden border-b border-white/10 bg-[#0c485e] text-white max-h-[calc(100vh-4rem)] overflow-y-auto"
           >
             <div className="px-4 py-4 space-y-3">
               {navLinks.map((link) => (
@@ -218,54 +282,68 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="block px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors cursor-pointer"
+                  className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   {link.label}
                 </a>
               ))}
-              <div className="pt-3 border-t border-border space-y-2">
+              <div className="pt-3 border-t border-white/10 space-y-2">
                 {currentUser ? (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2.5 px-3 py-2 bg-muted/60 rounded-xl">
+                    <div className="flex items-center gap-2.5 px-3 py-2 bg-white/10 rounded-xl">
                       {currentUser.avatarUrl ? (
                         <img
                           src={currentUser.avatarUrl}
                           alt={currentUser.name}
-                          className="w-8 h-8 rounded-full object-cover border border-border shrink-0"
+                          className="w-8 h-8 rounded-full object-cover border border-white/30 shrink-0"
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-primary/20 text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-900 font-bold text-xs flex items-center justify-center shrink-0">
                           {currentUser.name.charAt(0).toUpperCase()}
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="text-xs font-bold text-foreground truncate">{currentUser.name}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{currentUser.email}</p>
+                        <p className="text-xs font-semibold text-white truncate">{currentUser.name}</p>
+                        <p className="text-[10px] text-white/70 truncate">{currentUser.email}</p>
                       </div>
                     </div>
                     <Link
                       to="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={buttonVariants({
-                        className: "w-full justify-center bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold flex items-center gap-1.5 shadow-2xs",
-                      })}
+                      className="w-full h-10 justify-center rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs flex items-center gap-2 border border-white/20 transition-colors"
                     >
-                      <span>Go to Dashboard</span>
-                      <AltArrowRightIcon className="w-4 h-4" />
+                      <Widget2Icon className="w-4 h-4 text-amber-300" />
+                      <span>Student Dashboard</span>
                     </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        handleSignOut()
+                      }}
+                      className="w-full h-9 justify-center rounded-xl border border-red-400/30 hover:bg-red-500/20 text-red-300 font-medium text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <Logout2Icon className="w-3.5 h-3.5 text-red-300" />
+                      <span>Sign Out</span>
+                    </button>
                   </div>
                 ) : (
                   <>
-                    <Link to="/login" className={buttonVariants({ variant: "ghost", className: "w-full justify-center" })}>
+                    <Link to="/login" className={buttonVariants({ variant: "ghost", className: "w-full justify-center text-white/80 hover:text-white hover:bg-white/10" })}>
                       Log in
                     </Link>
-                    <Link to="/signup" className={buttonVariants({ className: "w-full justify-center bg-primary hover:bg-fox-yellow-dark text-primary-foreground font-semibold" })}>
-                      Get Started
+                    <Link 
+                      to="/signup" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full h-10 justify-center rounded-xl bg-[#FFC000] hover:bg-[#E6AD00] text-black font-semibold text-xs flex items-center gap-1.5 shadow-xs"
+                    >
+                      <span>Get Started</span>
+                      <AltArrowRightIcon className="w-4 h-4 text-black font-bold" />
                     </Link>
                   </>
                 )}
-                <div className="pt-2 flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                <div className="pt-2 flex items-center justify-between border-t border-white/10">
+                  <span className="text-xs font-medium text-white/70">Theme</span>
                   <ThemeToggle showLabel />
                 </div>
               </div>

@@ -111,7 +111,7 @@ export function IeltsSection() {
                   <div className={`inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${skill.bgColor}`}>
                     <Icon className={`h-4.5 w-4.5 sm:h-5 sm:w-5 ${skill.color}`} />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold">{skill.title}</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold">{skill.title}</h3>
                 </div>
 
                 <motion.div 

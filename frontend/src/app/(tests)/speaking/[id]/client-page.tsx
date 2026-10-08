@@ -686,15 +686,15 @@ export function SpeakingClientPage({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Official IELTS Speaking Diagnostic Report
                     </span>
                   </div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-foreground mt-1 tracking-tight">
+                  <h1 className="text-xl sm:text-2xl font-semibold text-foreground mt-1 tracking-tight">
                     {prompt.title}
                   </h1>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    IELTS Speaking Part {prompt.part_number || 1} • Duration: <strong className="text-foreground">{evaluation.durationSeconds}s</strong>
+                    IELTS Speaking Part {prompt.part_number || 1} • Duration: <strong className="text-foreground font-semibold">{evaluation.durationSeconds}s</strong>
                   </p>
                 </div>
 
@@ -704,7 +704,7 @@ export function SpeakingClientPage({
                     className={buttonVariants({
                       variant: 'outline',
                       size: 'sm',
-                      className: 'text-xs font-semibold'
+                      className: 'text-xs font-medium'
                     })}
                   >
                     <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
@@ -714,7 +714,7 @@ export function SpeakingClientPage({
                     to="/dashboard"
                     className={buttonVariants({
                       size: 'sm',
-                      className: 'text-xs font-semibold bg-primary hover:bg-primary/90 text-black'
+                      className: 'text-xs font-semibold bg-[#0c485e] hover:bg-[#083546] text-white shadow-xs'
                     })}
                   >
                     Dashboard
@@ -728,35 +728,35 @@ export function SpeakingClientPage({
                 {/* Overall Score Card */}
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Overall Speaking Band
                     </span>
                     <Award className="w-5 h-5 text-amber-500" />
                   </div>
                   <div className="my-3 flex items-baseline gap-3">
-                    <span className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
+                    <span className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
                       {evaluation.overallBand.toFixed(1)}
                     </span>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/20 text-primary border border-primary/30">
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
                       {getBandDescriptor(evaluation.overallBand)}
                     </span>
                   </div>
                   <div className="grid grid-cols-4 gap-2 pt-2 border-t border-border/60 text-center">
                     <div>
-                      <div className="text-[10px] text-muted-foreground font-semibold">FC</div>
-                      <div className="text-xs font-bold text-foreground">{evaluation.fc.toFixed(1)}</div>
+                      <div className="text-[10px] text-muted-foreground font-medium">FC</div>
+                      <div className="text-xs font-semibold text-foreground">{evaluation.fc.toFixed(1)}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-muted-foreground font-semibold">LR</div>
-                      <div className="text-xs font-bold text-foreground">{evaluation.lr.toFixed(1)}</div>
+                      <div className="text-[10px] text-muted-foreground font-medium">LR</div>
+                      <div className="text-xs font-semibold text-foreground">{evaluation.lr.toFixed(1)}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-muted-foreground font-semibold">GRA</div>
-                      <div className="text-xs font-bold text-foreground">{evaluation.gra.toFixed(1)}</div>
+                      <div className="text-[10px] text-muted-foreground font-medium">GRA</div>
+                      <div className="text-xs font-semibold text-foreground">{evaluation.gra.toFixed(1)}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-muted-foreground font-semibold">PRON</div>
-                      <div className="text-xs font-bold text-foreground">{evaluation.pron.toFixed(1)}</div>
+                      <div className="text-[10px] text-muted-foreground font-medium">PRON</div>
+                      <div className="text-xs font-semibold text-foreground">{evaluation.pron.toFixed(1)}</div>
                     </div>
                   </div>
                 </div>
@@ -812,10 +812,10 @@ export function SpeakingClientPage({
                 {/* FC */}
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Fluency & Coherence (FC)
                     </span>
-                    <span className="text-sm font-extrabold text-foreground">
+                    <span className="text-sm font-bold text-foreground">
                       Band {evaluation.fc.toFixed(1)}
                     </span>
                   </div>
@@ -833,10 +833,10 @@ export function SpeakingClientPage({
                 {/* LR */}
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Lexical Resource (LR)
                     </span>
-                    <span className="text-sm font-extrabold text-foreground">
+                    <span className="text-sm font-bold text-foreground">
                       Band {evaluation.lr.toFixed(1)}
                     </span>
                   </div>
@@ -854,10 +854,10 @@ export function SpeakingClientPage({
                 {/* GRA */}
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Grammatical Range & Accuracy (GRA)
                     </span>
-                    <span className="text-sm font-extrabold text-foreground">
+                    <span className="text-sm font-bold text-foreground">
                       Band {evaluation.gra.toFixed(1)}
                     </span>
                   </div>
@@ -875,10 +875,10 @@ export function SpeakingClientPage({
                 {/* PRON */}
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Pronunciation (PRON)
                     </span>
-                    <span className="text-sm font-extrabold text-foreground">
+                    <span className="text-sm font-bold text-foreground">
                       Band {evaluation.pron.toFixed(1)}
                     </span>
                   </div>
@@ -937,19 +937,19 @@ export function SpeakingClientPage({
               {evaluation.vocabularySuggestions && evaluation.vocabularySuggestions.length > 0 && (
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm space-y-3">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-primary" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300">
                       High-Band Vocabulary Upgrades
                     </h3>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {evaluation.vocabularySuggestions.map((item, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-secondary/40 border border-border/50 space-y-1">
+                      <div key={idx} className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200/70 dark:border-amber-800/40 space-y-1.5">
                         <div className="flex items-center gap-2 text-xs">
                           <span className="line-through text-muted-foreground">{item.original}</span>
-                          <span className="text-primary font-bold">→ {item.suggested}</span>
+                          <span className="text-amber-800 dark:text-amber-300 font-bold">→ {item.suggested}</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground">{item.reason}</p>
+                        <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">{item.reason}</p>
                       </div>
                     ))}
                   </div>
@@ -960,19 +960,19 @@ export function SpeakingClientPage({
               {evaluation.grammarCorrections && evaluation.grammarCorrections.length > 0 && (
                 <div className="bg-card border border-border rounded-2xl p-5 fox-shadow-sm space-y-3">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
                       Grammar & Syntax Refinements
                     </h3>
                   </div>
                   <div className="space-y-2">
                     {evaluation.grammarCorrections.map((item, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-secondary/40 border border-border/50 text-xs space-y-1">
+                      <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-800/60 text-xs space-y-1.5">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                          <span className="text-rose-500 font-medium line-through">Spoken: "{item.spoken}"</span>
-                          <span className="text-emerald-500 font-bold">Corrected: "{item.corrected}"</span>
+                          <span className="text-rose-600 dark:text-rose-400 font-medium">Spoken: <span className="line-through">{item.spoken}</span></span>
+                          <span className="text-emerald-700 dark:text-emerald-300 font-bold">Corrected: "{item.corrected}"</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground">{item.explanation}</p>
+                        <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">{item.explanation}</p>
                       </div>
                     ))}
                   </div>
@@ -993,9 +993,7 @@ export function SpeakingClientPage({
 
                 <Link
                   to="/dashboard"
-                  className={buttonVariants({
-                    className: 'flex-1 py-3 bg-primary hover:bg-primary/90 text-black font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs',
-                  })}
+                  className="flex-1 py-3 px-5 bg-[#0c485e] hover:bg-[#083546] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition-all hover:shadow active:scale-[0.99]"
                 >
                   <span>Go to Dashboard</span>
                   <ArrowRight className="w-4 h-4" />

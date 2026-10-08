@@ -19,6 +19,7 @@ import { Search, X, ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { cn } from '@/lib/utils'
+import { isUserAdmin } from '@/components/auth/ProtectedRoute'
 
 
 interface QuickSearchItem {
@@ -35,6 +36,7 @@ export function Sidebar() {
   const supabase = createClient()
   const isExpanded = true
   
+  const [rawUser, setRawUser] = useState<any>(null)
   const [profile, setProfile] = useState<{
     name: string
     avatarUrl?: string | null
@@ -50,14 +52,18 @@ export function Sidebar() {
     async function loadUser() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        setRawUser(user)
         const { data } = await supabase
           .from('profiles')
           .select('first_name, last_name, avatar_url, role')
           .eq('user_id', user.id)
           .single()
 
+        const d = (data as any) || {}
+        const adminStatus = isUserAdmin(user, d.role)
+
         let isPrem = false
-        if (data?.role === 'admin') {
+        if (adminStatus) {
           isPrem = true
         } else {
           try {
@@ -74,16 +80,13 @@ export function Sidebar() {
           }
         }
 
-        if (data) {
-          const d = data as any
-          const fullName = `${d.first_name || ''} ${d.last_name || ''}`.trim() || user.email?.split('@')[0] || 'Student'
-          setProfile({
-            name: fullName,
-            avatarUrl: d.avatar_url,
-            role: d.role || 'student',
-            isPremium: isPrem,
-          })
-        }
+        const fullName = `${d.first_name || ''} ${d.last_name || ''}`.trim() || user.email?.split('@')[0] || 'Student'
+        setProfile({
+          name: fullName,
+          avatarUrl: d.avatar_url,
+          role: adminStatus ? 'admin' : (d.role || 'student'),
+          isPremium: isPrem,
+        })
       }
     }
     loadUser()
@@ -108,7 +111,7 @@ export function Sidebar() {
     navigate('/login')
   }
 
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = isUserAdmin(rawUser, profile?.role)
 
   // Only real, active platform pages in search catalog
   const searchCatalog: QuickSearchItem[] = [
@@ -167,11 +170,11 @@ export function Sidebar() {
             className="flex items-center gap-2 overflow-hidden group"
             title="EduFox Dashboard"
           >
-            <div className="w-8 h-8 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center p-1 shadow-xs group-hover:bg-white/25 transition-all">
+            <div className="w-8 h-8 rounded-full bg-white border border-white/40 flex items-center justify-center p-1 shadow-xs group-hover:scale-105 transition-all shrink-0">
               <img 
                 src="/favicon.ico" 
                 alt="EduFox Logo" 
-                className="w-full h-full object-contain drop-shadow-sm" 
+                className="w-full h-full object-contain" 
               />
             </div>
             {isExpanded && (

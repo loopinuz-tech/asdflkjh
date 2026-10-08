@@ -75,12 +75,15 @@ export function FoxLogo({
   size?: 'default' | 'sm'
 }) {
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      <div className={cn('relative shrink-0', size === 'sm' ? 'w-7 h-7' : 'w-8 h-8')}>
+    <div className={cn('flex items-center gap-2.5', className)}>
+      <div className={cn(
+        'relative shrink-0 rounded-full bg-white border border-white/40 shadow-xs flex items-center justify-center p-1 overflow-hidden transition-transform',
+        size === 'sm' ? 'w-8 h-8' : 'w-9 h-9'
+      )}>
         <img 
           src="/favicon.ico" 
           alt="EduFox Logo" 
-          className="object-contain w-full h-full rounded-lg shadow-2xs"
+          className="object-contain w-full h-full drop-shadow-xs"
         />
       </div>
       {showText && (
@@ -88,14 +91,14 @@ export function FoxLogo({
           <span className={cn(
             'font-bold tracking-tight',
             size === 'sm' ? 'text-base' : 'text-lg sm:text-xl',
-            inverseText ? 'text-primary-foreground' : 'text-foreground'
+            inverseText ? 'text-white' : 'text-foreground'
           )}>
-            Edu<span className={inverseText ? '' : 'text-primary font-black'}>Fox</span>
+            Edu<span className={inverseText ? 'text-amber-400 font-black' : 'text-primary font-black'}>Fox</span>
           </span>
           {showSubtext && (
             <span className={cn(
               'text-[9px] font-semibold tracking-tight mt-0.5 whitespace-nowrap',
-              inverseText ? 'text-primary-foreground/75' : 'text-muted-foreground'
+              inverseText ? 'text-white/70' : 'text-muted-foreground'
             )}>
               contributed by FoxFord LC
             </span>

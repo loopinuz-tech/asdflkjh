@@ -80,12 +80,12 @@ export function AdminSidebar({
   }
 
   const renderSidebarContent = (isCollapsed: boolean) => (
-    <aside className="w-full border-r border-border bg-card flex flex-col justify-between h-full overflow-y-auto overflow-x-hidden">
+    <aside className="w-full border-r border-white/10 bg-[#0c485e] dark:bg-[#072936] text-white flex flex-col justify-between h-full overflow-y-auto overflow-x-hidden select-none">
       <div>
         {/* Fox Ford Logo & Desktop Toggle / Mobile Close */}
         <div
           className={cn(
-            'border-b border-border flex items-center transition-all',
+            'border-b border-white/10 flex items-center transition-all',
             isCollapsed
               ? 'p-3 flex-col gap-2.5 justify-center'
               : 'p-4 sm:p-5 justify-between'
@@ -93,11 +93,11 @@ export function AdminSidebar({
         >
           <Link
             to="/admin"
-            className="flex items-center gap-2.5"
+            className="flex items-center gap-2.5 group"
             onClick={onMobileClose}
             title="EduFox Control Center"
           >
-            <FoxLogo showText={!isCollapsed} size={isCollapsed ? 'sm' : 'default'} />
+            <FoxLogo showText={!isCollapsed} size={isCollapsed ? 'sm' : 'default'} inverseText={true} />
           </Link>
 
           {/* Desktop Collapse / Expand Toggle Button on Sidebar Header */}
@@ -106,16 +106,16 @@ export function AdminSidebar({
               type="button"
               onClick={onToggleDesktopCollapse}
               className={cn(
-                'hidden md:flex items-center justify-center rounded-lg border border-border bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground transition-all cursor-pointer',
+                'hidden md:flex items-center justify-center rounded-lg border border-white/10 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all cursor-pointer',
                 isCollapsed ? 'w-8 h-8' : 'w-7 h-7'
               )}
               title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {isCollapsed ? (
-                <PanelLeftOpenIcon className="w-4 h-4 text-primary" size={16} />
+                <PanelLeftOpenIcon className="w-4 h-4 text-amber-300" size={16} />
               ) : (
-                <PanelLeftCloseIcon className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" size={14} />
+                <PanelLeftCloseIcon className="w-3.5 h-3.5 text-white/70 hover:text-white" size={14} />
               )}
             </button>
           )}
@@ -124,7 +124,7 @@ export function AdminSidebar({
           {onMobileClose && (
             <button
               onClick={onMobileClose}
-              className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/15 text-white/80 hover:text-white transition-colors"
               aria-label="Close menu"
             >
               <CloseCircleIcon className="w-4 h-4" size={16} />
@@ -136,14 +136,14 @@ export function AdminSidebar({
         <div className={cn('pt-3 transition-all', isCollapsed ? 'px-2 flex justify-center' : 'px-4 sm:px-5')}>
           {isCollapsed ? (
             <div
-              className="w-8 h-8 rounded-xl bg-secondary border border-border flex items-center justify-center"
+              className="w-8 h-8 rounded-xl bg-[#083546] border border-amber-400/30 flex items-center justify-center text-amber-300"
               title="Production Admin"
             >
-              <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
+              <ShieldCheckIcon className="w-4 h-4 text-amber-300" size={16} />
             </div>
           ) : (
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary border border-border text-[11px] font-bold text-foreground">
-              <ShieldCheckIcon className="w-3.5 h-3.5 text-primary" size={14} />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#083546] border border-amber-400/30 text-[11px] font-bold text-amber-300 font-mono">
+              <ShieldCheckIcon className="w-3.5 h-3.5 text-amber-300" size={14} />
               <span>Production Admin</span>
             </div>
           )}
@@ -154,11 +154,11 @@ export function AdminSidebar({
           {navSections.map((sec) => (
             <div key={sec.label} className="space-y-1">
               {!isCollapsed ? (
-                <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#7faebd]">
                   {sec.label}
                 </div>
               ) : (
-                <div className="my-1.5 border-t border-border/60 mx-1" />
+                <div className="my-1.5 border-t border-white/10 mx-1" />
               )}
 
               {sec.items.map((item) => {
@@ -176,11 +176,11 @@ export function AdminSidebar({
                     className={cn(
                       'rounded-xl text-xs font-medium transition-all group',
                       isCollapsed
-                        ? 'flex items-center justify-center p-2.5'
+                        ? 'relative flex items-center justify-center w-11 h-10 mx-auto'
                         : 'flex items-center justify-between px-3 py-2.5',
                       isActive
-                        ? 'bg-primary/10 text-primary font-bold border border-primary/20 shadow-2xs'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+                        ? 'bg-white/15 text-white font-semibold shadow-xs border border-white/10'
+                        : 'text-[#a5cee0] hover:text-white hover:bg-white/10'
                     )}
                   >
                     <div className={cn('flex items-center min-w-0', isCollapsed ? 'justify-center' : 'gap-3')}>
@@ -188,15 +188,18 @@ export function AdminSidebar({
                         className={cn(
                           'w-4.5 h-4.5 shrink-0 transition-transform group-hover:scale-105',
                           isActive
-                            ? 'text-primary opacity-100'
-                            : 'text-muted-foreground group-hover:text-foreground opacity-90'
+                            ? 'text-amber-300 opacity-100'
+                            : 'text-[#9ec3d5] group-hover:text-white opacity-90'
                         )}
                         size={19}
                       />
                       {!isCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
                     {isActive && !isCollapsed && (
-                      <span className="w-1.5 h-3 rounded-full bg-primary shrink-0" />
+                      <span className="ml-auto w-1.5 h-3.5 rounded-full bg-amber-400 shrink-0" />
+                    )}
+                    {isActive && isCollapsed && (
+                      <span className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-3.5 rounded-full bg-amber-400" />
                     )}
                   </Link>
                 )
@@ -207,43 +210,43 @@ export function AdminSidebar({
       </div>
 
       {/* Footer Area: Back to Student App, Sign Out & Admin Card */}
-      <div className={cn('border-t border-border bg-secondary/20 transition-all', isCollapsed ? 'p-2 space-y-2' : 'p-3 space-y-2')}>
+      <div className={cn('border-t border-white/10 bg-[#0c485e] dark:bg-[#072936] transition-all', isCollapsed ? 'p-2 space-y-2' : 'p-3 space-y-2')}>
         {!isCollapsed ? (
           <>
             <div className="grid grid-cols-2 gap-1.5">
               <Link
                 to="/dashboard"
                 onClick={onMobileClose}
-                className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors truncate"
+                className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-[#a5cee0] hover:text-white hover:bg-white/15 border border-white/10 bg-[#083546] transition-colors truncate"
                 title="Return to Student Platform"
               >
-                <AltArrowLeftIcon className="w-3.5 h-3.5 shrink-0" size={14} />
+                <AltArrowLeftIcon className="w-3.5 h-3.5 shrink-0 text-amber-300" size={14} />
                 <span className="truncate">Student App</span>
               </Link>
 
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20 transition-colors truncate cursor-pointer"
+                className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-red-300 hover:text-red-200 hover:bg-red-500/20 border border-red-500/30 bg-red-500/10 transition-colors truncate cursor-pointer"
                 title="Sign Out of Admin"
               >
-                <Logout2Icon className="w-3.5 h-3.5 shrink-0" size={14} />
+                <Logout2Icon className="w-3.5 h-3.5 shrink-0 text-red-300" size={14} />
                 <span className="truncate">Sign Out</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-card border border-border fox-shadow-sm">
-              <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-[#083546] border border-white/10 shadow-xs">
+              <div className="w-7 h-7 rounded-full bg-amber-400 text-slate-900 font-black text-xs flex items-center justify-center shrink-0">
                 {adminName.charAt(0).toUpperCase()}
               </div>
               <div className="truncate flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1">
-                  <p className="text-xs font-bold text-foreground truncate">{adminName}</p>
-                  <span className="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-primary/10 text-primary border border-primary/20 shrink-0">
+                  <p className="text-xs font-bold text-white truncate">{adminName}</p>
+                  <span className="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 font-mono shrink-0">
                     {adminRole === 'admin' ? 'Admin' : adminRole || 'Admin'}
                   </span>
                 </div>
-                <p className="text-[10px] text-muted-foreground truncate">{adminEmail || 'admin@foxford.ielts'}</p>
+                <p className="text-[10px] text-[#7faebd] truncate">{adminEmail || 'admin@foxford.ielts'}</p>
               </div>
             </div>
           </>
@@ -252,23 +255,23 @@ export function AdminSidebar({
             <Link
               to="/dashboard"
               onClick={onMobileClose}
-              className="w-8 h-8 flex items-center justify-center rounded-xl bg-secondary/70 hover:bg-secondary border border-border text-muted-foreground hover:text-foreground transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-xl bg-[#083546] hover:bg-white/15 border border-white/10 text-amber-300 transition-colors"
               title="Return to Student Platform"
             >
-              <AltArrowLeftIcon className="w-4 h-4 shrink-0" size={16} />
+              <AltArrowLeftIcon className="w-4 h-4 shrink-0 text-amber-300" size={16} />
             </Link>
 
             <button
               type="button"
               onClick={handleSignOut}
-              className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-destructive/10 border border-destructive/20 text-destructive transition-colors cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 transition-colors cursor-pointer"
               title="Sign Out of Admin"
             >
               <Logout2Icon className="w-4 h-4 shrink-0" size={16} />
             </button>
 
             <div
-              className="w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shrink-0"
+              className="w-8 h-8 rounded-full bg-amber-400 text-slate-900 font-black text-xs flex items-center justify-center shrink-0"
               title={`${adminName} (${adminEmail || 'admin@foxford.ielts'})`}
             >
               {adminName.charAt(0).toUpperCase()}

@@ -410,7 +410,7 @@ function CabinCard({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight leading-tight truncate">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white tracking-tight leading-tight truncate">
                 {skill.name}
               </h4>
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${skill.accentDot}`} />
@@ -800,7 +800,7 @@ function CertificatesMarquee({
         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
         <span>AUTHENTIC IELTS RESULTS FROM OUR STUDENTS</span>
         <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
-        <span className="hidden sm:inline text-amber-600 dark:text-amber-400 font-bold">
+        <span className="hidden sm:inline text-amber-600 dark:text-amber-400 font-semibold">
           12 Real Certificates
         </span>
       </div>
@@ -816,10 +816,10 @@ function CertificatesMarquee({
             >
               {/* Card Header: Score Badge + Student Name */}
               <div className="flex items-center justify-between gap-1.5 mb-2">
-                <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 text-xs font-black shadow-xs whitespace-nowrap">
+                <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold shadow-xs whitespace-nowrap">
                   Band {cert.score}
                 </span>
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-200 truncate max-w-[105px]">
+                <span className="text-xs font-medium text-slate-700 dark:text-slate-200 truncate max-w-[105px]">
                   {cert.name}
                 </span>
               </div>
@@ -834,7 +834,7 @@ function CertificatesMarquee({
                 />
                 {/* Hover overlay hint */}
                 <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="px-2.5 py-1 rounded-full bg-white/95 text-slate-950 text-[10px] font-bold shadow-md flex items-center gap-1">
+                  <span className="px-2.5 py-1 rounded-full bg-white/95 text-slate-950 text-[10px] font-semibold shadow-md flex items-center gap-1">
                     <EyeIcon className="w-3.5 h-3.5 text-slate-950" /> Preview
                   </span>
                 </div>
@@ -874,10 +874,10 @@ function CertificateModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {certificate.name}
               </h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-xs font-semibold">
                 Overall Band {certificate.score}
               </span>
             </div>
@@ -1022,13 +1022,13 @@ export function FerrisWheelSkills() {
           {/* LEFT CONTENT COLUMN: Fills the left space with rich, compelling content */}
           <div className="lg:col-span-7 xl:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl xl:max-w-3xl">
             {/* Eyebrow badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-widest uppercase bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 mb-3 sm:mb-4 shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold tracking-widest uppercase bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 mb-3 sm:mb-4 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               ALL FOUR IELTS SKILLS
             </div>
 
             {/* Main Headline */}
-            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15] sm:leading-[1.12] mb-3 sm:mb-4">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-bold tracking-tight text-slate-900 dark:text-white leading-[1.15] sm:leading-[1.12] mb-3 sm:mb-4">
               Master All 4{' '}
               <span className="relative whitespace-nowrap">
                 <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 bg-clip-text text-transparent">
@@ -1080,10 +1080,10 @@ export function FerrisWheelSkills() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
-                          <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight truncate">
+                          <h4 className="text-sm font-semibold text-slate-900 dark:text-white tracking-tight truncate">
                             {skill.name}
                           </h4>
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60 shrink-0">
                             {skill.badge}
                           </span>
                         </div>
@@ -1101,7 +1101,7 @@ export function FerrisWheelSkills() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 mb-6 w-full sm:w-auto">
               <Link
                 to="/signup"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-base font-bold text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 bg-[length:200%_auto] hover:bg-right shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-base font-semibold text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 bg-[length:200%_auto] hover:bg-right shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
               >
                 <span>Start Practicing</span>
                 <AltArrowRightIcon className="w-4 h-4 text-slate-950 font-bold" />

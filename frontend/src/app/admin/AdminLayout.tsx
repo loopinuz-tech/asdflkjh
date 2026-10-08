@@ -5,6 +5,8 @@ import { AdminSidebar } from '@/components/admin/admin-sidebar'
 import { AdminHeader } from '@/components/admin/admin-header'
 import { cn } from '@/lib/utils'
 
+import { isUserAdmin } from '@/components/auth/ProtectedRoute'
+
 export default function AdminLayout() {
   const location = useLocation()
   const [adminInfo, setAdminInfo] = useState({
@@ -41,22 +43,32 @@ export default function AdminLayout() {
         return
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('first_name, last_name, role')
-        .eq('user_id', user.id)
-        .maybeSingle()
+      let profileRole: string | null = null
+      let profileName = ''
 
-      const role = profile?.role || user.role
-      if (role !== 'admin') {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('first_name, last_name, role')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        if (profile) {
+          profileRole = profile.role
+          profileName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
+        }
+      } catch {
+        // Fallback to user metadata
+      }
+
+      const isAuthorizedAdmin = isUserAdmin(user, profileRole)
+      if (!isAuthorizedAdmin) {
         navigate('/dashboard', { replace: true })
         return
       }
 
       setAdminInfo({
-        adminName: profile
-          ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Admin'
-          : 'Admin',
+        adminName: profileName || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email?.split('@')[0] || 'Admin',
         adminEmail: user.email || 'admin@foxford.ielts',
         adminRole: 'admin',
       })

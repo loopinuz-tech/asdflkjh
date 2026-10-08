@@ -22,6 +22,7 @@ import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { isUserAdmin } from '@/components/auth/ProtectedRoute'
 
 interface UserProfile {
   name: string
@@ -34,6 +35,7 @@ interface UserProfile {
 export function DashboardMobileHeader() {
   const location = useLocation()
   const navigate = useNavigate()
+  const [rawUser, setRawUser] = useState<any>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const supabase = createClient()
@@ -42,14 +44,18 @@ export function DashboardMobileHeader() {
     async function loadUser() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        setRawUser(user)
         const { data } = await supabase
           .from('profiles')
           .select('first_name, last_name, avatar_url, role')
           .eq('user_id', user.id)
           .single()
 
+        const d = (data as any) || {}
+        const adminStatus = isUserAdmin(user, d.role)
+
         let isPrem = false
-        if (data?.role === 'admin') {
+        if (adminStatus) {
           isPrem = true
         } else {
           try {
@@ -66,17 +72,14 @@ export function DashboardMobileHeader() {
           }
         }
 
-        if (data) {
-          const d = data as any
-          const fullName = `${d.first_name || ''} ${d.last_name || ''}`.trim() || user.email?.split('@')[0] || 'User'
-          setProfile({
-            name: fullName,
-            email: user.email || '',
-            avatarUrl: d.avatar_url,
-            role: d.role || 'student',
-            isPremium: isPrem,
-          })
-        }
+        const fullName = `${d.first_name || ''} ${d.last_name || ''}`.trim() || user.email?.split('@')[0] || 'User'
+        setProfile({
+          name: fullName,
+          email: user.email || '',
+          avatarUrl: d.avatar_url,
+          role: adminStatus ? 'admin' : (d.role || 'student'),
+          isPremium: isPrem,
+        })
       }
     }
     loadUser()
@@ -104,7 +107,7 @@ export function DashboardMobileHeader() {
     navigate('/login')
   }
 
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = isUserAdmin(rawUser, profile?.role)
 
   return (
     <>
@@ -122,7 +125,7 @@ export function DashboardMobileHeader() {
           </button>
 
           <Link to="/dashboard" className="flex items-center gap-2 truncate">
-            <div className="w-7 h-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center p-1 shadow-xs">
+            <div className="w-7 h-7 rounded-full bg-white border border-white/40 flex items-center justify-center p-1 shadow-xs shrink-0">
               <img src="/favicon.ico" alt="EduFox" className="w-full h-full object-contain" />
             </div>
             <span className="font-semibold text-lg tracking-tight text-white flex items-center">

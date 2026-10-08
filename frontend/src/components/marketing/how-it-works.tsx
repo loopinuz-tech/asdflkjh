@@ -39,7 +39,7 @@ export function HowItWorks() {
           transition={{ duration: 0.5 }}
           className="text-center mb-8 sm:mb-12"
         >
-          <h2 className="text-2xl xs:text-3xl font-extrabold sm:text-4xl text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-2xl xs:text-3xl font-bold sm:text-4xl text-slate-900 dark:text-white tracking-tight">
             How it works
           </h2>
           <p className="mt-2.5 sm:mt-4 text-sm sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-normal px-2">
@@ -62,12 +62,12 @@ export function HowItWorks() {
                 {/* Step number */}
                 <div className="inline-flex items-center justify-center w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm mb-3 sm:mb-4 relative z-10 transition-transform duration-300 hover:scale-105">
                   <div className="text-center">
-                    <span className="text-[11px] sm:text-xs font-bold text-amber-500 block">{step.number}</span>
+                    <span className="text-[11px] sm:text-xs font-semibold text-amber-500 block">{step.number}</span>
                     <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-slate-900 dark:text-white mx-auto mt-0.5" />
                   </div>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 text-slate-900 dark:text-white">{step.title}</h3>
+                <h3 className="text-base sm:text-lg font-semibold mb-1.5 sm:mb-2 text-slate-900 dark:text-white">{step.title}</h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-xs mx-auto font-normal">
                   {step.description}
                 </p>

@@ -59,18 +59,18 @@ export function Hero() {
             {isLoggedIn ? (
               <Link
                 to="/dashboard"
-                className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-sm sm:text-xl px-6 py-2.5 sm:px-9 sm:py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border border-amber-300/40"
+                className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-semibold text-sm sm:text-lg px-6 py-2.5 sm:px-8 sm:py-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border border-amber-300/40"
               >
                 <span>Go to Dashboard</span>
-                <AltArrowRightIcon className="w-4 h-4 sm:w-6 sm:h-6" />
+                <AltArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
             ) : (
               <Link
                 to="/practice"
-                className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-extrabold text-sm sm:text-xl px-6 py-2.5 sm:px-9 sm:py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border border-amber-300/40"
+                className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#FFC000] hover:bg-[#E6AD00] text-black font-semibold text-sm sm:text-lg px-6 py-2.5 sm:px-8 sm:py-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border border-amber-300/40"
               >
                 <span>Start Now</span>
-                <AltArrowRightIcon className="w-4 h-4 sm:w-6 sm:h-6" />
+                <AltArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
             )}
           </motion.div>

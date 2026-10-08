@@ -2,6 +2,25 @@ import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { createClient, type User } from '@/lib/supabase/client'
 
+const KNOWN_ADMIN_EMAILS = [
+  'xudayberganovbackend@gmail.com',
+  'ilyoskhudayberganov@gmail.com',
+  'ilyosbackend@gmail.com',
+  'khilyos1219@gmail.com',
+  'adilbekovfozilbek@gmail.com',
+]
+
+export function isUserAdmin(user: User | null | undefined, profileRole?: string | null): boolean {
+  if (!user) return false
+  const email = (user.email || '').toLowerCase().trim()
+  if (KNOWN_ADMIN_EMAILS.includes(email)) return true
+  if (email.startsWith('admin@') || email.includes('admin.foxford') || email.includes('@foxford.uz')) return true
+  if (user.role?.toLowerCase() === 'admin') return true
+  if (profileRole?.toLowerCase() === 'admin') return true
+  if (user.app_metadata?.role === 'admin' || user.user_metadata?.role === 'admin') return true
+  return false
+}
+
 interface ProtectedRouteProps {
   children: React.ReactNode
   adminOnly?: boolean
@@ -24,6 +43,7 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
 
       if (!user) {
         setUser(null)
+        setIsAdmin(false)
         setLoading(false)
         return
       }
@@ -31,20 +51,24 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
       setUser(user)
 
       if (adminOnly) {
-        try {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('user_id', user.id)
-            .maybeSingle()
-          const profile = profileData as { role: string } | null
-          const resolvedRole = profile?.role || user.role
-          if (mounted) {
-            setIsAdmin(resolvedRole === 'admin')
-          }
-        } catch {
-          if (mounted) {
-            setIsAdmin(user.role === 'admin')
+        // Fast-path: Check direct user object / known admin emails
+        if (isUserAdmin(user)) {
+          if (mounted) setIsAdmin(true)
+        } else {
+          try {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('user_id', user.id)
+              .maybeSingle()
+            const profile = profileData as { role: string } | null
+            if (mounted) {
+              setIsAdmin(isUserAdmin(user, profile?.role))
+            }
+          } catch {
+            if (mounted) {
+              setIsAdmin(isUserAdmin(user))
+            }
           }
         }
       }
@@ -56,15 +80,19 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return
-      setUser(session?.user ?? null)
-      if (!session?.user) setLoading(false)
+      const newUser = session?.user ?? null
+      setUser(newUser)
+      if (adminOnly) {
+        setIsAdmin(isUserAdmin(newUser))
+      }
+      if (!newUser) setLoading(false)
     })
 
     return () => {
       mounted = false
       subscription.unsubscribe()
     }
-  }, [])
+  }, [adminOnly, location.pathname])
 
   if (loading) {
     return (

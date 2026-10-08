@@ -179,7 +179,7 @@ export function validateParsedTest(test: ParsedIeltsTest | null): ValidationResu
   })
 
   if (duplicateNumbers.size > 0) {
-    errors.push(`Duplicate question numbers: ${Array.from(duplicateNumbers).join(', ')}`)
+    warnings.push(`Duplicate question numbers detected: ${Array.from(duplicateNumbers).join(', ')}. They will be automatically sequentialized when saving, or click "Auto-Fix Question Numbers".`)
   }
 
   const totalQuestions = allQuestions.length
@@ -539,21 +539,50 @@ export function HtmlImportClientView() {
     }
   }
 
+  // Auto-Fix Question Numbers (renumber sequentially 1..N across all sections)
+  const handleAutoFixQuestionNumbers = () => {
+    if (!parsedTest) return
+    let currentNumber = 1
+    const updatedSections = parsedTest.sections.map((sec) => ({
+      ...sec,
+      questions: sec.questions.map((q) => {
+        const fixedQ = { ...q, question_number: currentNumber }
+        currentNumber++
+        return fixedQ
+      }),
+    }))
+    const updatedTest = { ...parsedTest, sections: updatedSections, total_questions: currentNumber - 1 }
+    setParsedTest(updatedTest)
+    setValidation(validateParsedTest(updatedTest))
+  }
+
   // Save to Database
   const handleSaveToDatabase = async () => {
     if (!parsedTest) return
     setIsSaving(true)
 
     try {
+      // Check for duplicate question numbers and auto-resolve
+      const seenNums = new Set<number>()
+      let hasDupes = false
+      parsedTest.sections.forEach((s) =>
+        s.questions.forEach((q) => {
+          if (seenNums.has(q.question_number)) hasDupes = true
+          seenNums.add(q.question_number)
+        })
+      )
+
+      let runningNum = 1
       const allQuestions: any[] = []
       parsedTest.sections.forEach((sec, sIdx) => {
         sec.questions.forEach((q, qIdx) => {
+          const finalNum = hasDupes ? runningNum++ : (q.question_number || runningNum++)
           allQuestions.push({
             section_index: sIdx,
-            question_number: q.question_number || allQuestions.length + 1,
+            question_number: finalNum,
             question_type: q.question_type || 'sentence_completion',
             instruction: q.instruction || sec.instructions || '',
-            question_text: q.question_text || `Question ${q.question_number || qIdx + 1}`,
+            question_text: q.question_text || `Question ${finalNum}`,
             options: q.options || [],
             correct_answer: q.correct_answer || '',
             accepted_answers: q.accepted_answers || (q.correct_answer ? [q.correct_answer] : []),
@@ -914,6 +943,18 @@ export function HtmlImportClientView() {
                         <li key={idx}>{warn}</li>
                       ))}
                     </ul>
+                    {validation.warnings.some((w) => /duplicate/i.test(w)) && (
+                      <div className="pt-1.5 flex items-center justify-end">
+                        <button
+                          type="button"
+                          onClick={handleAutoFixQuestionNumbers}
+                          className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-200 font-bold text-[11px] flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Auto-Fix & Renumber Questions (1..{parsedTest?.total_questions || 40})</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1217,13 +1258,29 @@ export function HtmlImportClientView() {
                   {/* Save to Database Button */}
                   <div className="pt-2">
                     {savedTestId ? (
-                      <Link
-                        to={`/admin/tests/${savedTestId}/edit`}
-                        className="w-full py-3 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-xs"
-                      >
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Saved Successfully! Open in Test Builder →</span>
-                      </Link>
+                      <div className="space-y-2.5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center animate-in fade-in-50">
+                        <div className="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Test & Questions Successfully Saved to Database!</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">
+                          All passages, sections, audio settings, and questions are now accessible in Test Management.
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                          <Link
+                            to={`/admin/tests/${savedTestId}/edit`}
+                            className="py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-xs"
+                          >
+                            <span>Open in Test Builder →</span>
+                          </Link>
+                          <Link
+                            to="/admin/tests"
+                            className="py-2.5 px-4 rounded-xl bg-card border border-border text-foreground font-bold text-xs hover:bg-muted transition-all flex items-center justify-center gap-2 shadow-2xs"
+                          >
+                            <span>View in Tests Management</span>
+                          </Link>
+                        </div>
+                      </div>
                     ) : (
                       <button
                         type="button"

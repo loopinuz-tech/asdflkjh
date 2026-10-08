@@ -704,6 +704,13 @@ export async function saveFullTestStructure(data: {
   const { supabase, user } = await getAdminClient()
 
   // 1. Create or Update Test
+  const safeDifficulty = ['easy', 'medium', 'hard'].includes(String(data.test.difficulty).toLowerCase())
+    ? String(data.test.difficulty).toLowerCase()
+    : 'medium'
+  const safeStatus = ['draft', 'review', 'published', 'archived'].includes(String(data.test.status).toLowerCase())
+    ? String(data.test.status).toLowerCase()
+    : 'draft'
+
   const testPayload: any = {
     title: data.test.title.trim(),
     slug: data.test.slug?.trim() || data.test.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
@@ -711,13 +718,13 @@ export async function saveFullTestStructure(data: {
     skill: data.test.skill,
     ielts_type: data.test.ielts_type || 'academic',
     access_type: data.test.access_type || 'free',
-    difficulty: data.test.difficulty || 'medium',
-    time_limit_minutes: data.test.time_limit_minutes || 60,
+    difficulty: safeDifficulty,
+    time_limit_minutes: data.test.time_limit_minutes || (data.test.skill === 'listening' ? 40 : 60),
     total_questions: data.questions.length,
     is_premium: data.test.access_type === 'premium',
     cover_image: data.test.cover_image || null,
     tags: data.test.tags || [],
-    status: data.test.status || 'draft',
+    status: safeStatus,
     updated_at: new Date().toISOString(),
   }
 
@@ -727,7 +734,13 @@ export async function saveFullTestStructure(data: {
     const { error } = await supabase.from('tests').update(testPayload).eq('id', testId)
     if (error) throw new Error(`Failed to update test: ${error.message}`)
   } else {
-    testPayload.created_by = user.id
+    // Only set created_by if user exists in public.users to avoid foreign key violation
+    if (user?.id) {
+      const { data: userExists } = await supabase.from('users').select('id').eq('id', user.id).maybeSingle()
+      if (userExists) {
+        testPayload.created_by = user.id
+      }
+    }
     const { data: newTest, error } = await supabase.from('tests').insert(testPayload).select('id').single()
     if (error) throw new Error(`Failed to create test: ${error.message}`)
     testId = newTest.id
@@ -741,9 +754,22 @@ export async function saveFullTestStructure(data: {
       qTypeMap[qt.slug] = qt.id
     })
   }
-  const defaultTypeId = qTypes?.[0]?.id || '00000000-0000-0000-0000-000000000000'
 
-  // 3. Clear existing questions and sections if updating to ensure clean state and prevent duplicate parts/questions
+  // Canonical slug aliases for HTML/AI parser question types
+  const TYPE_SLUG_ALIASES: Record<string, string> = {
+    matching: 'matching_features',
+    matching_info: 'matching_information',
+    diagram_labelling: 'diagram_label_completion',
+    diagram_labeling: 'diagram_label_completion',
+    map_labelling: 'plan_map_diagram',
+    plan_map_labelling: 'plan_map_diagram',
+    short_answer_question: 'short_answer',
+    form_notes_completion: 'form_completion',
+    notes_completion: 'note_completion',
+    table_completion_question: 'table_completion',
+  }
+
+  // 3. Clear existing questions and sections if updating to ensure clean state
   if (data.test.id && !data.test.id.startsWith('temp-')) {
     await supabase.from('questions').delete().eq('test_id', testId)
     await supabase.from('test_sections').delete().eq('test_id', testId)
@@ -788,7 +814,7 @@ export async function saveFullTestStructure(data: {
       .from('test_sections')
       .insert({
         test_id: testId,
-        title: sec.title || `Section ${sIdx + 1}`,
+        title: sec.title || (data.test.skill === 'listening' ? `Section ${sIdx + 1}` : `Reading Passage ${sIdx + 1}`),
         order_number: sec.order_number || sIdx + 1,
         instructions: sec.instructions || null,
         time_limit_minutes: sec.time_limit_minutes || 20,
@@ -820,36 +846,40 @@ export async function saveFullTestStructure(data: {
   }
 
   // 5. Insert Questions & Options
+  let savedQuestionsCount = 0
+
   for (let qIdx = 0; qIdx < data.questions.length; qIdx++) {
     const q = data.questions[qIdx]
     const qNum = q.question_number || qIdx + 1
     let targetSectionIdx = typeof q.section_index === 'number' ? q.section_index : -1
 
-    // If 4 sections (standard IELTS Listening), prioritize question number ranges
-    if (data.sections.length === 4 && qNum >= 1 && qNum <= 40) {
-      targetSectionIdx = qNum <= 10 ? 0 : qNum <= 20 ? 1 : qNum <= 30 ? 2 : 3
-    } else if (data.sections.length === 3 && qNum >= 1 && qNum <= 40) {
-      targetSectionIdx = qNum <= 13 ? 0 : qNum <= 26 ? 1 : 2
-    } else if (targetSectionIdx < 0 && q.section_id) {
+    // If section_index was explicitly provided and valid, prioritize it!
+    if (targetSectionIdx >= 0 && targetSectionIdx < data.sections.length && sectionIndexToIds[targetSectionIdx]) {
+      // Use existing targetSectionIdx
+    } else if (q.section_id) {
       const matchedIdx = data.sections.findIndex((s) => s.id === q.section_id)
       if (matchedIdx !== -1) targetSectionIdx = matchedIdx
-    }
-
-    if (targetSectionIdx < 0 || !sectionIndexToIds[targetSectionIdx]) {
-      if (data.sections.length === 3) {
-        targetSectionIdx = qNum <= 13 ? 0 : qNum <= 26 ? 1 : 2
-      } else if (data.sections.length === 4) {
+    } else {
+      // Fallback heuristics only when section_index is missing
+      if (data.sections.length === 4 && qNum >= 1 && qNum <= 40) {
         targetSectionIdx = qNum <= 10 ? 0 : qNum <= 20 ? 1 : qNum <= 30 ? 2 : 3
+      } else if (data.sections.length === 3 && qNum >= 1 && qNum <= 40) {
+        targetSectionIdx = qNum <= 13 ? 0 : qNum <= 26 ? 1 : 2
       } else {
         targetSectionIdx = 0
       }
     }
 
     const secMapping = sectionIndexToIds[targetSectionIdx] || Object.values(sectionIndexToIds)[0]
-
     if (!secMapping) continue
 
-    const qTypeId = qTypeMap[q.question_type] || defaultTypeId
+    const normalizedSlug = TYPE_SLUG_ALIASES[q.question_type] || q.question_type
+    // Find valid UUID or null; avoid non-existent foreign keys
+    const qTypeId = qTypeMap[normalizedSlug] || qTypeMap[q.question_type] || (qTypes && qTypes.length > 0 ? qTypes[0].id : null)
+
+    const qDiff = ['easy', 'medium', 'hard'].includes(String(q.difficulty).toLowerCase())
+      ? String(q.difficulty).toLowerCase()
+      : safeDifficulty
 
     const { data: insertedQ, error: qErr } = await supabase
       .from('questions')
@@ -858,38 +888,70 @@ export async function saveFullTestStructure(data: {
         section_id: secMapping.sectionId,
         group_id: secMapping.groupId || null,
         question_type_id: qTypeId,
-        question_type: q.question_type,
-        question_number: q.question_number || qIdx + 1,
+        question_type: normalizedSlug || 'sentence_completion',
+        question_number: qNum,
         instruction: q.instruction || null,
-        question_text: q.question_text || `Question #${qIdx + 1}`,
+        question_text: q.question_text || `Question #${qNum}`,
         question_html: q.question_html || null,
         points: q.points || 1,
-        difficulty: q.difficulty || 'medium',
+        difficulty: qDiff,
         metadata: q.metadata || {},
         explanation: q.explanation || null,
         correct_answer: q.correct_answer || null,
-        accepted_answers: q.accepted_answers || [],
+        accepted_answers: Array.isArray(q.accepted_answers) ? q.accepted_answers : (q.correct_answer ? [q.correct_answer] : []),
         image_url: q.image_url || null,
         audio_url: q.audio_url || null,
-        status: data.test.status || 'draft',
+        status: safeStatus,
       })
       .select('id')
       .single()
 
     if (qErr || !insertedQ) {
-      console.error(`Failed to insert question ${q.question_number}:`, qErr)
+      console.error(`Failed to insert question ${qNum}:`, qErr)
       continue
     }
 
-    if (q.options && q.options.length > 0) {
-      const optionsRows = q.options.map((opt, oIdx) => ({
-        question_id: insertedQ.id,
-        option_key: opt.option_key || String.fromCharCode(65 + oIdx),
-        option_text: opt.option_text || '',
-        is_correct: !!opt.is_correct,
-        order_number: oIdx + 1,
-      }))
-      await supabase.from('question_options').insert(optionsRows)
+    savedQuestionsCount++
+
+    // Process question options (support both string[] and object[] format)
+    if (q.options && Array.isArray(q.options) && q.options.length > 0) {
+      const optionsRows = q.options.map((opt: any, oIdx: number) => {
+        let key = String.fromCharCode(65 + oIdx)
+        let text = ''
+        let isCorrect = false
+
+        if (typeof opt === 'string') {
+          const match = opt.match(/^([A-Za-z])[\.\)\:\s]+(.*)$/)
+          if (match) {
+            key = match[1].toUpperCase()
+            text = match[2].trim()
+          } else {
+            text = opt.trim()
+          }
+        } else if (typeof opt === 'object' && opt !== null) {
+          key = opt.option_key || opt.key || String.fromCharCode(65 + oIdx)
+          text = opt.option_text || opt.text || opt.value || ''
+          isCorrect = !!opt.is_correct
+        }
+
+        const normKey = String(key).trim().toUpperCase()
+        const normAns = String(q.correct_answer || '').trim().toUpperCase()
+        if (normAns && (normAns === normKey || normAns === text.toUpperCase())) {
+          isCorrect = true
+        }
+
+        return {
+          question_id: insertedQ.id,
+          option_key: key,
+          option_text: text,
+          is_correct: isCorrect,
+          order_number: oIdx + 1,
+        }
+      })
+
+      if (optionsRows.length > 0) {
+        await supabase.from('question_options').insert(optionsRows)
+      }
     }
   }
 

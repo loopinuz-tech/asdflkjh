@@ -135,6 +135,118 @@ export function TestBuilder({
   const [tagsInput, setTagsInput] = useState(initialTagsString)
   const [status, setStatus] = useState<'draft' | 'published'>(initialTest?.status || 'draft')
 
+  // HTML Import directly in Test Builder
+  const [showHtmlImportModal, setShowHtmlImportModal] = useState(false)
+  const [rawHtmlToImport, setRawHtmlToImport] = useState('')
+  const [isImportParsing, setIsImportParsing] = useState(false)
+  const [importMode, setImportMode] = useState<'append' | 'replace'>('append')
+  const [htmlImportFeedback, setHtmlImportFeedback] = useState<string | null>(null)
+
+  const handleImportHtml = () => {
+    if (!rawHtmlToImport.trim()) return
+    setIsImportParsing(true)
+    setHtmlImportFeedback(null)
+
+    try {
+      const parsed = parseIeltsHtml(rawHtmlToImport)
+      if (!parsed || !parsed.sections || parsed.sections.length === 0) {
+        throw new Error('No valid sections or questions found in HTML')
+      }
+
+      if (!title || title.trim() === 'New IELTS Test') {
+        if (parsed.title) setTitle(parsed.title)
+      }
+      if (parsed.skill && (parsed.skill === 'reading' || parsed.skill === 'listening')) {
+        setSkill(parsed.skill)
+      }
+
+      const importedSections = parsed.sections.map((s, idx) => ({
+        id: `imported-sec-${Date.now()}-${idx}`,
+        title: s.title || (parsed.skill === 'listening' ? `Section ${idx + 1}` : `Reading Passage ${idx + 1}`),
+        order_number: s.order_number || idx + 1,
+        instructions: s.instructions || '',
+        passage_html: s.passage_html || '',
+        audio_url: s.audio_url || '',
+        time_limit_minutes: s.time_limit_minutes || 20,
+      }))
+
+      if (importMode === 'replace') {
+        setSections(importedSections)
+        let qCount = 1
+        const newQuestions: any[] = []
+        parsed.sections.forEach((sec, sIdx) => {
+          sec.questions.forEach((q) => {
+            newQuestions.push({
+              id: `imported-q-${Date.now()}-${qCount}`,
+              section_id: importedSections[sIdx]?.id,
+              section_index: sIdx,
+              question_number: qCount++,
+              question_type: q.question_type || 'sentence_completion',
+              instruction: q.instruction || sec.instructions || '',
+              question_text: q.question_text || `Question #${qCount - 1}`,
+              options: q.options || [],
+              correct_answer: q.correct_answer || '',
+              accepted_answers: q.accepted_answers || (q.correct_answer ? [q.correct_answer] : []),
+              points: q.points || 1,
+              difficulty: q.difficulty || 'medium',
+              explanation: q.explanation || '',
+              metadata: {},
+            })
+          })
+        })
+        setQuestions(newQuestions)
+        setHtmlImportFeedback(`Successfully replaced test with ${importedSections.length} sections and ${newQuestions.length} questions!`)
+      } else {
+        // Append mode
+        const existingSecCount = sections.length
+        const mergedSections = [
+          ...sections,
+          ...importedSections.map((s, idx) => ({
+            ...s,
+            order_number: existingSecCount + idx + 1,
+          })),
+        ]
+        setSections(mergedSections)
+
+        let startNum = questions.length + 1
+        const appendedQuestions: any[] = []
+        parsed.sections.forEach((sec, sIdx) => {
+          sec.questions.forEach((q) => {
+            const mappedSectionIdx = existingSecCount + sIdx
+            appendedQuestions.push({
+              id: `imported-q-${Date.now()}-${startNum}`,
+              section_id: mergedSections[mappedSectionIdx]?.id,
+              section_index: mappedSectionIdx,
+              question_number: startNum++,
+              question_type: q.question_type || 'sentence_completion',
+              instruction: q.instruction || sec.instructions || '',
+              question_text: q.question_text || `Question #${startNum - 1}`,
+              options: q.options || [],
+              correct_answer: q.correct_answer || '',
+              accepted_answers: q.accepted_answers || (q.correct_answer ? [q.correct_answer] : []),
+              points: q.points || 1,
+              difficulty: q.difficulty || 'medium',
+              explanation: q.explanation || '',
+              metadata: {},
+            })
+          })
+        })
+        setQuestions([...questions, ...appendedQuestions])
+        setHtmlImportFeedback(`Successfully added ${importedSections.length} sections and ${appendedQuestions.length} questions!`)
+      }
+
+      setTimeout(() => {
+        setShowHtmlImportModal(false)
+        setRawHtmlToImport('')
+        setHtmlImportFeedback(null)
+      }, 1400)
+    } catch (err: any) {
+      setHtmlImportFeedback(`Import error: ${err.message}`)
+    } finally {
+      setIsImportParsing(false)
+    }
+  }
+
   const handlePracticePartChange = (newPart: 'full' | 'part_1' | 'part_2' | 'part_3' | 'part_4') => {
     setPracticePart(newPart)
 
@@ -1449,6 +1561,16 @@ export function TestBuilder({
               <span>Preview</span>
             </Link>
           )}
+
+          <button
+            type="button"
+            onClick={() => setShowHtmlImportModal(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 border border-primary/25 hover:bg-primary/20 text-primary text-xs font-bold fox-shadow-sm transition-all cursor-pointer"
+            title="Import questions from authentic IELTS HTML directly into this test"
+          >
+            <FileCode className="w-3.5 h-3.5" />
+            <span>Import HTML</span>
+          </button>
 
           <button
             type="button"
@@ -3329,6 +3451,135 @@ export function TestBuilder({
                   Return to Tests List
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HTML Import Modal */}
+      {showHtmlImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in-50">
+          <div className="bg-card border border-border rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
+              <div className="flex items-center gap-2">
+                <FileCode className="w-5 h-5 text-primary" />
+                <h3 className="text-base font-bold text-foreground">Import Questions from HTML</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowHtmlImportModal(false)}
+                className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Paste authentic IELTS HTML markup (or upload an .html file) to automatically extract reading passages, question prompts, options, and answer keys directly into this test.
+            </p>
+
+            {/* Mode selection: Append vs Replace */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-foreground">Mode:</span>
+              <button
+                type="button"
+                onClick={() => setImportMode('append')}
+                className={cn(
+                  'px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                  importMode === 'append'
+                    ? 'bg-primary text-primary-foreground shadow-xs'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Append Questions (+{sections.length > 0 ? `After Section ${sections.length}` : 'New'})
+              </button>
+              <button
+                type="button"
+                onClick={() => setImportMode('replace')}
+                className={cn(
+                  'px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                  importMode === 'replace'
+                    ? 'bg-destructive text-destructive-foreground shadow-xs'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Replace All Existing
+              </button>
+            </div>
+
+            {/* Upload or Paste */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-foreground">Raw HTML Source</label>
+                <label className="text-xs font-semibold text-primary hover:underline cursor-pointer flex items-center gap-1">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload .html</span>
+                  <input
+                    type="file"
+                    accept=".html,.htm"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = (evt) => {
+                          setRawHtmlToImport((evt.target?.result as string) || '')
+                        }
+                        reader.readAsText(file)
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+
+              <textarea
+                value={rawHtmlToImport}
+                onChange={(e) => setRawHtmlToImport(e.target.value)}
+                placeholder="Paste authentic IELTS HTML here..."
+                rows={10}
+                className="w-full p-3 font-mono text-xs rounded-xl border border-border bg-background text-foreground outline-hidden focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {htmlImportFeedback && (
+              <div
+                className={cn(
+                  'p-3 rounded-xl text-xs font-semibold',
+                  htmlImportFeedback.startsWith('Import error')
+                    ? 'bg-destructive/10 text-destructive border border-destructive/20'
+                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                )}
+              >
+                {htmlImportFeedback}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-border">
+              <button
+                type="button"
+                onClick={() => setShowHtmlImportModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-foreground hover:bg-secondary cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleImportHtml}
+                disabled={!rawHtmlToImport.trim() || isImportParsing}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 cursor-pointer disabled:opacity-50 flex items-center gap-2"
+              >
+                {isImportParsing ? (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 animate-spin" />
+                    <span>Parsing & Importing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Extract & Load into Test</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

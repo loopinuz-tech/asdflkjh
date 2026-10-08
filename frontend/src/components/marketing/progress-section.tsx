@@ -62,15 +62,15 @@ export function ProgressSection() {
               {/* Stats Row */}
               <div className="mt-5 sm:mt-6 pt-3.5 sm:pt-4 border-t border-border grid grid-cols-3 gap-2 sm:gap-4">
                 <div className="text-center">
-                  <div className="text-base sm:text-lg font-bold">12</div>
+                  <div className="text-base sm:text-lg font-semibold">12</div>
                   <div className="text-[11px] sm:text-xs text-muted-foreground">Tests</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-base sm:text-lg font-bold">🔥 5</div>
+                  <div className="text-base sm:text-lg font-semibold">🔥 5</div>
                   <div className="text-[11px] sm:text-xs text-muted-foreground">Streak</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-base sm:text-lg font-bold">142</div>
+                  <div className="text-base sm:text-lg font-semibold">142</div>
                   <div className="text-[11px] sm:text-xs text-muted-foreground">Words</div>
                 </div>
               </div>

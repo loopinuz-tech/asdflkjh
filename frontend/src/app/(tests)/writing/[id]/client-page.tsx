@@ -572,15 +572,15 @@ export function WritingClientPage({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Official IELTS Writing Diagnostic Report
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground mt-1 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-semibold text-foreground mt-1 tracking-tight">
                 {prompt.title}
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {isTask1 ? 'Academic Task 1 (Report/Graph)' : 'Academic Task 2 (Discursive Essay)'} • Word count: <strong className="text-foreground">{evaluation.wordCount}</strong> words
+                {isTask1 ? 'Academic Task 1 (Report/Graph)' : 'Academic Task 2 (Discursive Essay)'} • Word count: <strong className="text-foreground font-semibold">{evaluation.wordCount}</strong> words
               </p>
             </div>
 
@@ -590,7 +590,7 @@ export function WritingClientPage({
                 className={buttonVariants({
                   variant: 'outline',
                   size: 'sm',
-                  className: 'text-xs font-semibold'
+                  className: 'text-xs font-medium'
                 })}
               >
                 <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
@@ -598,13 +598,10 @@ export function WritingClientPage({
               </Link>
               <Link
                 to="/dashboard"
-                className={buttonVariants({
-                  size: 'sm',
-                  className: 'bg-primary hover:bg-primary/90 text-black font-bold text-xs shadow-xs'
-                })}
+                className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-[#0c485e] hover:bg-[#083546] text-white text-xs font-semibold shadow-xs transition-colors"
               >
                 Dashboard
-                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Link>
             </div>
           </div>
@@ -616,13 +613,13 @@ export function WritingClientPage({
               <div className="bg-card border border-border rounded-xl p-5 space-y-4 shadow-xs">
                 {/* Overall Band Score */}
                 <div className="text-center pt-1 pb-1">
-                  <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                  <h2 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100">
                     Overall Band Score
                   </h2>
-                  <div className="text-6xl font-black text-emerald-600 dark:text-emerald-500 tracking-tight my-1">
+                  <div className="text-5xl sm:text-6xl font-bold text-emerald-600 dark:text-emerald-500 tracking-tight my-1">
                     {evaluation.overallBand.toFixed(1)}
                   </div>
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
                     (+/- 0.5)
                   </div>
                 </div>
@@ -631,7 +628,7 @@ export function WritingClientPage({
                 <button
                   type="button"
                   onClick={() => exportResultToWord(prompt.title, prompt.task_type, evaluation, content)}
-                  className="w-full py-2.5 px-4 bg-[#0c5da5] hover:bg-[#09477e] text-white font-bold rounded-lg text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                  className="w-full py-2.5 px-4 bg-[#0c5da5] hover:bg-[#09477e] text-white font-semibold rounded-lg text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
                   <FileDown className="w-4 h-4" />
                   <span>Export Result to Word</span>
@@ -639,10 +636,10 @@ export function WritingClientPage({
 
                 {/* Vocabulary Complexity Card */}
                 <div className="bg-[#fef9c3] border border-[#fef08a] dark:bg-amber-950/40 dark:border-amber-900/50 p-3.5 rounded-lg text-center space-y-1">
-                  <div className="text-xs font-bold text-slate-800 dark:text-amber-200">
+                  <div className="text-xs font-medium text-slate-800 dark:text-amber-200">
                     Vocabulary Complexity:
                   </div>
-                  <div className="text-sm font-black text-slate-900 dark:text-amber-100">
+                  <div className="text-sm font-bold text-slate-900 dark:text-amber-100">
                     {vocabComplexity.level}
                   </div>
                   <p className="text-[11px] text-slate-700 dark:text-amber-300/80 leading-snug">
@@ -652,14 +649,14 @@ export function WritingClientPage({
 
                 {/* Grammar Mistakes Card */}
                 <div className="bg-[#ffe4e6] border border-[#fecdd3] dark:bg-rose-950/40 dark:border-rose-900/50 py-2.5 px-3 rounded-lg text-center">
-                  <span className="text-xs font-bold text-rose-900 dark:text-rose-200">
-                    Grammar Mistakes: <strong className="font-extrabold text-sm ml-1">{grammarMistakesCount}</strong>
+                  <span className="text-xs font-medium text-rose-900 dark:text-rose-200">
+                    Grammar Mistakes: <strong className="font-semibold text-sm ml-1">{grammarMistakesCount}</strong>
                   </span>
                 </div>
 
                 {/* Vocabulary Repetition Card */}
                 <div className="bg-[#e0e7ff] border border-[#c7d2fe] dark:bg-indigo-950/40 dark:border-indigo-900/50 p-3.5 rounded-lg space-y-2.5">
-                  <div className="text-xs font-bold text-center text-slate-800 dark:text-indigo-200">
+                  <div className="text-xs font-semibold text-center text-slate-800 dark:text-indigo-200">
                     Vocabulary Repetition:
                   </div>
                   {repeatedWords.length > 0 ? (
@@ -667,7 +664,7 @@ export function WritingClientPage({
                       {repeatedWords.map((item) => (
                         <div
                           key={item.word}
-                          className="bg-white dark:bg-slate-900 py-1.5 px-3 rounded-md text-xs font-bold text-center text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 shadow-2xs"
+                          className="bg-white dark:bg-slate-900 py-1.5 px-3 rounded-md text-xs font-medium text-center text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 shadow-2xs"
                         >
                           {item.word}: {item.count}
                         </div>
@@ -678,7 +675,7 @@ export function WritingClientPage({
                       No repetitive words detected.
                     </div>
                   )}
-                  <p className="text-[10px] text-center text-slate-600 dark:text-indigo-300/80 font-medium">
+                  <p className="text-[10px] text-center text-slate-600 dark:text-indigo-300/80 font-normal">
                     Try using synonyms for the above words
                   </p>
                 </div>
@@ -687,14 +684,14 @@ export function WritingClientPage({
 
             {/* Right Column (Criteria Breakdown with scores & detailed paragraphs) */}
             <div className="lg:col-span-8 xl:col-span-8.5 space-y-5 lg:max-h-[calc(100vh-125px)] lg:overflow-y-auto custom-scrollbar pr-2 lg:pr-3">
-              {/* Criterion Breakdown Card matching Screenshot 3 */}
+              {/* Criterion Breakdown Card */}
               <div className="bg-card border border-border rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
                 {/* 1. Task Response / Achievement */}
                 <div className="text-center sm:text-left space-y-2">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100">
                     {isTask1 ? 'Task Achievement' : 'Task Response'}
                   </h3>
-                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-500">
+                  <div className="text-3xl sm:text-4xl font-bold text-emerald-600 dark:text-emerald-500">
                     {evaluation.ta.toFixed(1)}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-left pt-1">
@@ -706,10 +703,10 @@ export function WritingClientPage({
 
                 {/* 2. Coherence & Cohesion */}
                 <div className="text-center sm:text-left space-y-2">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100">
                     Coherence & Cohesion
                   </h3>
-                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-500">
+                  <div className="text-3xl sm:text-4xl font-bold text-emerald-600 dark:text-emerald-500">
                     {evaluation.cc.toFixed(1)}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-left pt-1">
@@ -721,10 +718,10 @@ export function WritingClientPage({
 
                 {/* 3. Lexical Resource */}
                 <div className="text-center sm:text-left space-y-2">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100">
                     Lexical Resource
                   </h3>
-                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-500">
+                  <div className="text-3xl sm:text-4xl font-bold text-emerald-600 dark:text-emerald-500">
                     {evaluation.lr.toFixed(1)}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-left pt-1">
@@ -736,10 +733,10 @@ export function WritingClientPage({
 
                 {/* 4. Grammatical Range & Accuracy */}
                 <div className="text-center sm:text-left space-y-2">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100">
                     Grammatical Range & Accuracy
                   </h3>
-                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-500">
+                  <div className="text-3xl sm:text-4xl font-bold text-emerald-600 dark:text-emerald-500">
                     {evaluation.gra.toFixed(1)}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-left pt-1">
@@ -753,7 +750,7 @@ export function WritingClientPage({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {evaluation.strengths && evaluation.strengths.length > 0 && (
                     <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-2">
-                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-xs uppercase tracking-wider">
                         <CheckCircle2 className="w-4 h-4" />
                         <span>Key Strengths</span>
                       </div>
@@ -770,7 +767,7 @@ export function WritingClientPage({
 
                   {evaluation.improvements && evaluation.improvements.length > 0 && (
                     <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-2">
-                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-semibold text-xs uppercase tracking-wider">
                         <AlertTriangle className="w-4 h-4" />
                         <span>Areas for Improvement</span>
                       </div>
@@ -792,19 +789,19 @@ export function WritingClientPage({
                 <div className="bg-card border border-border rounded-xl p-5 space-y-3 shadow-xs">
                   <div className="flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-primary" />
-                    <h3 className="text-sm font-bold text-foreground">Examiner Sentence Corrections</h3>
+                    <h3 className="text-sm font-semibold text-foreground">Examiner Sentence Corrections</h3>
                   </div>
                   <div className="space-y-2.5">
                     {evaluation.corrections.map((corr, idx) => (
                       <div key={idx} className="p-3 rounded-lg border border-border bg-secondary/20 space-y-1.5 text-xs">
                         <div className="space-y-1">
                           <div className="flex items-start gap-2 text-rose-600 dark:text-rose-400">
-                            <span className="font-bold shrink-0">Student original:</span>
+                            <span className="font-semibold shrink-0">Student original:</span>
                             <span className="line-through opacity-90">{corr.original}</span>
                           </div>
                           <div className="flex items-start gap-2 text-emerald-600 dark:text-emerald-400">
-                            <span className="font-bold shrink-0">Corrected version:</span>
-                            <span className="font-semibold">{corr.corrected}</span>
+                            <span className="font-semibold shrink-0">Corrected version:</span>
+                            <span className="font-medium">{corr.corrected}</span>
                           </div>
                         </div>
                         {corr.explanation && (
@@ -822,17 +819,17 @@ export function WritingClientPage({
               {evaluation.vocabularySuggestions && evaluation.vocabularySuggestions.length > 0 && (
                 <div className="bg-card border border-border rounded-xl p-5 space-y-3 shadow-xs">
                   <div className="flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4 text-amber-500" />
-                    <h3 className="text-sm font-bold text-foreground">Band 8+ Academic Vocabulary Upgrades</h3>
+                    <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <h3 className="text-sm font-semibold text-foreground">Band 8+ Academic Vocabulary Upgrades</h3>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {evaluation.vocabularySuggestions.map((voc, idx) => (
-                      <div key={idx} className="p-3 rounded-lg border border-border bg-secondary/20 space-y-1 text-xs">
+                      <div key={idx} className="p-3 rounded-lg border border-amber-200/60 dark:border-amber-800/40 bg-amber-50/50 dark:bg-amber-950/20 space-y-1 text-xs">
                         <div className="flex items-center justify-between">
                           <span className="text-muted-foreground line-through">{voc.original}</span>
-                          <span className="text-primary font-bold">➔ {voc.suggested}</span>
+                          <span className="text-amber-700 dark:text-amber-300 font-bold">➔ {voc.suggested}</span>
                         </div>
-                        {voc.reason && <p className="text-[11px] text-muted-foreground">{voc.reason}</p>}
+                        {voc.reason && <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">{voc.reason}</p>}
                       </div>
                     ))}
                   </div>
@@ -844,7 +841,7 @@ export function WritingClientPage({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-muted-foreground" />
-                    <h3 className="text-sm font-bold text-foreground">
+                    <h3 className="text-sm font-semibold text-foreground">
                       Your Submitted Essay ({evaluation.wordCount} words)
                     </h3>
                   </div>

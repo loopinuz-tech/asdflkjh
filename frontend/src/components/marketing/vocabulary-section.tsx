@@ -92,7 +92,7 @@ export function VocabularySection() {
                   </span>
                   <span className="text-xs text-muted-foreground">Medium</span>
                 </div>
-                <h4 className="text-xl font-bold mb-1">sustainable</h4>
+                <h4 className="text-xl font-semibold mb-1">sustainable</h4>
                 <p className="text-xs text-muted-foreground italic mb-3">/səˈsteɪnəbl/ — adjective</p>
                 <p className="text-sm text-foreground mb-3">
                   Able to be maintained at a certain rate or level without depleting natural resources.

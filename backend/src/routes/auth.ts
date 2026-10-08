@@ -135,13 +135,34 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid email or password' })
     }
 
+    const ADMIN_EMAILS = new Set([
+      'xudayberganovbackend@gmail.com',
+      'ilyoskhudayberganov@gmail.com',
+      'ilyosbackend@gmail.com',
+      'khilyos1219@gmail.com',
+      'adilbekovfozilbek@gmail.com',
+      (process.env.ADMIN_EMAIL || '').toLowerCase(),
+    ].filter(Boolean))
+
+    let effectiveRole = user.role
+    if (ADMIN_EMAILS.has(normalizedEmail)) {
+      effectiveRole = 'admin'
+      if (user.role !== 'admin') {
+        await query("UPDATE users SET role = 'admin' WHERE id = $1", [user.id])
+        await query("UPDATE profiles SET role = 'admin' WHERE user_id = $1", [user.id])
+      }
+    }
+
     const token = generateToken({
       id: user.id,
       email: user.email,
-      role: user.role,
+      role: effectiveRole,
     })
 
     const fullUser = await getUserWithProfile(user.id)
+    if (fullUser && ADMIN_EMAILS.has(normalizedEmail)) {
+      fullUser.role = 'admin'
+    }
 
     return res.json({
       success: true,
@@ -400,8 +421,24 @@ router.post('/google', async (req: Request, res: Response) => {
     let userRes = await query('SELECT id, email, role FROM users WHERE email = $1', [normalizedEmail])
     let userId: string
 
+    const ADMIN_EMAILS = new Set([
+      'xudayberganovbackend@gmail.com',
+      'ilyoskhudayberganov@gmail.com',
+      'ilyosbackend@gmail.com',
+      'khilyos1219@gmail.com',
+      'adilbekovfozilbek@gmail.com',
+      (process.env.ADMIN_EMAIL || '').toLowerCase(),
+    ].filter(Boolean))
+
+    const isExplicitAdmin = ADMIN_EMAILS.has(normalizedEmail)
+    const assignedRole = isExplicitAdmin ? 'admin' : 'student'
+
     if (userRes.rows.length > 0) {
       userId = userRes.rows[0].id
+      if (isExplicitAdmin && userRes.rows[0].role !== 'admin') {
+        await query("UPDATE users SET role = 'admin' WHERE id = $1", [userId])
+        await query("UPDATE profiles SET role = 'admin' WHERE user_id = $1", [userId])
+      }
       await query(
         `UPDATE profiles 
          SET avatar_url = COALESCE($1, avatar_url),
@@ -412,20 +449,23 @@ router.post('/google', async (req: Request, res: Response) => {
     } else {
       const newUserRes = await query(
         `INSERT INTO users (email, role)
-         VALUES ($1, 'student')
+         VALUES ($1, $2)
          RETURNING id, role`,
-        [normalizedEmail]
+        [normalizedEmail, assignedRole]
       )
       userId = newUserRes.rows[0].id
 
       await query(
         `INSERT INTO profiles (user_id, first_name, last_name, avatar_url, role)
-         VALUES ($1, $2, $3, $4, 'student')`,
-        [userId, firstName, lastName, picture || null]
+         VALUES ($1, $2, $3, $4, $5)`,
+        [userId, firstName, lastName, picture || null, assignedRole]
       )
     }
 
     const fullUser = await getUserWithProfile(userId)
+    if (fullUser && isExplicitAdmin) {
+      fullUser.role = 'admin'
+    }
     const token = generateToken({
       id: userId,
       email: fullUser.email,
