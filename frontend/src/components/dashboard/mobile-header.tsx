@@ -219,18 +219,27 @@ export function DashboardMobileHeader() {
             onClick={() => setDrawerOpen(false)}
           />
 
-          {/* Drawer content (Left side slide-in) */}
-          <div className="relative w-full max-w-[290px] xs:max-w-xs bg-card border-r border-border h-[100dvh] shadow-2xl flex flex-col justify-between p-4 z-10 animate-in slide-in-from-left duration-200">
+          {/* Drawer content (Left side slide-in matching desktop sidebar theme) */}
+          <div className="relative w-full max-w-[290px] xs:max-w-xs bg-[#0c485e] dark:bg-[#072936] text-white border-r border-white/10 h-[100dvh] shadow-2xl flex flex-col justify-between p-4 z-10 animate-in slide-in-from-left duration-200">
             <div className="space-y-4 overflow-y-auto flex-1 custom-scrollbar pr-1 pb-4">
-              {/* Drawer Header with Close Button */}
-              <div className="flex items-center justify-between pb-3 border-b border-border">
-                <div className="flex items-center gap-2">
-                  <FoxLogo size="sm" showText showSubtext={false} />
-                </div>
+              {/* Drawer Header with Brand Logo & Close Button */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setDrawerOpen(false)}
+                  className="flex items-center gap-2"
+                >
+                  <div className="w-7 h-7 rounded-full bg-white border border-white/40 flex items-center justify-center p-1 shadow-xs shrink-0">
+                    <img src="/favicon.ico" alt="EduFox" className="w-full h-full object-contain" />
+                  </div>
+                  <span className="font-semibold text-lg tracking-tight text-white flex items-center">
+                    Edu<span className="text-amber-400 font-bold">Fox</span>
+                  </span>
+                </Link>
                 <button
                   type="button"
                   onClick={() => setDrawerOpen(false)}
-                  className="w-8 h-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer"
+                  className="w-8 h-8 rounded-xl border border-white/15 bg-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
                   aria-label="Close Menu"
                 >
                   <CloseCircleIcon className="w-5 h-5" size={20} />
@@ -238,22 +247,22 @@ export function DashboardMobileHeader() {
               </div>
 
               {/* User Identity Card */}
-              <div className="p-3.5 rounded-2xl bg-secondary/40 border border-border space-y-2">
+              <div className="p-3.5 rounded-2xl bg-[#083546]/80 dark:bg-[#051e28]/90 border border-white/10 space-y-2">
                 <div className="flex items-center gap-3">
                   {profile?.avatarUrl ? (
                     <img
                       src={profile.avatarUrl}
                       alt={profile.name}
-                      className="w-10 h-10 rounded-full object-cover border border-border shrink-0"
+                      className="w-10 h-10 rounded-full object-cover border border-white/20 shrink-0"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-primary/20 text-foreground font-semibold text-sm flex items-center justify-center shrink-0 border border-primary/30">
+                    <div className="w-10 h-10 rounded-full bg-white/20 text-white font-semibold text-sm flex items-center justify-center shrink-0 border border-white/30">
                       {profile?.name ? profile.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-foreground text-sm truncate">{profile?.name || 'Student'}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">{profile?.email}</p>
+                    <p className="font-semibold text-white text-sm truncate">{profile?.name || 'Student'}</p>
+                    <p className="text-[11px] text-[#a5cee0] truncate">{profile?.email}</p>
                   </div>
                 </div>
 
@@ -262,21 +271,21 @@ export function DashboardMobileHeader() {
                     className={cn(
                       'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider',
                       isAdmin
-                        ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30'
-                        : 'bg-secondary text-muted-foreground border border-border'
+                        ? 'bg-blue-400/20 text-blue-200 border border-blue-400/30'
+                        : 'bg-white/15 text-white/90 border border-white/10'
                     )}
                   >
-                    {isAdmin && <ShieldCheckIcon className="w-3 h-3" size={12} />}
+                    {isAdmin && <ShieldCheckIcon className="w-3 h-3 text-blue-200" size={12} />}
                     <span>{profile?.role === 'admin' ? 'Administrator' : 'Student'}</span>
                   </span>
 
                   {profile?.isPremium ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                      <CrownStarIcon className="w-3 h-3" size={12} />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                      <CrownStarIcon className="w-3 h-3 text-amber-300" size={12} />
                       <span>PRO</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-secondary text-muted-foreground border border-border">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/10 text-white/70 border border-white/10">
                       Free Tier
                     </span>
                   )}
@@ -288,13 +297,13 @@ export function DashboardMobileHeader() {
                 <Link
                   to="/admin"
                   onClick={() => setDrawerOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-foreground text-background shadow-xs font-semibold text-xs active:scale-98 transition-all"
+                  className="flex items-center justify-between p-3 rounded-2xl bg-[#083546]/90 hover:bg-white/15 text-white shadow-xs font-semibold text-xs border border-white/15 active:scale-98 transition-all"
                 >
                   <div className="flex items-center gap-2">
-                    <ShieldCheckIcon className="w-4 h-4 text-primary" size={16} />
+                    <ShieldCheckIcon className="w-4 h-4 text-amber-300" size={16} />
                     <span>Open Admin Panel</span>
                   </div>
-                  <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-background/20 font-mono">
+                  <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-black/25 text-amber-300 border border-amber-400/30 font-mono">
                     PRO
                   </span>
                 </Link>
@@ -319,7 +328,7 @@ export function DashboardMobileHeader() {
 
               {/* LEARN & PRACTICE Section */}
               <div className="space-y-1 pt-1">
-                <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <p className="px-3 text-[10px] font-bold text-[#7faebd] uppercase tracking-wider mb-2">
                   LEARN & PRACTICE
                 </p>
 
@@ -330,16 +339,22 @@ export function DashboardMobileHeader() {
                   className={cn(
                     'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
                     location.pathname === '/dashboard'
-                      ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
-                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                      ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                      : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <Widget2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                    <Widget2Icon
+                      className={cn(
+                        'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                        location.pathname === '/dashboard' ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                      )}
+                      size={16}
+                    />
                     <span>Dashboard</span>
                   </div>
                   {location.pathname === '/dashboard' && (
-                    <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />
+                    <span className="w-1.5 h-4 bg-amber-400 rounded-full shrink-0" />
                   )}
                 </Link>
 
@@ -351,40 +366,52 @@ export function DashboardMobileHeader() {
                     className={cn(
                       'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
                       location.pathname.startsWith('/reading')
-                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
-                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                        : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <BookBookmarkIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <BookBookmarkIcon
+                        className={cn(
+                          'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                          location.pathname.startsWith('/reading') ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                        )}
+                        size={16}
+                      />
                       <span>Reading</span>
                     </div>
                     <ChevronDown
                       className={cn(
-                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
-                        readingOpen ? 'rotate-180 text-primary' : ''
+                        'w-4 h-4 text-white/60 transition-transform duration-200 shrink-0',
+                        readingOpen ? 'rotate-180 text-amber-300' : ''
                       )}
                     />
                   </button>
 
                   {readingOpen && (
-                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                    <div className="pl-3 border-l-2 border-white/20 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
                       <Link
                         to="/reading"
                         onClick={() => setDrawerOpen(false)}
                         className={cn(
                           'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
                           location.pathname === '/reading'
-                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
-                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                            ? 'bg-white/15 text-white font-semibold border border-white/10'
+                            : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                         )}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <BookBookmarkIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <BookBookmarkIcon
+                            className={cn(
+                              'w-3.5 h-3.5 shrink-0',
+                              location.pathname === '/reading' ? 'text-amber-300' : 'text-[#9ec3d5]'
+                            )}
+                            size={14}
+                          />
                           <span className="truncate">IELTS Reading</span>
                         </div>
                         {location.pathname === '/reading' && (
-                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                          <span className="w-1 h-3.5 bg-amber-400 rounded-full shrink-0" />
                         )}
                       </Link>
 
@@ -394,12 +421,18 @@ export function DashboardMobileHeader() {
                         className={cn(
                           'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
                           location.pathname.startsWith('/reading/articles')
-                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
-                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                            ? 'bg-white/15 text-white font-semibold border border-white/10'
+                            : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                         )}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <DocumentTextIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <DocumentTextIcon
+                            className={cn(
+                              'w-3.5 h-3.5 shrink-0',
+                              location.pathname.startsWith('/reading/articles') ? 'text-amber-300' : 'text-[#9ec3d5]'
+                            )}
+                            size={14}
+                          />
                           <span className="truncate">Articles</span>
                         </div>
                         <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0">
@@ -418,52 +451,64 @@ export function DashboardMobileHeader() {
                     className={cn(
                       'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
                       location.pathname.startsWith('/listening')
-                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
-                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                        : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <HeadphonesRoundIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <HeadphonesRoundIcon
+                        className={cn(
+                          'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                          location.pathname.startsWith('/listening') ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                        )}
+                        size={16}
+                      />
                       <span>Listening</span>
                     </div>
                     <ChevronDown
                       className={cn(
-                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
-                        listeningOpen ? 'rotate-180 text-primary' : ''
+                        'w-4 h-4 text-white/60 transition-transform duration-200 shrink-0',
+                        listeningOpen ? 'rotate-180 text-amber-300' : ''
                       )}
                     />
                   </button>
 
                   {listeningOpen && (
-                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                    <div className="pl-3 border-l-2 border-white/20 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
                       <Link
                         to="/listening"
                         onClick={() => setDrawerOpen(false)}
                         className={cn(
                           'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
                           location.pathname === '/listening'
-                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
-                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                            ? 'bg-white/15 text-white font-semibold border border-white/10'
+                            : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                         )}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <HeadphonesRoundIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <HeadphonesRoundIcon
+                            className={cn(
+                              'w-3.5 h-3.5 shrink-0',
+                              location.pathname === '/listening' ? 'text-amber-300' : 'text-[#9ec3d5]'
+                            )}
+                            size={14}
+                          />
                           <span className="truncate">IELTS Listening</span>
                         </div>
                         {location.pathname === '/listening' && (
-                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                          <span className="w-1 h-3.5 bg-amber-400 rounded-full shrink-0" />
                         )}
                       </Link>
 
                       <div
                         title="Feature Coming Soon"
-                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground/60 select-none cursor-not-allowed opacity-75"
+                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-[#7faebd]/70 select-none cursor-not-allowed opacity-75"
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <NotesIcon className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" size={14} />
+                          <NotesIcon className="w-3.5 h-3.5 text-[#7faebd]/60 shrink-0" size={14} />
                           <span className="truncate">Script Writing</span>
                         </div>
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-secondary text-amber-500 border border-amber-500/30 font-mono shrink-0">
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-white/10 text-amber-300 border border-amber-400/30 font-mono shrink-0">
                           SOON
                         </span>
                       </div>
@@ -479,52 +524,64 @@ export function DashboardMobileHeader() {
                     className={cn(
                       'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
                       location.pathname.startsWith('/writing')
-                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
-                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                        : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <Pen2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <Pen2Icon
+                        className={cn(
+                          'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                          location.pathname.startsWith('/writing') ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                        )}
+                        size={16}
+                      />
                       <span>Writing</span>
                     </div>
                     <ChevronDown
                       className={cn(
-                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
-                        writingOpen ? 'rotate-180 text-primary' : ''
+                        'w-4 h-4 text-white/60 transition-transform duration-200 shrink-0',
+                        writingOpen ? 'rotate-180 text-amber-300' : ''
                       )}
                     />
                   </button>
 
                   {writingOpen && (
-                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                    <div className="pl-3 border-l-2 border-white/20 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
                       <Link
                         to="/writing"
                         onClick={() => setDrawerOpen(false)}
                         className={cn(
                           'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
                           location.pathname === '/writing'
-                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
-                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                            ? 'bg-white/15 text-white font-semibold border border-white/10'
+                            : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                         )}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <Pen2Icon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <Pen2Icon
+                            className={cn(
+                              'w-3.5 h-3.5 shrink-0',
+                              location.pathname === '/writing' ? 'text-amber-300' : 'text-[#9ec3d5]'
+                            )}
+                            size={14}
+                          />
                           <span className="truncate">IELTS Writing</span>
                         </div>
                         {location.pathname === '/writing' && (
-                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                          <span className="w-1 h-3.5 bg-amber-400 rounded-full shrink-0" />
                         )}
                       </Link>
 
                       <div
                         title="Feature Coming Soon"
-                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground/60 select-none cursor-not-allowed opacity-75"
+                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-[#7faebd]/70 select-none cursor-not-allowed opacity-75"
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <NotesIcon className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" size={14} />
+                          <NotesIcon className="w-3.5 h-3.5 text-[#7faebd]/60 shrink-0" size={14} />
                           <span className="truncate">Essay Ideas & Templates</span>
                         </div>
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-secondary text-amber-500 border border-amber-500/30 font-mono shrink-0">
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-white/10 text-amber-300 border border-amber-400/30 font-mono shrink-0">
                           SOON
                         </span>
                       </div>
@@ -540,40 +597,52 @@ export function DashboardMobileHeader() {
                     className={cn(
                       'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
                       location.pathname.startsWith('/speaking')
-                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
-                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                        : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <Microphone2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <Microphone2Icon
+                        className={cn(
+                          'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                          location.pathname.startsWith('/speaking') ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                        )}
+                        size={16}
+                      />
                       <span>Speaking</span>
                     </div>
                     <ChevronDown
                       className={cn(
-                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
-                        speakingOpen ? 'rotate-180 text-primary' : ''
+                        'w-4 h-4 text-white/60 transition-transform duration-200 shrink-0',
+                        speakingOpen ? 'rotate-180 text-amber-300' : ''
                       )}
                     />
                   </button>
 
                   {speakingOpen && (
-                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                    <div className="pl-3 border-l-2 border-white/20 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
                       <Link
                         to="/speaking"
                         onClick={() => setDrawerOpen(false)}
                         className={cn(
                           'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
                           location.pathname === '/speaking'
-                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
-                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                            ? 'bg-white/15 text-white font-semibold border border-white/10'
+                            : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                         )}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <UserSpeakRoundedIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <UserSpeakRoundedIcon
+                            className={cn(
+                              'w-3.5 h-3.5 shrink-0',
+                              location.pathname === '/speaking' ? 'text-amber-300' : 'text-[#9ec3d5]'
+                            )}
+                            size={14}
+                          />
                           <span className="truncate">IELTS Speaking</span>
                         </div>
                         {location.pathname === '/speaking' && (
-                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                          <span className="w-1 h-3.5 bg-amber-400 rounded-full shrink-0" />
                         )}
                       </Link>
 
@@ -583,12 +652,18 @@ export function DashboardMobileHeader() {
                         className={cn(
                           'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
                           location.pathname.startsWith('/speaking/shadowing')
-                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
-                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                            ? 'bg-white/15 text-white font-semibold border border-white/10'
+                            : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                         )}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <ClapperboardPlayIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <ClapperboardPlayIcon
+                            className={cn(
+                              'w-3.5 h-3.5 shrink-0',
+                              location.pathname.startsWith('/speaking/shadowing') ? 'text-amber-300' : 'text-[#9ec3d5]'
+                            )}
+                            size={14}
+                          />
                           <span className="truncate">Movie Shadowing</span>
                         </div>
                         <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0">
@@ -606,23 +681,29 @@ export function DashboardMobileHeader() {
                   className={cn(
                     'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
                     location.pathname.startsWith('/vocabulary')
-                      ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
-                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                      ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                      : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <TranslationIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+                    <TranslationIcon
+                      className={cn(
+                        'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                        location.pathname.startsWith('/vocabulary') ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                      )}
+                      size={16}
+                    />
                     <span>Vocabulary</span>
                   </div>
                   {location.pathname.startsWith('/vocabulary') && (
-                    <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />
+                    <span className="w-1.5 h-4 bg-amber-400 rounded-full shrink-0" />
                   )}
                 </Link>
               </div>
 
               {/* YOUR PROGRESS Section */}
               <div className="space-y-1 pt-3">
-                <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <p className="px-3 text-[10px] font-bold text-[#7faebd] uppercase tracking-wider mb-2">
                   YOUR PROGRESS
                 </p>
 
@@ -642,15 +723,21 @@ export function DashboardMobileHeader() {
                       className={cn(
                         'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
                         isActive
-                          ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
-                          : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                          ? 'bg-white/15 text-white font-semibold border border-white/10 shadow-xs'
+                          : 'text-[#a5cee0] hover:bg-white/10 hover:text-white'
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                        <Icon
+                          className={cn(
+                            'w-4 h-4 shrink-0 transition-transform group-hover:scale-105',
+                            isActive ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                          )}
+                          size={16}
+                        />
                         <span>{item.name}</span>
                       </div>
-                      {isActive && <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />}
+                      {isActive && <span className="w-1.5 h-4 bg-amber-400 rounded-full shrink-0" />}
                     </Link>
                   )
                 })}
@@ -658,13 +745,13 @@ export function DashboardMobileHeader() {
             </div>
 
             {/* Drawer Footer */}
-            <div className="pt-3 border-t border-border space-y-2">
+            <div className="pt-3 border-t border-white/10 space-y-2">
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-semibold transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-red-500/15 text-red-200 hover:bg-red-500/25 border border-red-500/20 text-xs font-semibold transition-colors cursor-pointer"
               >
-                <Logout2Icon className="w-4 h-4" size={16} />
+                <Logout2Icon className="w-4 h-4 text-red-300" size={16} />
                 <span>Sign Out</span>
               </button>
             </div>
