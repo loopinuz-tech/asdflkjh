@@ -393,21 +393,27 @@
   }
 
   /* Reading Passage Highlights */
-  mark.passage-highlight {
+  mark.passage-highlight,
+  mark.article-highlight {
     color: inherit;
-    border-radius: 3px;
+    border-radius: 0;
     cursor: pointer;
-    padding: 1px 2px;
+    padding: 1px 0;
+    margin: 0;
     transition: all 0.15s ease;
     text-decoration: none;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
-  mark.passage-highlight:hover {
+  mark.passage-highlight:hover,
+  mark.article-highlight:hover {
     filter: brightness(0.93);
-    outline: 1.5px solid rgba(0, 0, 0, 0.25);
+    outline: 1px solid rgba(0, 0, 0, 0.25);
   }
-  .dark mark.passage-highlight:hover {
+  .dark mark.passage-highlight:hover,
+  .dark mark.article-highlight:hover {
     filter: brightness(1.15);
-    outline: 1.5px solid rgba(255, 255, 255, 0.35);
+    outline: 1px solid rgba(255, 255, 255, 0.35);
   }
   mark.passage-highlight-yellow {
     background-color: #fef08a !important;

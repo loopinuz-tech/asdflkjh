@@ -380,8 +380,9 @@ export function PassageView({ passage, isPremium }: { passage: ReadingPassage; i
       mark.className = `passage-highlight passage-highlight-${colorDef.id}`
       mark.style.backgroundColor = colorDef.hex
       mark.style.color = 'inherit'
-      mark.style.borderRadius = '3px'
-      mark.style.padding = '1px 2px'
+      mark.style.borderRadius = '0'
+      mark.style.padding = '1px 0'
+      mark.style.margin = '0'
       mark.style.cursor = 'pointer'
       mark.dataset.highlightId = highlightId
       mark.title = 'Click to remove highlight (or Ctrl+Z)'

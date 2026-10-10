@@ -13,7 +13,7 @@ import {
   FileDownloadIcon,
   NotesIcon,
 } from '@solar-icons/react/bold-duotone'
-import { Loader2, Highlighter, ExternalLink } from 'lucide-react'
+import { Loader2, Highlighter, ExternalLink, Eraser } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SEOHead } from '@/components/seo/SEOHead'
 import { createClient } from '@/lib/supabase/client'
@@ -89,7 +89,15 @@ export default function ArticleReaderPage() {
         const res = await fetch('/articles/articles.json')
         if (res.ok) {
           const list: AcademicArticle[] = await res.json()
-          const found = list.find((a) => a.id === id || String(a.pageNumber) === id)
+          const found = list.find((a) => {
+            if (a.id === id || String(a.pageNumber) === id) return true
+            if (id?.startsWith('article-')) {
+              const parts = id.split('-')
+              const pNum = Number(parts[1])
+              if (!isNaN(pNum) && a.pageNumber === pNum) return true
+            }
+            return false
+          })
           if (found) {
             setArticle(found)
           }
@@ -248,21 +256,85 @@ export default function ArticleReaderPage() {
     } catch {}
   }
 
-  // Apply yellow highlight
+  // Apply highlight with ZERO horizontal padding to prevent letter separation
   const applyHighlight = (color: string) => {
     const sel = window.getSelection()
-    if (!sel || sel.isCollapsed) return
+    const range = sel && !sel.isCollapsed && sel.rangeCount > 0 
+      ? sel.getRangeAt(0) 
+      : lastRangeRef.current
+
+    if (!range) {
+      setFloatingMenu(null)
+      return
+    }
+
     try {
-      const range = sel.getRangeAt(0)
       const mark = document.createElement('mark')
+      mark.className = 'article-highlight'
       mark.style.backgroundColor = color
-      mark.style.borderRadius = '3px'
-      mark.style.padding = '1px 3px'
       mark.style.color = 'inherit'
+      mark.style.borderRadius = '0'
+      mark.style.padding = '1px 0'
+      mark.style.margin = '0'
+      mark.style.display = 'inline'
+      mark.style.cursor = 'pointer'
+      mark.style.boxDecorationBreak = 'clone'
+      ;(mark.style as any).webkitBoxDecorationBreak = 'clone'
+      mark.title = 'Click to remove highlight'
+      mark.onclick = (e) => {
+        e.stopPropagation()
+        const currentSel = window.getSelection()
+        if (currentSel && !currentSel.isCollapsed) return
+        const parent = mark.parentNode
+        if (parent) {
+          while (mark.firstChild) {
+            parent.insertBefore(mark.firstChild, mark)
+          }
+          parent.removeChild(mark)
+          parent.normalize()
+        }
+      }
+
       mark.appendChild(range.extractContents())
       range.insertNode(mark)
-      sel.removeAllRanges()
-    } catch {}
+      sel?.removeAllRanges()
+    } catch (err) {
+      console.error('Highlight error:', err)
+    }
+    setFloatingMenu(null)
+  }
+
+  // Remove highlight from current selection
+  const removeHighlight = () => {
+    const root = contentRef.current
+    if (!root) {
+      setFloatingMenu(null)
+      return
+    }
+
+    const sel = window.getSelection()
+    const range = sel && !sel.isCollapsed && sel.rangeCount > 0
+      ? sel.getRangeAt(0)
+      : lastRangeRef.current
+
+    if (range) {
+      const marks = root.querySelectorAll('mark')
+      marks.forEach((mark) => {
+        try {
+          if (range.intersectsNode(mark)) {
+            const parent = mark.parentNode
+            if (parent) {
+              while (mark.firstChild) {
+                parent.insertBefore(mark.firstChild, mark)
+              }
+              parent.removeChild(mark)
+              parent.normalize()
+            }
+          }
+        } catch {}
+      })
+      sel?.removeAllRanges()
+    }
     setFloatingMenu(null)
   }
 
@@ -572,6 +644,15 @@ export default function ArticleReaderPage() {
             title="Pink Highlight"
           >
             <Highlighter className="w-3 h-3 text-slate-900" />
+          </button>
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={removeHighlight}
+            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 bg-muted hover:bg-muted/80 border border-border text-muted-foreground hover:text-foreground cursor-pointer"
+            title="Remove Highlight"
+          >
+            <Eraser className="w-3 h-3" />
           </button>
 
           <div className="w-[1px] h-4 bg-border mx-0.5" />
