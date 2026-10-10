@@ -13,7 +13,7 @@ import {
   FileDownloadIcon,
   NotesIcon,
 } from '@solar-icons/react/bold-duotone'
-import { Loader2, Highlighter, RotateCcw } from 'lucide-react'
+import { Loader2, Highlighter, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SEOHead } from '@/components/seo/SEOHead'
 import { createClient } from '@/lib/supabase/client'
@@ -36,6 +36,7 @@ export default function ArticleReaderPage() {
   const [loading, setLoading] = useState(true)
   const [isPremiumUser, setIsPremiumUser] = useState(false)
   const [fontSizeIdx, setFontSizeIdx] = useState(0)
+  const [showPlateModal, setShowPlateModal] = useState(false)
 
   // Floating selection menu
   const [floatingMenu, setFloatingMenu] = useState<{
@@ -55,9 +56,6 @@ export default function ArticleReaderPage() {
   const [isSavingVocab, setIsSavingVocab] = useState(false)
   const [vocabSaved, setVocabSaved] = useState(false)
   const [vocabSuccessMessage, setVocabSuccessMessage] = useState<string | null>(null)
-
-  // Active highlights
-  const [highlights, setHighlights] = useState<string[]>([])
 
   // Load user premium status
   useEffect(() => {
@@ -91,7 +89,7 @@ export default function ArticleReaderPage() {
         const res = await fetch('/articles/articles.json')
         if (res.ok) {
           const list: AcademicArticle[] = await res.json()
-          const found = list.find((a) => a.id === id)
+          const found = list.find((a) => a.id === id || String(a.pageNumber) === id)
           if (found) {
             setArticle(found)
           }
@@ -270,13 +268,13 @@ export default function ArticleReaderPage() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-4xl mx-auto space-y-6 animate-pulse py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 space-y-6 animate-pulse py-8">
         <div className="h-6 w-32 bg-muted/60 rounded-lg" />
         <div className="h-10 w-3/4 bg-muted/60 rounded-xl" />
         <div className="h-5 w-1/2 bg-muted/60 rounded-lg" />
         <div className="space-y-4 pt-6">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-24 bg-muted/60 rounded-xl" />
+            <div key={i} className="h-28 bg-muted/60 rounded-xl" />
           ))}
         </div>
       </div>
@@ -285,10 +283,10 @@ export default function ArticleReaderPage() {
 
   if (!article) {
     return (
-      <div className="w-full max-w-xl mx-auto text-center py-16 space-y-4">
+      <div className="w-full px-4 sm:px-6 lg:px-8 text-center py-16 space-y-4">
         <h2 className="text-xl font-semibold text-foreground">Article Not Found</h2>
         <p className="text-xs text-muted-foreground font-normal">
-          The requested academic article could not be located in the catalog.
+          The requested article could not be located in the catalog.
         </p>
         <Button onClick={() => navigate('/reading/articles')} variant="outline" className="text-xs cursor-pointer">
           <AltArrowLeftIcon className="w-4 h-4 mr-1.5" />
@@ -299,24 +297,35 @@ export default function ArticleReaderPage() {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 pb-24">
+    <div className="w-full px-4 sm:px-6 lg:px-8 space-y-6 pb-24">
       <SEOHead
-        title={`${article.title} | Academic Reading`}
+        title={`${article.title} | Cambridge Academic Reading`}
         description={article.summary}
       />
 
-      {/* 1. Top Navigation Bar */}
+      {/* 1. Top Navigation Bar — Full Width */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-b border-border/40 pb-4">
         <Link
           to="/reading/articles"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
         >
           <AltArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          <span>All Academic Articles</span>
+          <span>All 101 Academic Articles</span>
         </Link>
 
         {/* Reader controls */}
         <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+          {/* View Original Illustrated Plate Modal Trigger */}
+          <button
+            type="button"
+            onClick={() => setShowPlateModal(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/60 transition-all cursor-pointer"
+            title="View original illustrated PDF plate"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-primary" />
+            <span>View Original Plate</span>
+          </button>
+
           {/* Font Size controls */}
           <div className="flex items-center rounded-xl bg-secondary/80 border border-border/60 p-0.5 text-xs">
             <span className="px-2 text-[11px] font-medium text-muted-foreground">Text Size:</span>
@@ -352,9 +361,12 @@ export default function ArticleReaderPage() {
         </div>
       </div>
 
-      {/* 2. Article Header */}
+      {/* 2. Article Header with Metadata */}
       <div className="space-y-3 pt-2">
         <div className="flex items-center gap-2 flex-wrap text-xs">
+          <span className="font-semibold px-2.5 py-0.5 rounded-md bg-black/80 text-white font-mono text-[11px]">
+            Article #{article.pageNumber}
+          </span>
           <span className="font-medium px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
             {article.category}
           </span>
@@ -367,6 +379,8 @@ export default function ArticleReaderPage() {
           </span>
           <span className="text-muted-foreground">•</span>
           <span className="text-muted-foreground">{article.wordCount} words</span>
+          <span className="text-muted-foreground">•</span>
+          <span className="text-muted-foreground">Author: {article.author}</span>
         </div>
 
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-foreground leading-tight">
@@ -397,45 +411,68 @@ export default function ArticleReaderPage() {
         </div>
       </div>
 
-      {/* 3. Main Reading Content Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-4">
-        {/* Main Article Text */}
-        <div
-          ref={contentRef}
-          onMouseUp={handleMouseUp}
-          className="lg:col-span-8 bg-card border border-border/60 rounded-3xl p-6 sm:p-10 shadow-xs space-y-6 select-text"
-        >
-          {article.content.map((paragraph, idx) => (
-            <p
-              key={idx}
-              className={cn(
-                FONT_SIZES[fontSizeIdx].prose,
-                'text-slate-800 dark:text-slate-200 font-normal tracking-normal text-justify'
-              )}
-            >
-              {paragraph}
-            </p>
-          ))}
+      {/* 3. Main Reading Content Container — Full Width 2-Column Split */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
+        {/* Main Article Reading Panel (9 Cols on large displays) */}
+        <div className="lg:col-span-8 xl:col-span-9 space-y-6">
+          {/* Authentic Illustrated Cover Plate Banner */}
+          <div className="rounded-2xl overflow-hidden border border-border/60 bg-muted/30 relative group shadow-2xs">
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="w-full max-h-80 sm:max-h-96 object-cover object-top cursor-pointer group-hover:opacity-95 transition-opacity"
+              onClick={() => setShowPlateModal(true)}
+            />
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowPlateModal(true)}
+                className="px-3 py-1.5 rounded-xl bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-xs font-medium border border-white/20 transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Zoom Plate</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Formatted Reading Paragraphs */}
+          <div
+            ref={contentRef}
+            onMouseUp={handleMouseUp}
+            className="bg-card border border-border/60 rounded-3xl p-6 sm:p-10 shadow-xs space-y-6 select-text"
+          >
+            {article.content.map((paragraph, idx) => (
+              <p
+                key={idx}
+                className={cn(
+                  FONT_SIZES[fontSizeIdx].prose,
+                  'text-slate-800 dark:text-slate-200 font-normal tracking-normal text-justify'
+                )}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
         </div>
 
-        {/* Key Vocabulary Sidebar */}
-        <div className="lg:col-span-4 space-y-4">
+        {/* Key Vocabulary Sidebar (3 Cols on large displays) */}
+        <div className="lg:col-span-4 xl:col-span-3 space-y-4">
           <div className="p-5 rounded-2xl bg-card border border-border/60 shadow-xs space-y-3 sticky top-20">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                 <NotesIcon className="w-4 h-4 text-primary" />
-                <span>Featured Academic Terms</span>
+                <span>Academic Vocabulary</span>
               </h3>
-              <span className="text-[11px] font-semibold text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
-                {article.keyVocabulary?.length || 0} words
+              <span className="text-[11px] font-semibold text-muted-foreground bg-secondary px-2 py-0.5 rounded-full font-mono">
+                {article.keyVocabulary?.length || 0} terms
               </span>
             </div>
 
             <p className="text-xs text-muted-foreground font-normal leading-relaxed">
-              Click any term to view its phonetic pronunciation, translation, and add it directly to your SRS flashcards.
+              Click any term to look up its definition, listen to its audio pronunciation, and sync it to your Leitner review flashcards.
             </p>
 
-            <div className="space-y-2 pt-1 max-h-[60vh] overflow-y-auto custom-scrollbar pr-1">
+            <div className="space-y-2 pt-1 max-h-[65vh] overflow-y-auto custom-scrollbar pr-1">
               {article.keyVocabulary?.map((item) => (
                 <div
                   key={item.word}
@@ -463,7 +500,40 @@ export default function ArticleReaderPage() {
         </div>
       </div>
 
-      {/* 4. Floating Action Menu upon Text Selection */}
+      {/* 4. Full-Size Illustrated Plate Lightbox Modal */}
+      {showPlateModal && (
+        <div
+          className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-150"
+          onClick={() => setShowPlateModal(false)}
+        >
+          <div
+            className="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center bg-card rounded-2xl overflow-hidden border border-border/80 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between w-full px-5 py-3 border-b border-border bg-secondary/50">
+              <span className="text-xs font-semibold text-foreground">
+                Original Magazine Plate: Article #{article.pageNumber} — {article.title}
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowPlateModal(false)}
+                className="p-1 rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                <CloseCircleIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="overflow-auto w-full p-2 flex justify-center max-h-[82vh] custom-scrollbar bg-black/20">
+              <img
+                src={article.coverImage}
+                alt={article.title}
+                className="max-w-full h-auto object-contain rounded-lg shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Floating Action Menu upon Text Selection */}
       {floatingMenu && (
         <div
           style={{
@@ -540,7 +610,7 @@ export default function ArticleReaderPage() {
         </div>
       )}
 
-      {/* 5. AI Contextual Dictionary Modal */}
+      {/* 6. AI Contextual Dictionary Modal */}
       {aiModalOpen && (
         <div
           className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
@@ -748,7 +818,7 @@ export default function ArticleReaderPage() {
         </div>
       )}
 
-      {/* 6. Premium Upgrade Modal */}
+      {/* 7. Premium Upgrade Modal */}
       {showPremiumModal && (
         <div
           className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
