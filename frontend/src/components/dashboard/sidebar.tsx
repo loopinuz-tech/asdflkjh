@@ -18,6 +18,7 @@ import {
   ClapperboardPlayIcon,
   UserSpeakRoundedIcon,
   DocumentTextIcon,
+  NotesIcon,
 } from '@solar-icons/react/bold-duotone'
 import { Search, X, ChevronRight, ChevronDown } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -54,6 +55,7 @@ export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [readingOpen, setReadingOpen] = useState(() => pathname.startsWith('/reading'))
   const [speakingOpen, setSpeakingOpen] = useState(() => pathname.startsWith('/speaking'))
+  const [listeningOpen, setListeningOpen] = useState(() => pathname.startsWith('/listening'))
 
   useEffect(() => {
     if (pathname.startsWith('/reading')) {
@@ -61,6 +63,9 @@ export function Sidebar() {
     }
     if (pathname.startsWith('/speaking')) {
       setSpeakingOpen(true)
+    }
+    if (pathname.startsWith('/listening')) {
+      setListeningOpen(true)
     }
   }, [pathname])
 
@@ -179,7 +184,26 @@ export function Sidebar() {
         },
       ],
     },
-    { name: 'Listening', href: '/listening', icon: HeadphonesRoundIcon },
+    {
+      name: 'Listening',
+      href: '/listening',
+      icon: HeadphonesRoundIcon,
+      subItems: [
+        {
+          name: 'IELTS Listening',
+          href: '/listening',
+          icon: HeadphonesRoundIcon,
+          exact: true,
+        },
+        {
+          name: 'Script Writing',
+          href: '/listening#soon',
+          icon: NotesIcon,
+          badge: 'SOON',
+          disabled: true,
+        },
+      ],
+    },
     { name: 'Writing', href: '/writing', icon: Pen2Icon },
     {
       name: 'Speaking',
@@ -308,10 +332,15 @@ export function Sidebar() {
               const hasSub = Boolean((item as any).subItems)
 
               if (hasSub) {
-                const isItemOpen = item.name === 'Reading' ? readingOpen : speakingOpen
+                const isItemOpen = item.name === 'Reading' 
+                  ? readingOpen 
+                  : item.name === 'Speaking' 
+                    ? speakingOpen 
+                    : listeningOpen
                 const toggleItem = () => {
                   if (item.name === 'Reading') setReadingOpen((prev) => !prev)
-                  else setSpeakingOpen((prev) => !prev)
+                  else if (item.name === 'Speaking') setSpeakingOpen((prev) => !prev)
+                  else if (item.name === 'Listening') setListeningOpen((prev) => !prev)
                 }
 
                 const subItems = (item as any).subItems as Array<{
@@ -319,6 +348,7 @@ export function Sidebar() {
                   href: string
                   exact?: boolean
                   badge?: string
+                  disabled?: boolean
                   icon?: any
                 }>
                 return (
@@ -370,6 +400,34 @@ export function Sidebar() {
                             ? pathname === sub.href
                             : pathname.startsWith(sub.href)
                           const SubIcon = sub.icon
+
+                          if (sub.disabled) {
+                            return (
+                              <div
+                                key={sub.name}
+                                title="Feature Coming Soon"
+                                className="group flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#7faebd]/70 select-none cursor-not-allowed opacity-75"
+                              >
+                                <div className="flex items-center gap-2 truncate">
+                                  {SubIcon ? (
+                                    <SubIcon
+                                      className="w-4 h-4 shrink-0 text-[#7faebd]/60"
+                                      size={16}
+                                    />
+                                  ) : (
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-white/20" />
+                                  )}
+                                  <span className="truncate">{sub.name}</span>
+                                </div>
+                                {sub.badge && (
+                                  <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-white/10 text-amber-300 border border-amber-400/30 font-mono shrink-0">
+                                    {sub.badge}
+                                  </span>
+                                )}
+                              </div>
+                            )
+                          }
+
                           return (
                             <Link
                               key={sub.name}

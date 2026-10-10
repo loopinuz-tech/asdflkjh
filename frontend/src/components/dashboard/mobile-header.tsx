@@ -21,6 +21,7 @@ import {
   StarsIcon,
   ClapperboardPlayIcon,
   DocumentTextIcon,
+  NotesIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
@@ -313,7 +314,8 @@ export function DashboardMobileHeader() {
                   { name: 'Dashboard', href: '/dashboard', icon: Widget2Icon, exact: true },
                   { name: 'IELTS Reading', href: '/reading', icon: BookBookmarkIcon, exact: true },
                   { name: 'Articles', href: '/reading/articles', icon: DocumentTextIcon, badge: 'NEW' },
-                  { name: 'Listening', href: '/listening', icon: HeadphonesRoundIcon },
+                  { name: 'IELTS Listening', href: '/listening', icon: HeadphonesRoundIcon, exact: true },
+                  { name: 'Script Writing', href: '#', icon: NotesIcon, badge: 'SOON', disabled: true },
                   { name: 'Writing', href: '/writing', icon: Pen2Icon },
                   { name: 'Speaking', href: '/speaking', icon: Microphone2Icon, exact: true },
                   { name: 'Movie Shadowing', href: '/speaking/shadowing', icon: ClapperboardPlayIcon, badge: 'NEW' },
@@ -323,6 +325,25 @@ export function DashboardMobileHeader() {
                     ? location.pathname === item.href
                     : location.pathname.startsWith(item.href)
                   const Icon = item.icon
+
+                  if ((item as any).disabled) {
+                    return (
+                      <div
+                        key={item.name}
+                        title="Coming Soon"
+                        className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muted-foreground/60 select-none cursor-not-allowed opacity-75"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon className="w-4 h-4 text-muted-foreground/50 shrink-0" size={16} />
+                          <span>{item.name}</span>
+                        </div>
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-secondary text-amber-500 border border-amber-500/30 font-mono shrink-0">
+                          {(item as any).badge}
+                        </span>
+                      </div>
+                    )
+                  }
+
                   return (
                     <Link
                       key={item.name}
@@ -339,6 +360,11 @@ export function DashboardMobileHeader() {
                         <Icon className="w-4 h-4 text-primary shrink-0" size={16} />
                         <span>{item.name}</span>
                       </div>
+                      {(item as any).badge && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0 mr-1.5">
+                          {(item as any).badge}
+                        </span>
+                      )}
                       {isActive && <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />}
                     </Link>
                   )
