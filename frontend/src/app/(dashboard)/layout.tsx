@@ -30,7 +30,7 @@ export default function DashboardLayout() {
         </main>
 
         {/* Mobile Bottom Navigation Bar */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40">
           <MobileNav />
         </div>
       </div>

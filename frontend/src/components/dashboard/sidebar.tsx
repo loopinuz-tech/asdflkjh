@@ -56,6 +56,7 @@ export function Sidebar() {
   const [readingOpen, setReadingOpen] = useState(() => pathname.startsWith('/reading'))
   const [speakingOpen, setSpeakingOpen] = useState(() => pathname.startsWith('/speaking'))
   const [listeningOpen, setListeningOpen] = useState(() => pathname.startsWith('/listening'))
+  const [writingOpen, setWritingOpen] = useState(() => pathname.startsWith('/writing'))
 
   useEffect(() => {
     if (pathname.startsWith('/reading')) {
@@ -66,6 +67,9 @@ export function Sidebar() {
     }
     if (pathname.startsWith('/listening')) {
       setListeningOpen(true)
+    }
+    if (pathname.startsWith('/writing')) {
+      setWritingOpen(true)
     }
   }, [pathname])
 
@@ -204,7 +208,26 @@ export function Sidebar() {
         },
       ],
     },
-    { name: 'Writing', href: '/writing', icon: Pen2Icon },
+    {
+      name: 'Writing',
+      href: '/writing',
+      icon: Pen2Icon,
+      subItems: [
+        {
+          name: 'IELTS Writing',
+          href: '/writing',
+          icon: Pen2Icon,
+          exact: true,
+        },
+        {
+          name: 'Essay Ideas & Templates',
+          href: '/writing#soon',
+          icon: NotesIcon,
+          badge: 'SOON',
+          disabled: true,
+        },
+      ],
+    },
     {
       name: 'Speaking',
       href: '/speaking',
@@ -336,11 +359,14 @@ export function Sidebar() {
                   ? readingOpen 
                   : item.name === 'Speaking' 
                     ? speakingOpen 
-                    : listeningOpen
+                    : item.name === 'Writing'
+                      ? writingOpen
+                      : listeningOpen
                 const toggleItem = () => {
                   if (item.name === 'Reading') setReadingOpen((prev) => !prev)
                   else if (item.name === 'Speaking') setSpeakingOpen((prev) => !prev)
                   else if (item.name === 'Listening') setListeningOpen((prev) => !prev)
+                  else if (item.name === 'Writing') setWritingOpen((prev) => !prev)
                 }
 
                 const subItems = (item as any).subItems as Array<{

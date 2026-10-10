@@ -132,15 +132,15 @@ export default function ArticlesHubPage() {
   }, [articles])
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 pb-20">
+    <div className="w-full px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-8 pb-20">
       <SEOHead
         title="100+ Academic Reading Articles & Passages | EduFox"
         description="Authentic Cambridge IELTS 100+ academic articles with real magazine illustrations, AI contextual Uzbek dictionary, and 1-click SRS vocabulary sync."
       />
 
       {/* 1. Header Section — Full Width */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1 border-b border-border/40 pb-6">
-        <div className="space-y-1.5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pt-1 border-b border-border/40 pb-5 sm:pb-6">
+        <div className="space-y-1 sm:space-y-1.5">
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <Link to="/reading" className="hover:text-foreground transition-colors flex items-center gap-1">
               <BookBookmarkIcon className="w-3.5 h-3.5 text-primary" />
@@ -149,90 +149,90 @@ export default function ArticlesHubPage() {
             <span>/</span>
             <span className="text-foreground font-semibold">Articles Collection</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground flex items-center gap-3">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-foreground flex items-center gap-2 sm:gap-3 flex-wrap">
             <span>100+ Academic Articles</span>
-            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-mono">
+            <span className="text-[11px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-mono">
               101 Articles
             </span>
           </h1>
-          <p className="text-sm font-normal text-muted-foreground max-w-3xl leading-relaxed">
+          <p className="text-xs sm:text-sm font-normal text-muted-foreground max-w-3xl leading-relaxed">
             Full authentic Cambridge IELTS academic articles collection with original scientific illustrations. Select any unfamiliar word or sentence in the text for instant AI contextual Uzbek translation and 1-click addition to your Leitner vocabulary system.
           </p>
         </div>
 
         {/* Action: 100+ Articles PDF Download */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
           <a
             href="/100+ Articles.pdf"
             download
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/80 transition-all hover:shadow-xs active:scale-98"
+            className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/80 transition-all hover:shadow-xs active:scale-98"
             title="Download the full 100+ Articles Collection PDF"
           >
-            <FileDownloadIcon className="w-4 h-4 text-primary" />
+            <FileDownloadIcon className="w-4 h-4 text-primary shrink-0" />
             <span>Download 100+ Articles (PDF)</span>
           </a>
         </div>
       </div>
 
       {/* 2. Highlights / Stats Strip — Full Width */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
-            <span>Total Articles in PDF</span>
-            <DocumentTextIcon className="w-4 h-4 text-primary" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="p-3 sm:p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground text-[11px] sm:text-xs font-medium">
+            <span className="truncate mr-1">Articles in PDF</span>
+            <DocumentTextIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary shrink-0" />
           </div>
-          <p className="text-2xl font-semibold text-foreground tracking-tight">{articles.length} Articles</p>
-          <p className="text-[11px] text-muted-foreground font-normal">All 101 illustrated plates extracted</p>
+          <p className="text-lg sm:text-2xl font-semibold text-foreground tracking-tight">{articles.length} Articles</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-normal truncate">All 101 plates extracted</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
-            <span>Indexed Academic Terms</span>
-            <NotesIcon className="w-4 h-4 text-emerald-500" />
+        <div className="p-3 sm:p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground text-[11px] sm:text-xs font-medium">
+            <span className="truncate mr-1">Academic Terms</span>
+            <NotesIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
           </div>
-          <p className="text-2xl font-semibold text-foreground tracking-tight">{totalVocabCount}+ Words</p>
-          <p className="text-[11px] text-muted-foreground font-normal">C1–C2 level contextual vocabulary</p>
+          <p className="text-lg sm:text-2xl font-semibold text-foreground tracking-tight">{totalVocabCount}+ Words</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-normal truncate">C1–C2 vocabulary</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
-            <span>AI Contextual Dictionary</span>
-            <StarsIcon className="w-4 h-4 text-amber-500" />
+        <div className="p-3 sm:p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground text-[11px] sm:text-xs font-medium">
+            <span className="truncate mr-1">AI Dictionary</span>
+            <StarsIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
           </div>
-          <p className="text-2xl font-semibold text-foreground tracking-tight">Active</p>
-          <p className="text-[11px] text-muted-foreground font-normal">Select any word to translate</p>
+          <p className="text-lg sm:text-2xl font-semibold text-foreground tracking-tight">Active</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-normal truncate">Contextual Uzbek AI</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
-            <span>SRS Leitner Flashcards</span>
-            <CheckCircleIcon className="w-4 h-4 text-blue-500" />
+        <div className="p-3 sm:p-4 rounded-2xl bg-card border border-border/60 shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground text-[11px] sm:text-xs font-medium">
+            <span className="truncate mr-1">SRS Flashcards</span>
+            <CheckCircleIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 shrink-0" />
           </div>
-          <p className="text-2xl font-semibold text-foreground tracking-tight">1-Click Save</p>
-          <p className="text-[11px] text-muted-foreground font-normal">Queued for active review</p>
+          <p className="text-lg sm:text-2xl font-semibold text-foreground tracking-tight">1-Click Save</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-normal truncate">Leitner review sync</p>
         </div>
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+      <div className="space-y-2.5 sm:space-y-3">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
           {/* Search Input */}
           <div className="relative flex-1 max-w-lg">
             <RoundedMagnifierIcon className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search 101 articles by title, author, keyword, or page number..."
+              placeholder="Search 101 articles by title, author, keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border/80 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-hidden focus:border-primary/80 focus:ring-1 focus:ring-primary/40 transition-all font-normal"
+              className="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-xl bg-card border border-border/80 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-hidden focus:border-primary/80 focus:ring-1 focus:ring-primary/40 transition-all font-normal"
             />
           </div>
 
-          {/* Level Filter Dropdown */}
-          <div className="flex items-center gap-1.5 self-end sm:self-auto flex-wrap">
-            <span className="text-[11px] font-medium text-muted-foreground mr-1">Band:</span>
+          {/* Level Filter Dropdown / Row */}
+          <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-0.5 no-scrollbar shrink-0">
+            <span className="text-[11px] font-medium text-muted-foreground mr-1 shrink-0">Band:</span>
             {[
               { id: 'all', label: 'All' },
               { id: '7.0', label: '7.0+' },
@@ -245,7 +245,7 @@ export default function ArticlesHubPage() {
                 type="button"
                 onClick={() => setSelectedLevel(lvl.id)}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer',
+                  'px-2 sm:px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer shrink-0',
                   selectedLevel === lvl.id
                     ? 'bg-foreground text-background font-semibold shadow-2xs'
                     : 'bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground'
@@ -257,15 +257,15 @@ export default function ArticlesHubPage() {
           </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 custom-scrollbar">
+        {/* Category Pills with smooth horizontal scrolling */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
           {categories.map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
               className={cn(
-                'px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer',
+                'px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap shrink-0 transition-all cursor-pointer',
                 selectedCategory === cat
                   ? 'bg-primary text-black font-semibold shadow-2xs'
                   : 'bg-card border border-border/60 hover:border-border text-muted-foreground hover:text-foreground'
@@ -407,7 +407,7 @@ export default function ArticlesHubPage() {
 
       {/* 5. Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1.5 pt-4">
+        <div className="flex items-center justify-between sm:justify-center gap-1.5 pt-4">
           <button
             type="button"
             disabled={currentPage === 1}
@@ -421,34 +421,42 @@ export default function ArticlesHubPage() {
             <span>Prev</span>
           </button>
 
-          {Array.from({ length: Math.min(7, totalPages) }, (_, idx) => {
-            let pageNum = idx + 1
-            if (totalPages > 7) {
-              if (currentPage > 4 && currentPage < totalPages - 2) {
-                pageNum = currentPage - 3 + idx
-              } else if (currentPage >= totalPages - 2) {
-                pageNum = totalPages - 6 + idx
+          {/* Mobile compact page indicator */}
+          <span className="sm:hidden text-xs text-muted-foreground font-medium px-2">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          {/* Desktop full page numbers */}
+          <div className="hidden sm:flex items-center gap-1">
+            {Array.from({ length: Math.min(7, totalPages) }, (_, idx) => {
+              let pageNum = idx + 1
+              if (totalPages > 7) {
+                if (currentPage > 4 && currentPage < totalPages - 2) {
+                  pageNum = currentPage - 3 + idx
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 6 + idx
+                }
               }
-            }
-            return (
-              <button
-                key={pageNum}
-                type="button"
-                onClick={() => {
-                  setCurrentPage(pageNum)
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }}
-                className={cn(
-                  'w-8 h-8 rounded-xl text-xs font-medium transition-all cursor-pointer',
-                  currentPage === pageNum
-                    ? 'bg-primary text-black font-semibold shadow-2xs'
-                    : 'bg-card border border-border/60 hover:bg-secondary text-muted-foreground hover:text-foreground'
-                )}
-              >
-                {pageNum}
-              </button>
-            )
-          })}
+              return (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => {
+                    setCurrentPage(pageNum)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                  className={cn(
+                    'w-8 h-8 rounded-xl text-xs font-medium transition-all cursor-pointer',
+                    currentPage === pageNum
+                      ? 'bg-primary text-black font-semibold shadow-2xs'
+                      : 'bg-card border border-border/60 hover:bg-secondary text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+          </div>
 
           <button
             type="button"

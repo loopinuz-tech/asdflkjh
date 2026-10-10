@@ -149,9 +149,16 @@ export default function ArticleReaderPage() {
     lastRangeRef.current = range.cloneRange()
     const rect = range.getBoundingClientRect()
 
+    const menuEstimatedWidth = 260
+    const clampedX = Math.max(
+      menuEstimatedWidth / 2 + 16,
+      Math.min(window.innerWidth - menuEstimatedWidth / 2 - 16, rect.left + rect.width / 2)
+    )
+    const clampedY = Math.max(64, rect.top - 12)
+
     setFloatingMenu({
-      x: rect.left + rect.width / 2,
-      y: Math.max(10, rect.top - 12),
+      x: clampedX,
+      y: clampedY,
       selectedText: text,
     })
   }, [])
@@ -386,28 +393,28 @@ export default function ArticleReaderPage() {
         </Link>
 
         {/* Reader controls */}
-        <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 justify-between sm:justify-end flex-wrap w-full sm:w-auto">
           {/* View Original Illustrated Plate Modal Trigger */}
           <button
             type="button"
             onClick={() => setShowPlateModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/60 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/60 transition-all cursor-pointer"
             title="View original illustrated PDF plate"
           >
-            <ExternalLink className="w-3.5 h-3.5 text-primary" />
-            <span>View Original Plate</span>
+            <ExternalLink className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="hidden xs:inline">View Original</span> Plate
           </button>
 
           {/* Font Size controls */}
           <div className="flex items-center rounded-xl bg-secondary/80 border border-border/60 p-0.5 text-xs">
-            <span className="px-2 text-[11px] font-medium text-muted-foreground">Text Size:</span>
+            <span className="hidden xs:inline px-1.5 sm:px-2 text-[11px] font-medium text-muted-foreground">Size:</span>
             {FONT_SIZES.map((f, idx) => (
               <button
                 key={f.label}
                 type="button"
                 onClick={() => setFontSizeIdx(idx)}
                 className={cn(
-                  'px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer',
+                  'px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-medium transition-all cursor-pointer',
                   fontSizeIdx === idx
                     ? 'bg-foreground text-background font-semibold shadow-2xs'
                     : 'text-muted-foreground hover:text-foreground'
@@ -424,35 +431,49 @@ export default function ArticleReaderPage() {
             download
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/60 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-medium border border-border/60 transition-all cursor-pointer"
             title="Download original 100+ Articles PDF"
           >
             <FileDownloadIcon className="w-3.5 h-3.5 text-primary" />
-            <span className="hidden sm:inline">PDF</span>
+            <span className="text-xs">PDF</span>
           </a>
         </div>
       </div>
 
       {/* 2. Article Header with Metadata */}
       <div className="space-y-3 pt-2">
-        <div className="flex items-center gap-2 flex-wrap text-xs">
-          <span className="font-semibold px-2.5 py-0.5 rounded-md bg-black/80 text-white font-mono text-[11px]">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs">
+          <span className="font-semibold px-2 py-0.5 rounded-md bg-black/80 text-white font-mono text-[11px]">
             Article #{article.pageNumber}
           </span>
-          <span className="font-medium px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+          <span className="font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[11px]">
             {article.category}
           </span>
-          <span className="font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-mono">
+          <span className="font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-mono text-[11px]">
             {article.bandTarget}
           </span>
-          <span className="text-muted-foreground flex items-center gap-1">
+          <span className="text-muted-foreground flex items-center gap-1 text-[11px]">
             <ClockCircleIcon className="w-3.5 h-3.5" />
             <span>{article.readingTime}</span>
           </span>
-          <span className="text-muted-foreground">•</span>
-          <span className="text-muted-foreground">{article.wordCount} words</span>
-          <span className="text-muted-foreground">•</span>
-          <span className="text-muted-foreground">Author: {article.author}</span>
+          <span className="text-muted-foreground text-[11px]">•</span>
+          <span className="text-muted-foreground text-[11px]">{article.wordCount} words</span>
+          {article.author && (
+            <>
+              <span className="text-muted-foreground text-[11px]">•</span>
+              <span className="text-muted-foreground text-[11px] truncate max-w-[180px]">By {article.author}</span>
+            </>
+          )}
+
+          {article.keyVocabulary && article.keyVocabulary.length > 0 && (
+            <a
+              href="#vocab-section"
+              className="lg:hidden inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary text-foreground text-[11px] font-medium border border-border/60 hover:bg-secondary/80 transition-colors ml-auto xs:ml-0"
+            >
+              <NotesIcon className="w-3 h-3 text-primary" />
+              <span>{article.keyVocabulary.length} Vocab Terms</span>
+            </a>
+          )}
         </div>
 
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-foreground leading-tight">
@@ -511,14 +532,15 @@ export default function ArticleReaderPage() {
           <div
             ref={contentRef}
             onMouseUp={handleMouseUp}
-            className="bg-card border border-border/60 rounded-3xl p-6 sm:p-10 shadow-xs space-y-6 select-text"
+            onTouchEnd={handleMouseUp}
+            className="bg-card border border-border/60 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-xs space-y-5 sm:space-y-6 select-text"
           >
             {article.content.map((paragraph, idx) => (
               <p
                 key={idx}
                 className={cn(
                   FONT_SIZES[fontSizeIdx].prose,
-                  'text-slate-800 dark:text-slate-200 font-normal tracking-normal text-justify'
+                  'text-slate-800 dark:text-slate-200 font-normal tracking-normal text-left sm:text-justify'
                 )}
               >
                 {paragraph}
@@ -528,8 +550,8 @@ export default function ArticleReaderPage() {
         </div>
 
         {/* Key Vocabulary Sidebar (3 Cols on large displays) */}
-        <div className="lg:col-span-4 xl:col-span-3 space-y-4">
-          <div className="p-5 rounded-2xl bg-card border border-border/60 shadow-xs space-y-3 sticky top-20">
+        <div id="vocab-section" className="lg:col-span-4 xl:col-span-3 space-y-4">
+          <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border/60 shadow-xs space-y-3 lg:sticky lg:top-20">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                 <NotesIcon className="w-4 h-4 text-primary" />
@@ -615,7 +637,8 @@ export default function ArticleReaderPage() {
             transform: 'translate(-50%, -100%)',
           }}
           onMouseDown={(e) => e.preventDefault()}
-          className="z-50 flex items-center gap-1.5 p-1.5 bg-card/95 text-foreground backdrop-blur-md border border-border shadow-2xl rounded-full text-xs animate-in fade-in zoom-in-95 duration-150"
+          onTouchStart={(e) => e.stopPropagation()}
+          className="z-[90] flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 bg-card/95 text-foreground backdrop-blur-md border border-border shadow-2xl rounded-full text-xs animate-in fade-in zoom-in-95 duration-150 max-w-[calc(100vw-24px)]"
         >
           {/* Quick Highlight Buttons */}
           <button

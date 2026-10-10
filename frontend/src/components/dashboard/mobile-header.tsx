@@ -22,7 +22,9 @@ import {
   ClapperboardPlayIcon,
   DocumentTextIcon,
   NotesIcon,
+  UserSpeakRoundedIcon,
 } from '@solar-icons/react/bold-duotone'
+import { ChevronDown } from 'lucide-react'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { createClient } from '@/lib/supabase/client'
@@ -46,7 +48,18 @@ export function DashboardMobileHeader() {
   const [rawUser, setRawUser] = useState<any>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [readingOpen, setReadingOpen] = useState(() => location.pathname.startsWith('/reading'))
+  const [listeningOpen, setListeningOpen] = useState(() => location.pathname.startsWith('/listening'))
+  const [writingOpen, setWritingOpen] = useState(() => location.pathname.startsWith('/writing'))
+  const [speakingOpen, setSpeakingOpen] = useState(() => location.pathname.startsWith('/speaking'))
   const supabase = createClient()
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/reading')) setReadingOpen(true)
+    if (location.pathname.startsWith('/listening')) setListeningOpen(true)
+    if (location.pathname.startsWith('/writing')) setWritingOpen(true)
+    if (location.pathname.startsWith('/speaking')) setSpeakingOpen(true)
+  }, [location.pathname])
 
   useEffect(() => {
     async function loadUser() {
@@ -199,16 +212,16 @@ export function DashboardMobileHeader() {
 
       {/* Slide-over Mobile Navigation & Profile Drawer */}
       {drawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-start">
+        <div className="fixed inset-0 z-[100] flex justify-start">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
             onClick={() => setDrawerOpen(false)}
           />
 
           {/* Drawer content (Left side slide-in) */}
-          <div className="relative w-full max-w-xs bg-card border-r border-border h-full shadow-2xl flex flex-col justify-between p-4 z-10 animate-in slide-in-from-left duration-200">
-            <div className="space-y-4 overflow-y-auto flex-1">
+          <div className="relative w-full max-w-[290px] xs:max-w-xs bg-card border-r border-border h-[100dvh] shadow-2xl flex flex-col justify-between p-4 z-10 animate-in slide-in-from-left duration-200">
+            <div className="space-y-4 overflow-y-auto flex-1 custom-scrollbar pr-1 pb-4">
               {/* Drawer Header with Close Button */}
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2">
@@ -310,65 +323,301 @@ export function DashboardMobileHeader() {
                   LEARN & PRACTICE
                 </p>
 
-                {[
-                  { name: 'Dashboard', href: '/dashboard', icon: Widget2Icon, exact: true },
-                  { name: 'IELTS Reading', href: '/reading', icon: BookBookmarkIcon, exact: true },
-                  { name: 'Articles', href: '/reading/articles', icon: DocumentTextIcon, badge: 'NEW' },
-                  { name: 'IELTS Listening', href: '/listening', icon: HeadphonesRoundIcon, exact: true },
-                  { name: 'Script Writing', href: '#', icon: NotesIcon, badge: 'SOON', disabled: true },
-                  { name: 'Writing', href: '/writing', icon: Pen2Icon },
-                  { name: 'Speaking', href: '/speaking', icon: Microphone2Icon, exact: true },
-                  { name: 'Movie Shadowing', href: '/speaking/shadowing', icon: ClapperboardPlayIcon, badge: 'NEW' },
-                  { name: 'Vocabulary', href: '/vocabulary', icon: TranslationIcon },
-                ].map((item) => {
-                  const isActive = item.exact
-                    ? location.pathname === item.href
-                    : location.pathname.startsWith(item.href)
-                  const Icon = item.icon
+                {/* 1. Dashboard */}
+                <Link
+                  to="/dashboard"
+                  onClick={() => setDrawerOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
+                    location.pathname === '/dashboard'
+                      ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
+                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <Widget2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                    <span>Dashboard</span>
+                  </div>
+                  {location.pathname === '/dashboard' && (
+                    <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />
+                  )}
+                </Link>
 
-                  if ((item as any).disabled) {
-                    return (
-                      <div
-                        key={item.name}
-                        title="Coming Soon"
-                        className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muted-foreground/60 select-none cursor-not-allowed opacity-75"
+                {/* 2. Reading Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setReadingOpen((p) => !p)}
+                    className={cn(
+                      'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
+                      location.pathname.startsWith('/reading')
+                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
+                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <BookBookmarkIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <span>Reading</span>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
+                        readingOpen ? 'rotate-180 text-primary' : ''
+                      )}
+                    />
+                  </button>
+
+                  {readingOpen && (
+                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                      <Link
+                        to="/reading"
+                        onClick={() => setDrawerOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                          location.pathname === '/reading'
+                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        )}
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon className="w-4 h-4 text-muted-foreground/50 shrink-0" size={16} />
-                          <span>{item.name}</span>
+                        <div className="flex items-center gap-2.5 truncate">
+                          <BookBookmarkIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <span className="truncate">IELTS Reading</span>
+                        </div>
+                        {location.pathname === '/reading' && (
+                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                        )}
+                      </Link>
+
+                      <Link
+                        to="/reading/articles"
+                        onClick={() => setDrawerOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                          location.pathname.startsWith('/reading/articles')
+                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <DocumentTextIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <span className="truncate">Articles</span>
+                        </div>
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0">
+                          NEW
+                        </span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. Listening Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setListeningOpen((p) => !p)}
+                    className={cn(
+                      'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
+                      location.pathname.startsWith('/listening')
+                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
+                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <HeadphonesRoundIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <span>Listening</span>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
+                        listeningOpen ? 'rotate-180 text-primary' : ''
+                      )}
+                    />
+                  </button>
+
+                  {listeningOpen && (
+                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                      <Link
+                        to="/listening"
+                        onClick={() => setDrawerOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                          location.pathname === '/listening'
+                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <HeadphonesRoundIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <span className="truncate">IELTS Listening</span>
+                        </div>
+                        {location.pathname === '/listening' && (
+                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                        )}
+                      </Link>
+
+                      <div
+                        title="Feature Coming Soon"
+                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground/60 select-none cursor-not-allowed opacity-75"
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <NotesIcon className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" size={14} />
+                          <span className="truncate">Script Writing</span>
                         </div>
                         <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-secondary text-amber-500 border border-amber-500/30 font-mono shrink-0">
-                          {(item as any).badge}
+                          SOON
                         </span>
                       </div>
-                    )
-                  }
+                    </div>
+                  )}
+                </div>
 
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setDrawerOpen(false)}
+                {/* 4. Writing Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setWritingOpen((p) => !p)}
+                    className={cn(
+                      'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
+                      location.pathname.startsWith('/writing')
+                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
+                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Pen2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <span>Writing</span>
+                    </div>
+                    <ChevronDown
                       className={cn(
-                        'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
-                        isActive
-                          ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
-                          : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
+                        writingOpen ? 'rotate-180 text-primary' : ''
                       )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon className="w-4 h-4 text-primary shrink-0" size={16} />
-                        <span>{item.name}</span>
-                      </div>
-                      {(item as any).badge && (
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0 mr-1.5">
-                          {(item as any).badge}
+                    />
+                  </button>
+
+                  {writingOpen && (
+                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                      <Link
+                        to="/writing"
+                        onClick={() => setDrawerOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                          location.pathname === '/writing'
+                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <Pen2Icon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <span className="truncate">IELTS Writing</span>
+                        </div>
+                        {location.pathname === '/writing' && (
+                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                        )}
+                      </Link>
+
+                      <div
+                        title="Feature Coming Soon"
+                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground/60 select-none cursor-not-allowed opacity-75"
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <NotesIcon className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" size={14} />
+                          <span className="truncate">Essay Ideas & Templates</span>
+                        </div>
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-secondary text-amber-500 border border-amber-500/30 font-mono shrink-0">
+                          SOON
                         </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 5. Speaking Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setSpeakingOpen((p) => !p)}
+                    className={cn(
+                      'w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all cursor-pointer group',
+                      location.pathname.startsWith('/speaking')
+                        ? 'bg-secondary/70 text-foreground font-semibold border border-border/60'
+                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Microphone2Icon className="w-4 h-4 text-primary shrink-0" size={16} />
+                      <span>Speaking</span>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        'w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0',
+                        speakingOpen ? 'rotate-180 text-primary' : ''
                       )}
-                      {isActive && <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />}
-                    </Link>
-                  )
-                })}
+                    />
+                  </button>
+
+                  {speakingOpen && (
+                    <div className="pl-3 border-l-2 border-border/70 ml-5 my-1 space-y-1 animate-in slide-in-from-top-1 duration-150">
+                      <Link
+                        to="/speaking"
+                        onClick={() => setDrawerOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                          location.pathname === '/speaking'
+                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <UserSpeakRoundedIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <span className="truncate">IELTS Speaking</span>
+                        </div>
+                        {location.pathname === '/speaking' && (
+                          <span className="w-1 h-3.5 bg-primary rounded-full shrink-0" />
+                        )}
+                      </Link>
+
+                      <Link
+                        to="/speaking/shadowing"
+                        onClick={() => setDrawerOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all',
+                          location.pathname.startsWith('/speaking/shadowing')
+                            ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                            : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <ClapperboardPlayIcon className="w-3.5 h-3.5 text-primary shrink-0" size={14} />
+                          <span className="truncate">Movie Shadowing</span>
+                        </div>
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0">
+                          NEW
+                        </span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* 6. Vocabulary */}
+                <Link
+                  to="/vocabulary"
+                  onClick={() => setDrawerOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group',
+                    location.pathname.startsWith('/vocabulary')
+                      ? 'bg-secondary text-foreground font-semibold border border-border/80 shadow-2xs'
+                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <TranslationIcon className="w-4 h-4 text-primary shrink-0" size={16} />
+                    <span>Vocabulary</span>
+                  </div>
+                  {location.pathname.startsWith('/vocabulary') && (
+                    <span className="w-1.5 h-4 bg-primary rounded-full shrink-0" />
+                  )}
+                </Link>
               </div>
 
               {/* YOUR PROGRESS Section */}
