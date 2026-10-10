@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { LiveExaminerAvatar, AvatarExpression } from '@/components/speaking/live-avatar'
 import { useLiveSpeech } from '@/hooks/use-live-speech'
 import { createClient } from '@/lib/supabase/client'
+import { isUserAdmin } from '@/components/auth/ProtectedRoute'
 import { apiUrl } from '@/lib/api-config'
 
 export default function SpeakingLivePage() {
@@ -75,33 +76,108 @@ export default function SpeakingLivePage() {
     silenceTimeoutMs: 1200,
   })
 
-  // 1. Verify user & premium access
+  // 1. Verify user & premium access strictly (no dev bypass)
   useEffect(() => {
+    let isMounted = true
+
     async function checkAuth() {
       const supabase = createClient()
       const {
         data: { user: currentUser },
       } = await supabase.auth.getUser()
 
-      if (!currentUser && !import.meta.env.DEV) {
-        navigate('/login?redirect=/speaking/live')
+      if (!currentUser) {
+        navigate('/login?redirect=/speaking/live', { replace: true })
         return
       }
 
-      const token = typeof window !== 'undefined' ? localStorage.getItem('foxford_token') : null
-      try {
-        const res = await fetch(apiUrl('/api/speaking-live/status'), {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        })
-        const data = await res.json()
-        if (data.success && data.is_premium) {
-          setIsPremium(true)
-        } else {
-          setIsPremium(Boolean(currentUser?.is_premium || currentUser?.role === 'admin' || import.meta.env.DEV))
+      let hasAccess = false
+
+      // 1. Check admin status (direct role or profile role)
+      if (isUserAdmin(currentUser, (currentUser as any)?.role)) {
+        hasAccess = true
+      } else {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('user_id', currentUser.id)
+            .maybeSingle()
+          if (isUserAdmin(currentUser, (profile as any)?.role)) {
+            hasAccess = true
+          }
+        } catch {
+          // ignore
         }
-      } catch {
-        setIsPremium(Boolean(currentUser?.is_premium || currentUser?.role === 'admin' || import.meta.env.DEV))
       }
+
+      // 2. Check speaking-live status endpoint
+      const token = typeof window !== 'undefined' ? localStorage.getItem('foxford_token') : null
+      if (!hasAccess) {
+        try {
+          const res = await fetch(apiUrl('/api/speaking-live/status'), {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          })
+          if (res.ok) {
+            const data = await res.json()
+            if (data.success && data.is_premium) {
+              hasAccess = true
+            }
+          }
+        } catch (err) {
+          console.warn('Speaking live status API check failed:', err)
+        }
+      }
+
+      // 3. Check /api/subscriptions/me endpoint
+      if (!hasAccess && token) {
+        try {
+          const res = await fetch('/api/subscriptions/me', {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          if (res.ok) {
+            const data = await res.json()
+            if (data?.is_premium) {
+              hasAccess = true
+            }
+          }
+        } catch (err) {
+          console.warn('Subscriptions check failed:', err)
+        }
+      }
+
+      // 4. Fallback check: active subscription in Supabase subscriptions table
+      if (!hasAccess) {
+        try {
+          const now = new Date().toISOString()
+          const { data: activeSub } = await supabase
+            .from('subscriptions')
+            .select('id, status, expires_at')
+            .eq('user_id', currentUser.id)
+            .in('status', ['active', 'trialing'])
+            .or(`expires_at.is.null,expires_at.gt.${now}`)
+            .limit(1)
+            .maybeSingle()
+
+          if (activeSub) {
+            hasAccess = true
+          }
+        } catch (err) {
+          console.warn('Supabase subscription check failed:', err)
+        }
+      }
+
+      if (!isMounted) return
+
+      // Non-premium free users cannot access Live Speaking — redirect directly to paywall
+      if (!hasAccess) {
+        setIsPremium(false)
+        setLoadingAuth(false)
+        navigate('/premium?reason=speaking_live', { replace: true })
+        return
+      }
+
+      setIsPremium(true)
 
       // Load topics
       try {
@@ -115,10 +191,16 @@ export default function SpeakingLivePage() {
         console.warn('Failed to load live topics:', err)
       }
 
-      setLoadingAuth(false)
+      if (isMounted) {
+        setLoadingAuth(false)
+      }
     }
 
     checkAuth()
+
+    return () => {
+      isMounted = false
+    }
   }, [navigate])
 
   // Timer
@@ -143,6 +225,11 @@ export default function SpeakingLivePage() {
 
   // 2. Start Call
   const handleStartCall = () => {
+    if (!isPremium) {
+      navigate('/premium?reason=speaking_live', { replace: true })
+      return
+    }
+
     setSessionActive(true)
     setSessionSeconds(0)
     setHistory([])
@@ -200,6 +287,10 @@ export default function SpeakingLivePage() {
       if (res.status === 403) {
         setIsPremium(false)
         setIsThinking(false)
+        stopListening()
+        stopSpeaking()
+        setSessionActive(false)
+        navigate('/premium?reason=speaking_live', { replace: true })
         return
       }
 
@@ -321,24 +412,16 @@ export default function SpeakingLivePage() {
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Button
-              onClick={() => setIsPremium(true)}
+              onClick={() => navigate('/premium?reason=speaking_live')}
               className="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 hover:opacity-95 text-black font-extrabold rounded-xl shadow-lg shadow-amber-500/20 text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 fill-current" />
-              Try Free Practice Session
-            </Button>
-            <Button
-              onClick={() => navigate('/premium?reason=speaking_live')}
-              variant="outline"
-              className="rounded-xl text-xs font-semibold"
-            >
-              <Crown className="w-3.5 h-3.5 text-amber-500" />
+              <Crown className="w-4 h-4 fill-current" />
               Upgrade to Premium
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => navigate('/speaking')}
-              className="rounded-xl text-xs text-muted-foreground"
+              className="rounded-xl text-xs font-semibold cursor-pointer"
             >
               Back to Topics
             </Button>

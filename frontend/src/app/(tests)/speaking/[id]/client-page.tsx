@@ -30,6 +30,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { DashboardMobileHeader } from '@/components/dashboard/mobile-header'
+import { verifyUserTestAccess } from '@/lib/test-access'
 
 export default function SpeakingTestPage() {
   const { id } = useParams<{ id: string }>()
@@ -44,7 +45,6 @@ export default function SpeakingTestPage() {
     const supabase = createClient()
     async function loadPrompt() {
       const { data: { user } } = await supabase.auth.getUser()
-      const isPremUser = Boolean(user?.is_premium || user?.role === 'admin')
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id!)
 
@@ -53,8 +53,9 @@ export default function SpeakingTestPage() {
       testQuery = isUuid ? testQuery.eq('id', id) : testQuery.eq('slug', id)
       const { data: testData } = await testQuery.maybeSingle()
       if (testData) {
-        if (testData.is_premium && !isPremUser) {
-          navigate(`/premium?testId=${testData.id}&reason=premium_required`)
+        const access = await verifyUserTestAccess(user?.id, testData)
+        if (!access.hasAccess) {
+          navigate(`/premium?testId=${testData.id}&reason=premium_required`, { replace: true })
           return
         }
         setPrompt(testData)
@@ -66,8 +67,9 @@ export default function SpeakingTestPage() {
       if (isUuid) {
         const { data: spData } = await supabase.from('speaking_prompts').select('*').eq('id', id).maybeSingle()
         if (spData) {
-          if (spData.is_premium && !isPremUser) {
-            navigate(`/premium?testId=${spData.id}&reason=premium_required`)
+          const access = await verifyUserTestAccess(user?.id, spData)
+          if (!access.hasAccess) {
+            navigate(`/premium?testId=${spData.id}&reason=premium_required`, { replace: true })
             return
           }
           setPrompt({
@@ -114,8 +116,9 @@ export default function SpeakingTestPage() {
 
         if (subData) {
           const sp = (subData.prompt as any) || {}
-          if (sp.is_premium && !isPremUser) {
-            navigate(`/premium?testId=${sp.id || subData.prompt_id}&reason=premium_required`)
+          const access = await verifyUserTestAccess(user?.id, sp)
+          if (!access.hasAccess) {
+            navigate(`/premium?testId=${sp.id || subData.prompt_id}&reason=premium_required`, { replace: true })
             return
           }
           setPrompt({

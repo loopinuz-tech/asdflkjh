@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { DashboardMobileHeader } from '@/components/dashboard/mobile-header'
 import { apiUrl } from '@/lib/api-config'
+import { verifyUserTestAccess } from '@/lib/test-access'
 
 export default function WritingTestPage() {
   const { id } = useParams<{ id: string }>()
@@ -46,7 +47,6 @@ export default function WritingTestPage() {
     const supabase = createClient()
     async function loadPrompt() {
       const { data: { user } } = await supabase.auth.getUser()
-      const isPremUser = Boolean(user?.is_premium || user?.role === 'admin')
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id!)
 
@@ -55,8 +55,9 @@ export default function WritingTestPage() {
       testQuery = isUuid ? testQuery.eq('id', id) : testQuery.eq('slug', id)
       const { data: testData } = await testQuery.maybeSingle()
       if (testData) {
-        if (testData.is_premium && !isPremUser) {
-          navigate(`/premium?testId=${testData.id}&reason=premium_required`)
+        const access = await verifyUserTestAccess(user?.id, testData)
+        if (!access.hasAccess) {
+          navigate(`/premium?testId=${testData.id}&reason=premium_required`, { replace: true })
           return
         }
         setPrompt(testData)
@@ -68,8 +69,9 @@ export default function WritingTestPage() {
       if (isUuid) {
         const { data: wpData } = await supabase.from('writing_prompts').select('*').eq('id', id).maybeSingle()
         if (wpData) {
-          if (wpData.is_premium && !isPremUser) {
-            navigate(`/premium?testId=${wpData.id}&reason=premium_required`)
+          const access = await verifyUserTestAccess(user?.id, wpData)
+          if (!access.hasAccess) {
+            navigate(`/premium?testId=${wpData.id}&reason=premium_required`, { replace: true })
             return
           }
           setPrompt({
@@ -115,8 +117,9 @@ export default function WritingTestPage() {
 
         if (subData) {
           const wp = (subData.prompt as any) || {}
-          if (wp.is_premium && !isPremUser) {
-            navigate(`/premium?testId=${wp.id || subData.prompt_id}&reason=premium_required`)
+          const access = await verifyUserTestAccess(user?.id, wp)
+          if (!access.hasAccess) {
+            navigate(`/premium?testId=${wp.id || subData.prompt_id}&reason=premium_required`, { replace: true })
             return
           }
           setPrompt({

@@ -11,6 +11,7 @@ import {
   CardIcon,
   AltArrowRightIcon,
   PlaneIcon,
+  CrownStarIcon,
 } from '@solar-icons/react/bold-duotone'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -220,6 +221,12 @@ export function PremiumClientPage({ user, plans, activeSubscription, reason, tes
               <StarsIcon className="w-3.5 h-3.5 text-primary" size={14} />
               FOX FORD IELTS PRO
             </span>
+            {reason === 'speaking_live' && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-600 dark:text-amber-400 text-[11px] font-semibold">
+                <CrownStarIcon className="w-3.5 h-3.5 text-amber-500" size={14} />
+                Real-Time AI Speaking Partner requires Foxford Premium
+              </span>
+            )}
             {reason === 'premium_required' && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-destructive/10 border border-destructive/20 text-destructive text-[11px] font-semibold">
                 <DangerCircleIcon className="w-3.5 h-3.5" size={14} />
