@@ -20,6 +20,7 @@ import {
   BellIcon,
   StarsIcon,
   ClapperboardPlayIcon,
+  DocumentTextIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
@@ -310,7 +311,8 @@ export function DashboardMobileHeader() {
 
                 {[
                   { name: 'Dashboard', href: '/dashboard', icon: Widget2Icon, exact: true },
-                  { name: 'Reading', href: '/reading', icon: BookBookmarkIcon },
+                  { name: 'IELTS Reading', href: '/reading', icon: BookBookmarkIcon, exact: true },
+                  { name: 'Articles', href: '/reading/articles', icon: DocumentTextIcon, badge: 'NEW' },
                   { name: 'Listening', href: '/listening', icon: HeadphonesRoundIcon },
                   { name: 'Writing', href: '/writing', icon: Pen2Icon },
                   { name: 'Speaking', href: '/speaking', icon: Microphone2Icon, exact: true },

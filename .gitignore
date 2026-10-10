@@ -56,3 +56,4 @@ backend/audio/
 backend/subs/
 *.mp4
 *.wav
+*.pdf

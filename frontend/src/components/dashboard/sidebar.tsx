@@ -17,6 +17,7 @@ import {
   BellIcon,
   ClapperboardPlayIcon,
   UserSpeakRoundedIcon,
+  DocumentTextIcon,
 } from '@solar-icons/react/bold-duotone'
 import { Search, X, ChevronRight, ChevronDown } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -51,9 +52,13 @@ export function Sidebar() {
 
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [readingOpen, setReadingOpen] = useState(() => pathname.startsWith('/reading'))
   const [speakingOpen, setSpeakingOpen] = useState(() => pathname.startsWith('/speaking'))
 
   useEffect(() => {
+    if (pathname.startsWith('/reading')) {
+      setReadingOpen(true)
+    }
     if (pathname.startsWith('/speaking')) {
       setSpeakingOpen(true)
     }
@@ -141,6 +146,7 @@ export function Sidebar() {
     { id: '10', title: 'Account Settings', category: 'Settings', href: '/settings' },
     { id: '11', title: 'Notifications', category: 'General', href: '/notifications' },
     { id: '12', title: 'Movie Shadowing Studio', category: 'Speaking', href: '/speaking/shadowing' },
+    { id: '13', title: 'Academic Reading Articles', category: 'Reading', href: '/reading/articles' },
   ]
 
   const filteredSearch = useMemo(() => {
@@ -154,7 +160,25 @@ export function Sidebar() {
   // Real core modules only (No fake / demo pages)
   const learnNavItems = [
     { name: 'Dashboard', href: '/dashboard', icon: Widget2Icon, exact: true },
-    { name: 'Reading', href: '/reading', icon: BookBookmarkIcon },
+    {
+      name: 'Reading',
+      href: '/reading',
+      icon: BookBookmarkIcon,
+      subItems: [
+        {
+          name: 'IELTS Reading',
+          href: '/reading',
+          icon: BookBookmarkIcon,
+          exact: true,
+        },
+        {
+          name: 'Articles',
+          href: '/reading/articles',
+          icon: DocumentTextIcon,
+          badge: 'NEW',
+        },
+      ],
+    },
     { name: 'Listening', href: '/listening', icon: HeadphonesRoundIcon },
     { name: 'Writing', href: '/writing', icon: Pen2Icon },
     {
@@ -284,6 +308,12 @@ export function Sidebar() {
               const hasSub = Boolean((item as any).subItems)
 
               if (hasSub) {
+                const isItemOpen = item.name === 'Reading' ? readingOpen : speakingOpen
+                const toggleItem = () => {
+                  if (item.name === 'Reading') setReadingOpen((prev) => !prev)
+                  else setSpeakingOpen((prev) => !prev)
+                }
+
                 const subItems = (item as any).subItems as Array<{
                   name: string
                   href: string
@@ -295,7 +325,7 @@ export function Sidebar() {
                   <div key={item.name} className="space-y-1">
                     <button
                       type="button"
-                      onClick={() => setSpeakingOpen((prev) => !prev)}
+                      onClick={toggleItem}
                       title={!isExpanded ? item.name : undefined}
                       className={cn(
                         'group rounded-xl transition-all w-full cursor-pointer text-left',
@@ -317,11 +347,11 @@ export function Sidebar() {
 
                       {isExpanded && (
                         <>
-                          <span className="truncate flex-1">{item.name}</span>
+                          <span className="truncate flex-1 font-medium">{item.name}</span>
                           <ChevronDown
                             className={cn(
                               'w-4 h-4 text-white/70 transition-transform duration-200 shrink-0 ml-auto',
-                              speakingOpen ? 'rotate-180 text-amber-300' : ''
+                              isItemOpen ? 'rotate-180 text-amber-300' : ''
                             )}
                           />
                         </>
@@ -333,7 +363,7 @@ export function Sidebar() {
                     </button>
 
                     {/* Submenu items */}
-                    {isExpanded && speakingOpen && (
+                    {isExpanded && isItemOpen && (
                       <div className="pl-2 pr-1 space-y-1 border-l-2 border-white/20 ml-5 my-1 animate-in slide-in-from-top-1 duration-150">
                         {subItems.map((sub) => {
                           const isSubActive = sub.exact
@@ -347,7 +377,7 @@ export function Sidebar() {
                               className={cn(
                                 'group flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all font-medium',
                                 isSubActive
-                                  ? 'bg-white/20 text-white font-bold shadow-2xs'
+                                  ? 'bg-white/20 text-white font-semibold shadow-2xs'
                                   : 'text-[#a5cee0] hover:text-white hover:bg-white/10'
                               )}
                             >

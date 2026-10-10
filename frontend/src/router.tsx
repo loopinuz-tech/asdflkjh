@@ -28,6 +28,8 @@ import OnboardingPage from './app/(onboarding)/onboarding/page'
 // Dashboard pages
 import DashboardPage from './app/(dashboard)/dashboard/page'
 import ReadingPage from './app/(dashboard)/reading/page'
+import ArticlesHubPage from './app/(dashboard)/reading/articles/page'
+import ArticleReaderPage from './app/(dashboard)/reading/articles/[id]/page'
 import ListeningPage from './app/(dashboard)/listening/page'
 import WritingPage from './app/(dashboard)/writing/page'
 import SpeakingPage from './app/(dashboard)/speaking/page'
@@ -113,6 +115,9 @@ export default function AppRouter() {
       >
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/reading" element={<ReadingPage />} />
+        <Route path="/reading/articles" element={<ArticlesHubPage />} />
+        <Route path="/reading/articles/:id" element={<ArticleReaderPage />} />
+        <Route path="/articles" element={<Navigate to="/reading/articles" replace />} />
         <Route path="/listening" element={<ListeningPage />} />
         <Route path="/writing" element={<WritingPage />} />
         <Route path="/speaking" element={<SpeakingPage />} />

@@ -11,6 +11,7 @@ import {
   CloseCircleIcon,
   CrownStarIcon,
   StarsIcon,
+  DocumentTextIcon,
 } from '@solar-icons/react/bold-duotone'
 import { cn } from '@/lib/utils'
 import { getTestScope } from '@/lib/test-scope'
@@ -183,6 +184,13 @@ export default function ReadingHub() {
               <ChartSquareIcon className="w-3.5 h-3.5 text-amber-500" size={14} />
               <span>Avg Score: {avgScore}</span>
             </span>
+            <Link
+              to="/reading/articles"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-primary text-black shadow-2xs hover:opacity-90 transition-all cursor-pointer"
+            >
+              <DocumentTextIcon className="w-3.5 h-3.5" size={14} />
+              <span>Academic Articles (NEW)</span>
+            </Link>
           </div>
         </div>
       </div>
