@@ -379,7 +379,7 @@ export function PassageView({ passage, isPremium }: { passage: ReadingPassage; i
       const mark = document.createElement('mark')
       mark.className = `passage-highlight passage-highlight-${colorDef.id}`
       mark.style.backgroundColor = colorDef.hex
-      mark.style.color = 'inherit'
+      mark.style.color = '#0f172a'
       mark.style.borderRadius = '0'
       mark.style.padding = '1px 0'
       mark.style.margin = '0'

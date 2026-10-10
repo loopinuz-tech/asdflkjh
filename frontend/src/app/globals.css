@@ -392,10 +392,17 @@
     overflow-x: auto;
   }
 
-  /* Reading Passage Highlights */
+  /* Reading Passage & Article Highlights */
   mark.passage-highlight,
-  mark.article-highlight {
-    color: inherit;
+  mark.passage-highlight *,
+  mark.article-highlight,
+  mark.article-highlight *,
+  mark[data-highlight-id],
+  mark[data-highlight-id] *,
+  mark,
+  mark * {
+    color: #0f172a !important;
+    text-shadow: none !important;
     border-radius: 0;
     cursor: pointer;
     padding: 1px 0;
@@ -405,6 +412,20 @@
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
+
+  .dark mark.passage-highlight,
+  .dark mark.passage-highlight *,
+  .dark mark.article-highlight,
+  .dark mark.article-highlight *,
+  .dark mark[data-highlight-id],
+  .dark mark[data-highlight-id] *,
+  .dark mark,
+  .dark mark * {
+    color: #0f172a !important;
+    text-shadow: none !important;
+    font-weight: 500;
+  }
+
   mark.passage-highlight:hover,
   mark.article-highlight:hover {
     filter: brightness(0.93);
@@ -412,38 +433,29 @@
   }
   .dark mark.passage-highlight:hover,
   .dark mark.article-highlight:hover {
-    filter: brightness(1.15);
-    outline: 1px solid rgba(255, 255, 255, 0.35);
+    filter: brightness(0.95);
+    outline: 1px solid rgba(0, 0, 0, 0.4);
   }
-  mark.passage-highlight-yellow {
+
+  mark.passage-highlight-yellow,
+  .dark mark.passage-highlight-yellow {
     background-color: #fef08a !important;
   }
-  .dark mark.passage-highlight-yellow {
-    background-color: rgba(202, 138, 4, 0.45) !important;
-  }
-  mark.passage-highlight-green {
+  mark.passage-highlight-green,
+  .dark mark.passage-highlight-green {
     background-color: #bbf7d0 !important;
   }
-  .dark mark.passage-highlight-green {
-    background-color: rgba(22, 163, 74, 0.45) !important;
-  }
-  mark.passage-highlight-blue {
+  mark.passage-highlight-blue,
+  .dark mark.passage-highlight-blue {
     background-color: #bae6fd !important;
   }
-  .dark mark.passage-highlight-blue {
-    background-color: rgba(2, 132, 199, 0.45) !important;
-  }
-  mark.passage-highlight-pink {
+  mark.passage-highlight-pink,
+  .dark mark.passage-highlight-pink {
     background-color: #fbcfe8 !important;
   }
-  .dark mark.passage-highlight-pink {
-    background-color: rgba(219, 39, 119, 0.45) !important;
-  }
-  mark.passage-highlight-orange {
-    background-color: #fed7aa !important;
-  }
+  mark.passage-highlight-orange,
   .dark mark.passage-highlight-orange {
-    background-color: rgba(234, 88, 12, 0.45) !important;
+    background-color: #fed7aa !important;
   }
 }
 

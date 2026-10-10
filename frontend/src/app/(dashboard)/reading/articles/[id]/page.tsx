@@ -279,7 +279,7 @@ export default function ArticleReaderPage() {
       const mark = document.createElement('mark')
       mark.className = 'article-highlight'
       mark.style.backgroundColor = color
-      mark.style.color = 'inherit'
+      mark.style.color = '#0f172a'
       mark.style.borderRadius = '0'
       mark.style.padding = '1px 0'
       mark.style.margin = '0'
