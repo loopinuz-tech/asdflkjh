@@ -52,3 +52,7 @@ scratch/
 client_secret*.json
 uploads/
 backend/uploads/
+backend/audio/
+backend/subs/
+*.mp4
+*.wav

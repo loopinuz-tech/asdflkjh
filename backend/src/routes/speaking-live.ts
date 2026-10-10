@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import { query } from '../config/db.js'
 import { authenticateToken } from '../middleware/auth.js'
+import { notifyUser } from './notifications.js'
 
 const router = Router()
 
@@ -436,6 +437,16 @@ OUTPUT STRICT JSON ONLY:
     } catch (dbErr: any) {
       console.warn('[Speaking Live] Note: Could not save to live_speaking_sessions table:', dbErr.message)
     }
+
+    // Trigger user notification
+    const finalBand = report?.overall_band || 6.5
+    await notifyUser(
+      userId,
+      `Speaking Practice Completed 🎙️`,
+      `You completed Part ${part} on "${topic}" with an estimated Band ${finalBand}.`,
+      'test',
+      `/speaking/live`
+    )
 
     return res.json({
       success: true,

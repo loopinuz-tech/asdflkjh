@@ -352,38 +352,38 @@ export default function SpeakingLivePage() {
   // FULL-WIDTH REAL-TIME VOICE CALL ROOM
   // ==========================================
   return (
-    <div className="w-full min-h-[calc(100vh-4.5rem)] flex flex-col justify-between items-center py-4 px-4 sm:px-8 relative select-none">
+    <div className="w-full min-h-[calc(100vh-4.5rem)] flex flex-col justify-between items-center py-2 sm:py-4 px-2 sm:px-8 relative select-none overflow-x-hidden">
       {/* 1. TOP BAR: Minimalist Navigation, Topic & Mode */}
-      <div className="w-full flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-border/40">
-        <div className="flex items-center gap-3">
+      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pb-2 border-b border-border/40">
+        <div className="flex items-center gap-2.5 min-w-0">
           <Link
             to="/speaking"
-            className="p-2 rounded-xl bg-secondary/80 text-muted-foreground hover:text-foreground transition-all"
+            className="p-1.5 sm:p-2 rounded-xl bg-secondary/80 text-muted-foreground hover:text-foreground transition-all shrink-0"
             title="Back to Topics"
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-foreground">Live AI Speaking Partner</h2>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h2 className="text-xs sm:text-base font-bold text-foreground truncate">Live AI Speaking Partner</h2>
               {sessionActive && (
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                  CALL ACTIVE
+                <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  LIVE
                 </span>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">Topic: {selectedTopic}</p>
+            <p className="text-[11px] text-muted-foreground truncate">Topic: {selectedTopic}</p>
           </div>
         </div>
 
         {/* Mode Selector & Session Timer */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between sm:justify-end gap-2 flex-wrap">
           {!sessionActive && (
             <select
               value={selectedTopic}
               onChange={(e) => setSelectedTopic(e.target.value)}
-              className="px-3 py-1.5 bg-secondary border border-border rounded-xl text-xs font-semibold text-foreground cursor-pointer focus:outline-hidden"
+              className="flex-1 sm:flex-none max-w-[150px] sm:max-w-xs px-2.5 py-1.5 bg-secondary border border-border rounded-xl text-xs font-semibold text-foreground cursor-pointer focus:outline-hidden truncate"
             >
               {availableTopics.map((t, idx) => (
                 <option key={t.id || idx} value={t.title}>
@@ -394,29 +394,29 @@ export default function SpeakingLivePage() {
           )}
 
           {/* Mode Switcher */}
-          <div className="flex items-center bg-secondary/80 p-1 rounded-xl border border-border">
+          <div className="flex items-center bg-secondary/80 p-0.5 sm:p-1 rounded-xl border border-border shrink-0">
             <button
               onClick={() => setMode('roast')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
                 mode === 'roast' ? 'bg-rose-500 text-white shadow-xs' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <Flame className="w-3.5 h-3.5" />
-              Savage Roast
+              <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Savage</span>
             </button>
             <button
               onClick={() => setMode('strict')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
                 mode === 'strict' ? 'bg-blue-600 text-white shadow-xs' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <Zap className="w-3.5 h-3.5" />
-              Cambridge
+              <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Cambridge</span>
             </button>
           </div>
 
           {sessionActive && (
-            <span className="font-mono text-xs font-bold px-3 py-1 bg-secondary rounded-xl border border-border">
+            <span className="font-mono text-xs font-bold px-2.5 py-1 bg-secondary rounded-xl border border-border shrink-0">
               {formatTimer(sessionSeconds)}
             </span>
           )}
@@ -424,7 +424,7 @@ export default function SpeakingLivePage() {
       </div>
 
       {/* 2. CENTERPIECE: Clean Avatar & Real-time Dialogue */}
-      <div className="w-full flex-1 flex flex-col items-center justify-center my-6 space-y-6 max-w-3xl">
+      <div className="w-full flex-1 flex flex-col items-center justify-center my-4 sm:my-6 space-y-4 sm:space-y-6 max-w-3xl">
         {/* The Clean Pill Avatar */}
         <LiveExaminerAvatar
           expression={currentExpression}
@@ -433,7 +433,7 @@ export default function SpeakingLivePage() {
           isSpeaking={isSpeaking}
           mode={mode}
           size="lg"
-          className="scale-90 sm:scale-100 transition-transform"
+          className="scale-75 xs:scale-85 sm:scale-100 transition-transform"
           statusText={
             !sessionActive
               ? 'Ready to connect'
@@ -529,70 +529,71 @@ export default function SpeakingLivePage() {
             Start Voice Conversation
           </Button>
         ) : (
-          <div className="flex items-center gap-2 sm:gap-4 bg-card/90 backdrop-blur-md px-3 sm:px-6 py-2 sm:py-3 rounded-2xl border border-border shadow-lg">
+          <div className="w-full max-w-sm sm:max-w-md flex items-center justify-between sm:justify-center gap-1.5 sm:gap-4 bg-card/90 backdrop-blur-md px-2.5 sm:px-6 py-2 sm:py-3 rounded-2xl border border-border shadow-lg">
             {/* Mic Button */}
             <button
               onClick={() => {
                 if (isListening) stopListening()
                 else startListening()
               }}
-              className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all cursor-pointer ${
+              className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-md transition-all cursor-pointer shrink-0 ${
                 isListening
                   ? 'bg-emerald-500 text-white ring-4 ring-emerald-500/30'
                   : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
               }`}
               title={isListening ? 'Mute Mic' : 'Unmute Mic'}
             >
-              {isListening ? <Mic className="w-6 h-6 fill-current" /> : <MicOff className="w-6 h-6" />}
+              {isListening ? <Mic className="w-5 h-5 sm:w-6 sm:h-6 fill-current" /> : <MicOff className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
 
             {/* Hands-Free Toggle */}
             <button
               onClick={() => setHandsFree(!handsFree)}
-              className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold border transition-all cursor-pointer flex items-center gap-1 shrink-0 ${
                 handsFree
                   ? 'bg-primary/10 border-primary/40 text-primary'
                   : 'bg-secondary/60 border-border text-muted-foreground'
               }`}
               title="Automatically listen after examiner stops speaking"
             >
-              <span className={`w-2 h-2 rounded-full ${handsFree ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
-              Hands-free
+              <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${handsFree ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+              <span className="hidden xs:inline">Hands-free</span>
+              <span className="xs:hidden">Auto</span>
             </button>
 
             {/* Speaker Sound Mute/Unmute */}
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={`p-3 rounded-xl border transition-all cursor-pointer ${
+              className={`p-2 sm:p-3 rounded-xl border transition-all cursor-pointer shrink-0 ${
                 isMuted
                   ? 'bg-rose-500/10 border-rose-500/30 text-rose-500'
                   : 'bg-secondary border-border text-foreground hover:bg-secondary/80'
               }`}
               title={isMuted ? 'Unmute Speaker' : 'Mute Speaker'}
             >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              {isMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
             {/* Optional Keyboard Fallback Toggle */}
             <button
               onClick={() => setShowKeyboardInput(!showKeyboardInput)}
-              className={`p-3 rounded-xl border transition-all cursor-pointer ${
+              className={`p-2 sm:p-3 rounded-xl border transition-all cursor-pointer shrink-0 ${
                 showKeyboardInput
                   ? 'bg-primary/10 border-primary/40 text-primary'
                   : 'bg-secondary border-border text-muted-foreground hover:text-foreground hover:bg-secondary/80'
               }`}
               title={showKeyboardInput ? 'Hide keyboard input' : 'Type response'}
             >
-              <MessageSquare className="w-5 h-5" />
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             {/* Red End Call Button */}
             <button
               onClick={handleEndCall}
-              className="w-14 h-14 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-lg shadow-rose-600/30 transition-all cursor-pointer"
+              className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-lg shadow-rose-600/30 transition-all cursor-pointer shrink-0"
               title="End Voice Call"
             >
-              <PhoneOff className="w-6 h-6 fill-current" />
+              <PhoneOff className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
             </button>
           </div>
         )}

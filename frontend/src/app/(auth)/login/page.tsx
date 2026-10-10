@@ -80,7 +80,7 @@ export default function LoginPage() {
           Welcome back
         </h1>
         <p className="text-sm text-muted-foreground">
-          Sign in to your Foxford account
+          Sign in to your EduFox account
         </p>
       </div>
 

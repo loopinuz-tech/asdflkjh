@@ -2,7 +2,9 @@
  * Foxford Backend API Configuration
  * Supports VITE_API_URL environment variable or defaults to the production Render backend URL.
  */
-const envApiUrl = (import.meta as any).env?.VITE_API_URL
+const envApiUrl =
+  (import.meta as any).env?.VITE_API_URL ||
+  (import.meta as any).env?.VITE_BACKEND_URL
 
 export const API_BASE_URL: string =
   envApiUrl !== undefined && envApiUrl !== null && envApiUrl !== ''

@@ -15,7 +15,7 @@ import {
 } from '@solar-icons/react/bold-duotone'
 import { cn } from '@/lib/utils'
 import { LiveExaminerAvatar } from '@/components/speaking/live-avatar'
-import { ArrowRight, Mic } from 'lucide-react'
+import { ArrowRight, Mic, Film } from 'lucide-react'
 
 export default function SpeakingHub() {
   const navigate = useNavigate()
@@ -209,7 +209,7 @@ export default function SpeakingHub() {
               Practice 1-on-1 IELTS speaking in real-time with instant Band score diagnostics and speech evaluation.
             </p>
 
-            <div className="pt-1">
+            <div className="pt-1 flex items-center gap-2.5 flex-wrap">
               <button
                 type="button"
                 onClick={() => {
@@ -225,6 +225,17 @@ export default function SpeakingHub() {
                 <span>{isPremiumUser ? 'Start Live Speaking' : 'Unlock Live Examiner'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
+
+              <Link
+                to="/speaking/shadowing"
+                className="px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold rounded-xl shadow-xs text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer transition-all active:scale-95"
+              >
+                <Film className="w-4 h-4" />
+                <span>Movie Shadowing Studio</span>
+                <span className="text-[10px] uppercase font-black px-1.5 py-0.2 rounded bg-black/20 font-mono">
+                  NEW
+                </span>
+              </Link>
             </div>
           </div>
 

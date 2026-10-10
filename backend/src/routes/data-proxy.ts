@@ -38,6 +38,7 @@ const ALLOWED_TABLES = new Set([
   'import_errors',
   'activity_logs',
   'admin_activity_logs',
+  'notifications',
 ])
 
 // Whitelist of known database columns per table to prevent SQL column errors
@@ -138,6 +139,9 @@ const TABLE_COLUMNS: Record<string, Set<string>> = {
   ]),
   tags: new Set([
     'id', 'name', 'slug', 'color', 'created_at'
+  ]),
+  notifications: new Set([
+    'id', 'user_id', 'title', 'message', 'type', 'link', 'is_read', 'created_at'
   ])
 }
 

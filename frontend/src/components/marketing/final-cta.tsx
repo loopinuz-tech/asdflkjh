@@ -15,11 +15,10 @@ export function FinalCta() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
           whileHover={{ scale: 1.01 }}
-          className="relative rounded-3xl overflow-hidden shadow-2xl"
+          className="relative rounded-3xl overflow-hidden shadow-2xl border border-amber-400/40 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 dark:from-amber-500 dark:via-amber-600 dark:to-amber-700"
         >
-          {/* Background */}
-          <div className="absolute inset-0 fox-gradient opacity-95" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
+          {/* Ambient Lighting Overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)] pointer-events-none" />
 
           <div className="relative px-4 py-12 sm:px-12 sm:py-20 text-center">
             {/* Mascot */}
@@ -34,23 +33,21 @@ export function FinalCta() {
               <FoxMascot variant="celebration" size="lg" />
             </motion.div>
 
-            <h2 className="text-2xl xs:text-3xl font-bold sm:text-4xl text-primary-foreground">
+            <h2 className="text-2xl xs:text-3xl font-extrabold sm:text-4xl lg:text-5xl text-slate-950 tracking-tight">
               Your IELTS goal starts here.
             </h2>
-            <p className="mt-2.5 sm:mt-4 text-sm sm:text-lg text-primary-foreground/80 max-w-xl mx-auto px-2">
+            <p className="mt-2.5 sm:mt-4 text-sm sm:text-lg text-slate-950/85 font-medium max-w-xl mx-auto px-2">
               Join EduFox and start preparing for your IELTS exam with confidence. 
               Practice smarter, track your progress, and reach your target band.
             </p>
 
             <div className="mt-8">
-              <Link to="/signup"
-                className={cn(
-                  buttonVariants({ size: 'lg' }),
-                  'bg-background text-foreground hover:bg-background/90 font-semibold text-base px-8 h-12 inline-flex items-center justify-center rounded-lg shadow-lg'
-                )}
+              <Link 
+                to="/signup"
+                className="bg-slate-950 hover:bg-slate-900 text-white font-semibold text-base px-8 h-12 inline-flex items-center justify-center rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all cursor-pointer"
               >
-                Get Started
-                <AltArrowRightIcon className="ml-2 h-4 w-4" />
+                <span>Get Started Now</span>
+                <AltArrowRightIcon className="ml-2 h-4 w-4 text-white font-bold" />
               </Link>
             </div>
           </div>

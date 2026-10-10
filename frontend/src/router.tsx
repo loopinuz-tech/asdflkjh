@@ -32,6 +32,7 @@ import ListeningPage from './app/(dashboard)/listening/page'
 import WritingPage from './app/(dashboard)/writing/page'
 import SpeakingPage from './app/(dashboard)/speaking/page'
 import SpeakingLivePage from './app/(dashboard)/speaking/live/page'
+import MovieShadowingPage from './app/(dashboard)/speaking/shadowing/page'
 import VocabularyPage from './app/(dashboard)/vocabulary/page'
 import VocabularyReviewPage from './app/(dashboard)/vocabulary/review/page'
 import PracticePage from './app/(dashboard)/practice/page'
@@ -39,6 +40,7 @@ import ProgressPage from './app/(dashboard)/progress/page'
 import SavedPage from './app/(dashboard)/saved/page'
 import SettingsPage from './app/(dashboard)/settings/page'
 import PremiumPage from './app/(dashboard)/premium/page'
+import NotificationsPage from './app/(dashboard)/notifications/page'
 
 // Test pages (self-loading)
 import ReadingTestPage from './app/(tests)/reading/[id]/client-page'
@@ -62,6 +64,8 @@ import AdminAttemptsPage from './app/admin/attempts/client-page'
 import AdminTasksPage from './app/admin/tasks/page'
 import AdminPricingPage from './app/admin/pricing/page'
 import AdminVocabularyPage from './app/admin/vocabulary/page'
+import AdminNotificationsPage from './app/admin/notifications/page'
+import AdminShadowingPage from './app/admin/shadowing/page'
 
 export default function AppRouter() {
   return (
@@ -113,6 +117,8 @@ export default function AppRouter() {
         <Route path="/writing" element={<WritingPage />} />
         <Route path="/speaking" element={<SpeakingPage />} />
         <Route path="/speaking/live" element={<SpeakingLivePage />} />
+        <Route path="/speaking/shadowing" element={<MovieShadowingPage />} />
+        <Route path="/shadowing" element={<Navigate to="/speaking/shadowing" replace />} />
         <Route path="/vocabulary" element={<VocabularyPage />} />
         <Route path="/vocabulary/review" element={<VocabularyReviewPage />} />
         <Route path="/practice" element={<PracticePage />} />
@@ -120,6 +126,7 @@ export default function AppRouter() {
         <Route path="/saved" element={<SavedPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/premium" element={<PremiumPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
 
       {/* Tests (self-loading, ProtectedRoute wraps layout) */}
@@ -152,6 +159,7 @@ export default function AppRouter() {
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/tests" element={<AdminTestsPage />} />
         <Route path="/admin/tasks" element={<AdminTasksPage />} />
+        <Route path="/admin/shadowing" element={<AdminShadowingPage />} />
         <Route path="/admin/vocabulary" element={<AdminVocabularyPage />} />
         <Route path="/admin/tests/create" element={<AdminTestCreatePage />} />
         <Route path="/admin/tests/:id/edit" element={<AdminTestEditPage />} />
@@ -161,6 +169,7 @@ export default function AppRouter() {
         <Route path="/admin/results" element={<Navigate to="/admin/attempts" replace />} />
         <Route path="/admin/pricing" element={<AdminPricingPage />} />
         <Route path="/admin/plans" element={<Navigate to="/admin/pricing" replace />} />
+        <Route path="/admin/notifications" element={<AdminNotificationsPage />} />
         <Route path="/admin/import" element={<AdminImportPage />} />
         <Route path="/admin/import/html" element={<AdminImportHtmlPage />} />
         <Route path="/admin/import/json" element={<AdminImportJsonPage />} />

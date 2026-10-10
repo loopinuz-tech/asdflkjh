@@ -18,6 +18,9 @@ import savedRouter from './routes/saved.js'
 import sitemapRouter from './routes/sitemap.js'
 import telegramRouter from './routes/telegram.js'
 import speakingLiveRouter from './routes/speaking-live.js'
+import notificationsRouter from './routes/notifications.js'
+import announcementBannerRouter from './routes/announcement-banner.js'
+import shadowingRouter from './routes/shadowing.js'
 import { initTelegramBot } from './services/telegramBot.js'
 
 dotenv.config()
@@ -61,6 +64,9 @@ app.use('/api/subscriptions', subscriptionsRouter)
 app.use('/api/saved', savedRouter)
 app.use('/api/telegram', telegramRouter)
 app.use('/api/speaking-live', speakingLiveRouter)
+app.use('/api/notifications', notificationsRouter)
+app.use('/api/announcement-banner', announcementBannerRouter)
+app.use('/api/shadowing', shadowingRouter)
 app.use('/api/sitemap', sitemapRouter)
 app.use('/sitemap.xml', sitemapRouter)
 

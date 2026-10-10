@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { SidebarProvider } from '@/context/sidebar-context'
 import YandexMetrica from '@/components/analytics/yandex-metrica'
+import { NotificationProvider } from '@/context/notification-context'
 import AppRouter from './router'
 
 export default function App() {
@@ -11,11 +12,13 @@ export default function App() {
     <HelmetProvider>
       <BrowserRouter>
         <ThemeProvider>
-          <TooltipProvider>
-            <SidebarProvider>
-              <AppRouter />
-            </SidebarProvider>
-          </TooltipProvider>
+          <NotificationProvider>
+            <TooltipProvider>
+              <SidebarProvider>
+                <AppRouter />
+              </SidebarProvider>
+            </TooltipProvider>
+          </NotificationProvider>
         </ThemeProvider>
         <YandexMetrica />
       </BrowserRouter>

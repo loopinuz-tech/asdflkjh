@@ -1108,7 +1108,7 @@ export function FerrisWheelSkills() {
               </Link>
 
               <a
-                href="#ielts-test-format"
+                href="#ielts"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-full text-base font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-200"
               >
                 <span>Explore all skills</span>

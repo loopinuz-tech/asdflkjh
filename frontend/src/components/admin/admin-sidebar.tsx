@@ -14,6 +14,8 @@ import {
   PanelLeftOpenIcon,
   CloseCircleIcon,
   TranslationIcon,
+  BellIcon,
+  ClapperboardPlayIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { cn } from '@/lib/utils'
@@ -31,6 +33,7 @@ const navSections = [
     items: [
       { href: '/admin/tests', label: 'Tests Management', icon: DocumentTextIcon },
       { href: '/admin/tasks', label: 'Writing & Speaking Tasks', icon: PenNewSquareIcon },
+      { href: '/admin/shadowing', label: 'Movie Shadowing', icon: ClapperboardPlayIcon },
       { href: '/admin/vocabulary', label: 'Vocabulary & Folders', icon: TranslationIcon },
       { href: '/admin/import', label: 'Import Center (AI & Ingestion)', icon: CloudUploadIcon },
     ],
@@ -39,6 +42,7 @@ const navSections = [
     label: 'Platform & Business',
     items: [
       { href: '/admin/pricing', label: 'Pricing & Coupons', icon: TagPriceIcon },
+      { href: '/admin/notifications', label: 'Broadcast Notifications', icon: BellIcon },
       { href: '/admin/attempts', label: 'Student Results & Attempts', icon: ChartSquareIcon },
       { href: '/admin/users', label: 'Student & User Accounts', icon: UsersGroupTwoRoundedIcon },
     ],

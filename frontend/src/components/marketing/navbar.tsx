@@ -9,15 +9,18 @@ import {
   Widget2Icon,
   SettingsIcon,
   Logout2Icon,
+  BellIcon,
 } from '@solar-icons/react/bold-duotone'
 import { buttonVariants } from '@/components/ui/button'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
+import { NotificationBell } from '@/components/notifications/notification-bell'
 
 const navLinks = [
   { href: '#skills', label: 'Skills' },
+  { href: '#shadowing', label: 'Movie Shadowing' },
   { href: '#ielts', label: 'IELTS' },
   { href: '#how-it-works', label: 'How it works' },
 ]
@@ -125,7 +128,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#0c485e] border-b border-white/10 shadow-sm'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/85 dark:bg-slate-950/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs'
       )}
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -143,11 +146,11 @@ export function Navbar() {
           >
             {/* Mobile: no subtitle */}
             <span className="md:hidden">
-              <FoxLogo showSubtext={false} size="sm" inverseText={true} />
+              <FoxLogo showSubtext={false} size="sm" inverseText={false} />
             </span>
             {/* Desktop: full logo with subtitle */}
             <span className="hidden md:block">
-              <FoxLogo showSubtext={true} inverseText={true} />
+              <FoxLogo showSubtext={true} inverseText={false} />
             </span>
           </Link>
 
@@ -158,7 +161,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-white/80 transition-colors hover:text-white cursor-pointer"
+                className="text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:text-slate-900 dark:hover:text-white cursor-pointer"
               >
                 {link.label}
               </a>
@@ -167,15 +170,16 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex md:items-center md:gap-3">
-            <ThemeToggle className="w-9 h-9 rounded-full justify-center p-0 shrink-0 text-white/80 hover:text-white hover:bg-white/15 border-white/20" />
+            <ThemeToggle className="w-9 h-9 rounded-full justify-center p-0 shrink-0 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200/80 dark:border-slate-800" />
             {currentUser ? (
               <div className="flex items-center gap-2">
+                <NotificationBell buttonClassName="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 rounded-full w-9 h-9 p-0" />
                 {/* Profile Pill with Dropdown (Go to Dashboard button removed as requested) */}
                 <div className="relative" ref={profileDropdownRef}>
                   <button
                     type="button"
                     onClick={() => setIsProfileOpen((prev) => !prev)}
-                    className="h-9 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 select-none"
+                    className="h-9 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-900 dark:text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 select-none"
                     aria-expanded={isProfileOpen}
                     aria-label="User profile menu"
                   >
@@ -183,17 +187,17 @@ export function Navbar() {
                       <img
                         src={currentUser.avatarUrl}
                         alt={currentUser.name}
-                        className="w-[22px] h-[22px] rounded-full object-cover ring-1 ring-white/40 shrink-0"
+                        className="w-[22px] h-[22px] rounded-full object-cover ring-1 ring-slate-300 dark:ring-slate-700 shrink-0"
                       />
                     ) : (
-                      <div className="w-[22px] h-[22px] rounded-full bg-amber-400 text-slate-900 font-black text-[11px] flex items-center justify-center shrink-0">
+                      <div className="w-[22px] h-[22px] rounded-full bg-amber-500 text-slate-950 font-black text-[11px] flex items-center justify-center shrink-0">
                         {currentUser.name.charAt(0).toUpperCase()}
                       </div>
                     )}
-                    <span className="text-xs font-semibold text-white max-w-[130px] truncate">
+                    <span className="text-xs font-semibold text-slate-900 dark:text-white max-w-[130px] truncate">
                       {currentUser.name}
                     </span>
-                    <AltArrowDownIcon className={cn("w-3.5 h-3.5 text-white/70 transition-transform duration-200", isProfileOpen && "rotate-180")} />
+                    <AltArrowDownIcon className={cn("w-3.5 h-3.5 text-slate-500 dark:text-slate-400 transition-transform duration-200", isProfileOpen && "rotate-180")} />
                   </button>
 
                   {/* Dropdown Menu */}
@@ -212,6 +216,14 @@ export function Navbar() {
                         >
                           <Widget2Icon className="w-4 h-4 text-primary" />
                           <span>Student Dashboard</span>
+                        </Link>
+                        <Link
+                          to="/notifications"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                        >
+                          <BellIcon className="w-4 h-4 text-amber-500" />
+                          <span>Bildirishnomalar</span>
                         </Link>
                         <Link
                           to="/settings"
@@ -239,15 +251,15 @@ export function Navbar() {
               </div>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors px-3 py-2 cursor-pointer">
+                <Link to="/login" className="text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white transition-colors px-3 py-2 cursor-pointer">
                   Log in
                 </Link>
                 <Link 
                   to="/signup" 
-                  className="h-9 px-5 rounded-full bg-[#FFC000] hover:bg-[#E6AD00] text-black font-semibold text-xs shadow-xs hover:shadow-sm hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer border border-amber-400/40"
+                  className="h-9 px-5 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold text-xs shadow-xs hover:shadow-md hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer border border-amber-400/40"
                 >
                   <span>Get Started</span>
-                  <AltArrowRightIcon className="w-4 h-4 text-black font-bold" />
+                  <AltArrowRightIcon className="w-4 h-4 text-slate-950 font-bold" />
                 </Link>
               </>
             )}
@@ -256,7 +268,7 @@ export function Navbar() {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
@@ -274,7 +286,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden border-b border-white/10 bg-[#0c485e] text-white max-h-[calc(100vh-4rem)] overflow-y-auto"
+            className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl text-slate-900 dark:text-white max-h-[calc(100vh-4rem)] overflow-y-auto"
           >
             <div className="px-4 py-4 space-y-3">
               {navLinks.map((link) => (
@@ -282,38 +294,46 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                  className="block px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors cursor-pointer"
                 >
                   {link.label}
                 </a>
               ))}
-              <div className="pt-3 border-t border-white/10 space-y-2">
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
                 {currentUser ? (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2.5 px-3 py-2 bg-white/10 rounded-xl">
+                    <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
                       {currentUser.avatarUrl ? (
                         <img
                           src={currentUser.avatarUrl}
                           alt={currentUser.name}
-                          className="w-8 h-8 rounded-full object-cover border border-white/30 shrink-0"
+                          className="w-8 h-8 rounded-full object-cover border border-slate-300 dark:border-slate-700 shrink-0"
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-900 font-bold text-xs flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
                           {currentUser.name.charAt(0).toUpperCase()}
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-white truncate">{currentUser.name}</p>
-                        <p className="text-[10px] text-white/70 truncate">{currentUser.email}</p>
+                        <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">{currentUser.name}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{currentUser.email}</p>
                       </div>
                     </div>
                     <Link
                       to="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="w-full h-10 justify-center rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs flex items-center gap-2 border border-white/20 transition-colors"
+                      className="w-full h-10 justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-700 transition-colors"
                     >
-                      <Widget2Icon className="w-4 h-4 text-amber-300" />
+                      <Widget2Icon className="w-4 h-4 text-amber-500" />
                       <span>Student Dashboard</span>
+                    </Link>
+                    <Link
+                      to="/notifications"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full h-10 justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-700 transition-colors"
+                    >
+                      <BellIcon className="w-4 h-4 text-amber-500" />
+                      <span>Bildirishnomalar</span>
                     </Link>
                     <button
                       type="button"
@@ -321,29 +341,29 @@ export function Navbar() {
                         setIsMobileMenuOpen(false)
                         handleSignOut()
                       }}
-                      className="w-full h-9 justify-center rounded-xl border border-red-400/30 hover:bg-red-500/20 text-red-300 font-medium text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                      className="w-full h-9 justify-center rounded-xl border border-red-500/20 hover:bg-red-500/10 text-red-600 dark:text-red-400 font-medium text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
                     >
-                      <Logout2Icon className="w-3.5 h-3.5 text-red-300" />
+                      <Logout2Icon className="w-3.5 h-3.5 text-red-500" />
                       <span>Sign Out</span>
                     </button>
                   </div>
                 ) : (
                   <>
-                    <Link to="/login" className={buttonVariants({ variant: "ghost", className: "w-full justify-center text-white/80 hover:text-white hover:bg-white/10" })}>
+                    <Link to="/login" className={buttonVariants({ variant: "ghost", className: "w-full justify-center text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900" })}>
                       Log in
                     </Link>
                     <Link 
                       to="/signup" 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="w-full h-10 justify-center rounded-xl bg-[#FFC000] hover:bg-[#E6AD00] text-black font-semibold text-xs flex items-center gap-1.5 shadow-xs"
+                      className="w-full h-10 justify-center rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold text-xs flex items-center gap-1.5 shadow-xs"
                     >
                       <span>Get Started</span>
-                      <AltArrowRightIcon className="w-4 h-4 text-black font-bold" />
+                      <AltArrowRightIcon className="w-4 h-4 text-slate-950 font-bold" />
                     </Link>
                   </>
                 )}
-                <div className="pt-2 flex items-center justify-between border-t border-white/10">
-                  <span className="text-xs font-medium text-white/70">Theme</span>
+                <div className="pt-2 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Theme</span>
                   <ThemeToggle showLabel />
                 </div>
               </div>

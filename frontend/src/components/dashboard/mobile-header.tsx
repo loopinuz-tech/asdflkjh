@@ -17,12 +17,17 @@ import {
   Microphone2Icon,
   TranslationIcon,
   ChartSquareIcon,
+  BellIcon,
+  StarsIcon,
+  ClapperboardPlayIcon,
 } from '@solar-icons/react/bold-duotone'
 import { FoxLogo } from '@/components/mascot/fox-mascot'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { isUserAdmin } from '@/components/auth/ProtectedRoute'
+import { NotificationBell } from '@/components/notifications/notification-bell'
+import { useNotifications } from '@/context/notification-context'
 
 interface UserProfile {
   name: string
@@ -35,6 +40,7 @@ interface UserProfile {
 export function DashboardMobileHeader() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { unreadCount } = useNotifications()
   const [rawUser, setRawUser] = useState<any>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -162,6 +168,8 @@ export function DashboardMobileHeader() {
               <span>Admin</span>
             </Link>
           )}
+
+          <NotificationBell />
 
           <ThemeToggle />
 
@@ -305,7 +313,8 @@ export function DashboardMobileHeader() {
                   { name: 'Reading', href: '/reading', icon: BookBookmarkIcon },
                   { name: 'Listening', href: '/listening', icon: HeadphonesRoundIcon },
                   { name: 'Writing', href: '/writing', icon: Pen2Icon },
-                  { name: 'Speaking', href: '/speaking', icon: Microphone2Icon },
+                  { name: 'Speaking', href: '/speaking', icon: Microphone2Icon, exact: true },
+                  { name: 'Movie Shadowing', href: '/speaking/shadowing', icon: ClapperboardPlayIcon, badge: 'NEW' },
                   { name: 'Vocabulary', href: '/vocabulary', icon: TranslationIcon },
                 ].map((item) => {
                   const isActive = item.exact

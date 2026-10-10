@@ -32,7 +32,7 @@ const benefits = [
 
 export function TrustStrip() {
   return (
-    <section className="py-6 sm:py-10 border-y border-border bg-secondary/30">
+    <section className="py-6 sm:py-10 border-y border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-900/40">
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -50,9 +50,9 @@ export function TrustStrip() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.4 }}
-                className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium text-muted-foreground"
+                className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300"
               >
-                <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 dark:text-amber-400 flex-shrink-0" />
                 {benefit.label}
               </motion.div>
             )

@@ -18,25 +18,26 @@ export function Footer() {
           <div className="space-y-3 sm:space-y-4">
             <h4 className="text-xs sm:text-sm font-semibold text-foreground uppercase tracking-wider">Product</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-              <li><Link to="/features" className="hover:text-primary transition-colors">Features</Link></li>
-              <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
-              <li><Link to="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link></li>
+              <li><Link to="/speaking/shadowing" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Movie Shadowing</Link></li>
+              <li><Link to="/features" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Features</Link></li>
+              <li><Link to="/pricing" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Pricing</Link></li>
+              <li><Link to="/dashboard" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Dashboard</Link></li>
             </ul>
           </div>
           
           <div className="space-y-3 sm:space-y-4">
             <h4 className="text-xs sm:text-sm font-semibold text-foreground uppercase tracking-wider">Company</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <li><Link to="/about" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Contact</Link></li>
             </ul>
           </div>
           
           <div className="space-y-3 sm:space-y-4">
             <h4 className="text-xs sm:text-sm font-semibold text-foreground uppercase tracking-wider">Legal</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-              <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-              <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Terms of Service</Link></li>
+              <li><Link to="/privacy" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

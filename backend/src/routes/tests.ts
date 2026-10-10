@@ -4,6 +4,7 @@ import { authenticateToken, optionalAuth } from '../middleware/auth.js'
 import { verifyIeltsAnswer, calculateIeltsBand } from '../utils/ielts-grader.js'
 import { evaluateEssayWithGemini } from '../utils/gemini-evaluator.js'
 import { evaluateSpeakingWithGemini } from '../utils/gemini-speaking-evaluator.js'
+import { notifyUser } from './notifications.js'
 
 const router = Router()
 
@@ -454,6 +455,16 @@ router.post('/attempt/:attemptId/submit', authenticateToken, async (req: Request
         [userId, attempt.skill, rawScore, estimatedBand]
       )
     }
+
+    // Trigger real user notification
+    const skillName = (attempt.skill || 'Test').charAt(0).toUpperCase() + (attempt.skill || 'test').slice(1)
+    await notifyUser(
+      userId,
+      `${skillName} Test Completed! 🎯`,
+      `You scored Band ${estimatedBand.toFixed(1)} (${rawScore}/${totalPoints} points). Check your practice history for the review.`,
+      'test',
+      `/practice`
+    )
 
     return res.json({
       success: true,

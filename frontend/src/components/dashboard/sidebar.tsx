@@ -14,12 +14,17 @@ import {
   CrownStarIcon,
   Logout2Icon,
   ShieldCheckIcon,
+  BellIcon,
+  ClapperboardPlayIcon,
+  UserSpeakRoundedIcon,
 } from '@solar-icons/react/bold-duotone'
-import { Search, X, ChevronRight } from 'lucide-react'
+import { Search, X, ChevronRight, ChevronDown } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { cn } from '@/lib/utils'
 import { isUserAdmin } from '@/components/auth/ProtectedRoute'
+import { NotificationBell } from '@/components/notifications/notification-bell'
+import { useNotifications } from '@/context/notification-context'
 
 
 interface QuickSearchItem {
@@ -46,6 +51,15 @@ export function Sidebar() {
 
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [speakingOpen, setSpeakingOpen] = useState(() => pathname.startsWith('/speaking'))
+
+  useEffect(() => {
+    if (pathname.startsWith('/speaking')) {
+      setSpeakingOpen(true)
+    }
+  }, [pathname])
+
+  const { unreadCount } = useNotifications()
 
   // Load user data
   useEffect(() => {
@@ -125,6 +139,8 @@ export function Sidebar() {
     { id: '8', title: 'Practice History & Results', category: 'History', href: '/practice' },
     { id: '9', title: 'Saved Items & Mistake Bank', category: 'Review', href: '/saved' },
     { id: '10', title: 'Account Settings', category: 'Settings', href: '/settings' },
+    { id: '11', title: 'Notifications', category: 'General', href: '/notifications' },
+    { id: '12', title: 'Movie Shadowing Studio', category: 'Speaking', href: '/speaking/shadowing' },
   ]
 
   const filteredSearch = useMemo(() => {
@@ -141,7 +157,25 @@ export function Sidebar() {
     { name: 'Reading', href: '/reading', icon: BookBookmarkIcon },
     { name: 'Listening', href: '/listening', icon: HeadphonesRoundIcon },
     { name: 'Writing', href: '/writing', icon: Pen2Icon },
-    { name: 'Speaking', href: '/speaking', icon: Microphone2Icon },
+    {
+      name: 'Speaking',
+      href: '/speaking',
+      icon: Microphone2Icon,
+      subItems: [
+        {
+          name: 'IELTS Speaking',
+          href: '/speaking',
+          icon: UserSpeakRoundedIcon,
+          exact: true,
+        },
+        {
+          name: 'Movie Shadowing',
+          href: '/speaking/shadowing',
+          icon: ClapperboardPlayIcon,
+          badge: 'NEW',
+        },
+      ],
+    },
     { name: 'Vocabulary', href: '/vocabulary', icon: TranslationIcon },
   ]
 
@@ -184,15 +218,18 @@ export function Sidebar() {
             )}
           </Link>
 
-          {/* Action button: Search (Ctrl+K) */}
-          <button
-            onClick={() => setSearchOpen(true)}
-            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex items-center justify-center"
-            title="Search (Ctrl+K)"
-            aria-label="Search platform"
-          >
-            <Search className="w-4 h-4 text-white" />
-          </button>
+          {/* Action buttons: Notification Bell & Search (Ctrl+K) */}
+          <div className="flex items-center gap-1">
+            <NotificationBell align="left" />
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex items-center justify-center"
+              title="Search (Ctrl+K)"
+              aria-label="Search platform"
+            >
+              <Search className="w-4 h-4 text-white" />
+            </button>
+          </div>
         </div>
 
         {/* 3. NAVIGATION LIST */}
@@ -244,6 +281,109 @@ export function Sidebar() {
                 ? pathname === item.href
                 : pathname.startsWith(item.href)
               const IconComp = item.icon
+              const hasSub = Boolean((item as any).subItems)
+
+              if (hasSub) {
+                const subItems = (item as any).subItems as Array<{
+                  name: string
+                  href: string
+                  exact?: boolean
+                  badge?: string
+                  icon?: any
+                }>
+                return (
+                  <div key={item.name} className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => setSpeakingOpen((prev) => !prev)}
+                      title={!isExpanded ? item.name : undefined}
+                      className={cn(
+                        'group rounded-xl transition-all w-full cursor-pointer text-left',
+                        isExpanded
+                          ? 'flex items-center gap-3 px-3 py-2 text-sm font-medium'
+                          : 'relative flex items-center justify-center w-11 h-10 mx-auto',
+                        isActive
+                          ? 'bg-white/15 text-white font-semibold shadow-xs border border-white/10'
+                          : 'text-[#a5cee0] hover:text-white hover:bg-white/10'
+                      )}
+                    >
+                      <IconComp
+                        className={cn(
+                          'w-5 h-5 shrink-0 transition-transform group-hover:scale-105',
+                          isActive ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                        )}
+                        size={20}
+                      />
+
+                      {isExpanded && (
+                        <>
+                          <span className="truncate flex-1">{item.name}</span>
+                          <ChevronDown
+                            className={cn(
+                              'w-4 h-4 text-white/70 transition-transform duration-200 shrink-0 ml-auto',
+                              speakingOpen ? 'rotate-180 text-amber-300' : ''
+                            )}
+                          />
+                        </>
+                      )}
+
+                      {!isExpanded && isActive && (
+                        <span className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-3.5 rounded-full bg-amber-400" />
+                      )}
+                    </button>
+
+                    {/* Submenu items */}
+                    {isExpanded && speakingOpen && (
+                      <div className="pl-2 pr-1 space-y-1 border-l-2 border-white/20 ml-5 my-1 animate-in slide-in-from-top-1 duration-150">
+                        {subItems.map((sub) => {
+                          const isSubActive = sub.exact
+                            ? pathname === sub.href
+                            : pathname.startsWith(sub.href)
+                          const SubIcon = sub.icon
+                          return (
+                            <Link
+                              key={sub.name}
+                              to={sub.href}
+                              className={cn(
+                                'group flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all font-medium',
+                                isSubActive
+                                  ? 'bg-white/20 text-white font-bold shadow-2xs'
+                                  : 'text-[#a5cee0] hover:text-white hover:bg-white/10'
+                              )}
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                {SubIcon ? (
+                                  <SubIcon
+                                    className={cn(
+                                      'w-4 h-4 shrink-0 transition-transform group-hover:scale-110',
+                                      isSubActive ? 'text-amber-300' : 'text-[#9ec3d5] group-hover:text-white'
+                                    )}
+                                    size={16}
+                                  />
+                                ) : (
+                                  <span
+                                    className={cn(
+                                      'w-1.5 h-1.5 rounded-full shrink-0',
+                                      isSubActive ? 'bg-amber-400' : 'bg-white/40'
+                                    )}
+                                  />
+                                )}
+                                <span className="truncate">{sub.name}</span>
+                              </div>
+                              {sub.badge && (
+                                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-mono shrink-0">
+                                  {sub.badge}
+                                </span>
+                              )}
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+
               return (
                 <Link
                   key={item.name}

@@ -475,6 +475,7 @@ export interface Notification {
   title: string;
   message: string;
   is_read: boolean;
+  link?: string | null;
   created_at: string;
 }
 
